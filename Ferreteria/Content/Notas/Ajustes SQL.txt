@@ -1,0 +1,3 @@
+alter table [User] add estado int 
+
+alter table [dbo].[Company] add email varchar (50)

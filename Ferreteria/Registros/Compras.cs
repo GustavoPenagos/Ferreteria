@@ -314,7 +314,7 @@ namespace Tienda.Registros
                     {
                         var st = double.Parse(itemArray.ToString());
                         var tv = (0.19 * st) + st;
-                        this.totalVenta.Text = st.ToString("C").Replace(".00", string.Empty);
+                        this.totalVenta.Text = st.ToString("C").Replace(",00",string.Empty);
                     }
                 }
             }
@@ -985,16 +985,14 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
+                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
                             var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
 
                             //--------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
                         }
-                        var totalComp = double.Parse(this.totalVenta.Text.Replace(".00", string.Empty), NumberStyles.Currency);
+                        var totalComp = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
                         //DateTimeNow.Short.ToString
                         string fecha = DateTime.Now.ToShortDateString().ToString();
@@ -1114,11 +1112,9 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
+                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
                             var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1245,11 +1241,9 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
+                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
                             var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString().Replace(".00", string.Empty), NumberStyles.Currency);
-                            //var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket3.AgregaArticulo(articuloT, precioT, cantidadT, totalT);

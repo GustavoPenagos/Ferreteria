@@ -204,8 +204,7 @@ namespace Tienda.Listas
                         string Nombre_Prod = dataGridView1.CurrentRow.Cells["Producto"].Value.ToString();
                         string Marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
                         string p1 = dataGridView1.CurrentRow.Cells["Precio Compra"].Value.ToString();
-                        double Precio_Prod = double.Parse(p1.Replace(".", "*").Replace(".00", string.Empty), NumberStyles.Currency);//cambiar
-                        //double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
+                        double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
                         string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
                         //
                         double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);

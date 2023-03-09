@@ -102,6 +102,7 @@
             this.dienro.Size = new System.Drawing.Size(543, 60);
             this.dienro.TabIndex = 1;
             this.dienro.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.dienro.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dienro_KeyPress);
             // 
             // label2
             // 
@@ -135,6 +136,7 @@
             this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "IngresarCapital";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "IngresarCapital";
             this.Load += new System.EventHandler(this.IngresarCapital_Load);
             this.panel3.ResumeLayout(false);

@@ -56,7 +56,6 @@ namespace Tienda.Registros
                 var resultado = total - abono;
                 if (resultado < 0)
                 {
-                    
                     MessageBox.Show("Ese valor es mayor al valor por pagar");
                     return;
                 }
@@ -68,13 +67,6 @@ namespace Tienda.Registros
                     SqlCommand cmdInsert = new SqlCommand(queryAbono, con);
                     cmdInsert.ExecuteNonQuery();
                     con.Close();
-                    //
-                    //string queryUpdate = "update Cartera set Valor_Cartera = '" + valorActual + "' where Factura like '" + nFactura + "' and Id_Cartera = 4";
-                    //con.Open();
-                    //SqlCommand cmdUpdate = new SqlCommand(queryUpdate, con);
-                    //cmdUpdate.ExecuteNonQuery();
-                    //con.Close();
-                    //
                     Borrar(resultado);
                 }
                 con.Close();
@@ -137,7 +129,7 @@ namespace Tienda.Registros
                 var resul = 0.00;
                 con.Open();
                 //CARTERA
-                string queryTotal = "select * from Cartera where Factura like '" + nFactura.ToString() + "'";
+                string queryTotal = "select * from Cartera where Factura like '" + nFactura.ToString() + "' and Id_Cartera = 4";
                 SqlCommand cmd = new SqlCommand(queryTotal, con);
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();

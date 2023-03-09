@@ -29,7 +29,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["ID"].ReadOnly = true;
             dataGridView1.Columns["Unidad"].ReadOnly = true;
             dataGridView1.Columns["Precio Venta"].ReadOnly = true;
-            //dataGridView1.Columns["Utilidad (%)"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.selectBus.Text = "Nombre";
@@ -216,14 +215,14 @@ namespace Tienda.Listas
 
         private void Delete()
         {
-            //
+            
             DataGridViewButtonColumn eliminar = new DataGridViewButtonColumn();
             eliminar.HeaderText = "Eliminar";
             eliminar.Name = "Eliminar";
             eliminar.Text = "Eliminar";
             eliminar.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(eliminar);
-            //
+            
             DataGridViewButtonColumn update = new DataGridViewButtonColumn();
             update.HeaderText = "Actualizar";
             update.Name = "Actualizar";

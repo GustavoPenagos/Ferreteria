@@ -22,9 +22,12 @@ namespace Tienda.Listas
             InitializeComponent();
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
+
         private void ControlCaja_Load(object sender, EventArgs e)
         {
+            Listar();
             Delete();
+            dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             Capital();
             DineroBase();
         }
@@ -134,7 +137,7 @@ namespace Tienda.Listas
                         IngresarCapital ingresar = new IngresarCapital();
                         ingresar.ShowDialog();
                         Total();
-                        ControlCaja_Load(sender, e);
+                        Capital();
                         break;
                     case DialogResult.Cancel:
                         break;
@@ -427,14 +430,12 @@ namespace Tienda.Listas
 
         private void Delete()
         {
-            //
             DataGridViewButtonColumn button = new DataGridViewButtonColumn();
             button.HeaderText = "Eliminar";
             button.Name = "Eliminar";
             button.Text = "Eliminar";
             button.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(button);
-            //
         }
     }
 }

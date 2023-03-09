@@ -28,10 +28,32 @@ namespace Ferreteria.Forms
         //ACECPT
         private void button2_Click(object sender, EventArgs e)
         {
+            Ingresar();
+        }
+        //CANCEL
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+        }
+
+        private void dienro_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == Convert.ToChar(Keys.Enter))
+            {
+                Ingresar();
+            }
+            if(e.KeyChar == Convert.ToChar(Keys.Escape))
+            {
+                DialogResult = DialogResult.Cancel;
+            }
+        }
+
+        public void Ingresar()
+        {
             try
             {
-                string capital = this.dienro.Text; 
-                var sum = 0.00; 
+                string capital = this.dienro.Text;
+                var sum = 0.00;
                 var num = 0.00;
                 var date = DateTime.Now.ToShortDateString();
                 string queryCapital = "INSERT INTO Cartera values (6, '" + capital.Trim() + "', '" + date + "', '0', '0','0')";
@@ -68,11 +90,6 @@ namespace Ferreteria.Forms
             {
 
             }
-        }
-        //CANCEL
-        private void button1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

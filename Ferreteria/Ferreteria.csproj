@@ -106,11 +106,41 @@
     <Compile Include="Forms\Empresa.designer.cs">
       <DependentUpon>Empresa.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FinVenta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FinVenta.Designer.cs">
+      <DependentUpon>FinVenta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Gastos.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Gastos.designer.cs">
       <DependentUpon>Gastos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\IngresarCapital.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\IngresarCapital.Designer.cs">
+      <DependentUpon>IngresarCapital.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MensageCambio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MensageCambio.Designer.cs">
+      <DependentUpon>MensageCambio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MsgUsrEmp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MsgUsrEmp.Designer.cs">
+      <DependentUpon>MsgUsrEmp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Password.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Password.Designer.cs">
+      <DependentUpon>Password.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Usuario.cs">
       <SubType>Form</SubType>
@@ -261,8 +291,23 @@
     <EmbeddedResource Include="Forms\Empresa.resx">
       <DependentUpon>Empresa.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FinVenta.resx">
+      <DependentUpon>FinVenta.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Gastos.resx">
       <DependentUpon>Gastos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\IngresarCapital.resx">
+      <DependentUpon>IngresarCapital.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MensageCambio.resx">
+      <DependentUpon>MensageCambio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MsgUsrEmp.resx">
+      <DependentUpon>MsgUsrEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Password.resx">
+      <DependentUpon>Password.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Usuario.resx">
       <DependentUpon>Usuario.cs</DependentUpon>

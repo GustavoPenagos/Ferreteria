@@ -295,6 +295,7 @@
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "RegistroUsuarios";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RegistroUsuarios";
             this.Load += new System.EventHandler(this.RegistroUsuarios_Load);
             this.panel1.ResumeLayout(false);

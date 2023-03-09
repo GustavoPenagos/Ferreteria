@@ -16,6 +16,7 @@ using System.IO;
 using iTextSharp.text.pdf;
 using System.Diagnostics;
 using System.Threading;
+using Ferreteria.Forms;
 
 namespace Tienda.Registros
 {
@@ -582,8 +583,9 @@ namespace Tienda.Registros
                     MessageBox.Show(cancela + " es menor a la venta de " + total);
                     return;
                 }
-                DialogResult dr = MessageBox.Show("¿FINALIZAR VENTA?", "Seleccionar", MessageBoxButtons.YesNo);
-                switch (dr)
+                FinVenta finVenta = new FinVenta();
+                finVenta.ShowDialog();
+                switch (finVenta.DialogResult)
                 {
                     case DialogResult.Yes:
                         var resultImp = this.rBImprimir.Checked;
@@ -599,9 +601,8 @@ namespace Tienda.Registros
                         }
                         break;
                     case DialogResult.No:
-                        con.Close();
-                        MessageBox.Show("COMPRA CANCELADA");
                         break;
+                    default: break;
                 }
 
 
@@ -722,23 +723,24 @@ namespace Tienda.Registros
             try
             {
                 double cancela = this.cancelaCon.Text.Equals("") ? Convert.ToDouble(this.cancelaCon.Text = "0") : double.Parse(this.cancelaCon.Text, NumberStyles.Currency);
-
+                var cambio = 0.00;
                 if (this.cancelaCon.Text.Equals("0"))
                 {
                     this.cancelaCon.Text = this.totalVenta.Text;
                     this.cambioDe.Text = "0";
-                    MessageBox.Show("El cambio al cliente es: 0");
+                    cambio = double.Parse(this.cambioDe.Text);
                 }
                 else if (!this.cancelaCon.Text.Equals(""))
                 {
 
                     var value = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
 
-                    var cambio = cancela - value;
+                    cambio = cancela - value;
                     this.cambioDe.Text = cambio.ToString("C").Replace(",00", string.Empty);
-                    MessageBox.Show("El cambio al cliente es:" + cambio.ToString("C").Replace(",00", string.Empty), "CAMBIO");
-                }
+                    cambio.ToString("C").Replace(",00", string.Empty);
 
+                }
+                AlertCambio(cambio);
                 var conteo = dataGridView2.Rows.Count;
                 if (conteo != 0)
                 {
@@ -747,41 +749,39 @@ namespace Tienda.Registros
                     string direcStr = "";
                     string telStr = "";
                     string prodStr = "";
-                    string muniStr = "";
                     string correo = "";
                     string ID = "";
-                    string tipoDoc = "";
                     //
                     var cc = ""; int i = 0;
                     var nombre = "";
                     var direc = "";
                     var tel = "";
                     var nit = "";
-                    var ciudad = "";
-                    var depart = "";
-
                     try
                     {
-                        DialogResult dr = MessageBox.Show("¿La venta es a una empresa?", "Seleccionar", MessageBoxButtons.YesNo);
-                        switch (dr)
+                        MsgUsrEmp msgUsrEmp = new MsgUsrEmp();
+                        msgUsrEmp.ShowDialog();
+                        switch (msgUsrEmp.DialogResult)
                         {
-                            case DialogResult.Yes:
+                            case DialogResult.Cancel:
                                 while (ID.Equals(""))
                                 {
                                     ID = Microsoft.VisualBasic.Interaction.InputBox("Insertar Nit de la empresa", "Datos de factura NIT");
-                                    if (ID.Equals(""))
+                                    if(ID.Equals(""))
                                     {
                                         MessageBox.Show("Este Capo no puede estar vacio");
+                                        FacturacionNit();
                                     }
                                 }
                                 break;
-                            case DialogResult.No:
+                            case DialogResult.OK:
                                 while (ID.Equals(""))
                                 {
                                     ID = Microsoft.VisualBasic.Interaction.InputBox("Insertar numero de documento", "Datos de factura NIT");
-                                    if (ID.Equals(""))
+                                    if(ID.Equals(""))
                                     {
                                         MessageBox.Show("Este Capo no puede estar vacio");
+                                        FacturacionNit();
                                     }
                                 }
                                 break;
@@ -796,11 +796,10 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");
                         Ticket1.TextoCentro("-------------------------------------------------------");
-                        //
 
-                        switch (dr)
+                        switch (msgUsrEmp.DialogResult)
                         {
-                            case DialogResult.Yes:
+                            case DialogResult.Cancel:
                                 string queryNit = "select * from Company where Nit_Company= " + ID;
                                 SqlDataAdapter ad = new SqlDataAdapter(queryNit, con);
                                 DataTable td = new DataTable();
@@ -829,52 +828,21 @@ namespace Tienda.Registros
                                 }
                                 else
                                 {
-                                    //
-                                    MessageBox.Show("No existe esta empresa");
-                                    //
-                                    nitStr = ID;
-                                    nombreStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir nombre de la empresa", "Datos de factura Nit");
-                                    nombreStr = nombreStr.Equals("") ? "Sin nimbre" : nombreStr;
-                                    prodStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir los productos de la empresa", "Datos de factura Nit");
-                                    prodStr = prodStr.Equals("") ? "Sin productos" : prodStr;
-                                    direcStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir dirección de la empresa", "Datos de factura Nit");
-                                    direcStr = direcStr.Equals("") ? "Sin direccion" : direcStr;
-                                    telStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir telefono de la empresa", "Datos de factura Nit");
-                                    telStr = telStr.Equals("") ? "Sin telefono" : telStr;
-                                    while (muniStr.Equals(""))
-                                    {
-                                        muniStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir la ciudad de la empresa", "Datos de factura Nit");
+                                    MessageBox.Show("No existe esta empresa","",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                                    RegistraEmpresa registra=new RegistraEmpresa(ID);
+                                    registra.ShowDialog();
+                                    string queryN = "select Nit_Company,Name_Company,Products,Direction,Phone,Mail from Company where Nit_Company= " + ID;
+                                    SqlDataAdapter adN = new SqlDataAdapter(queryN, con);
+                                    DataTable tdN = new DataTable();
+                                    adN.Fill(tdN);
 
-                                        string queryDepart = "select Id_Municipality, Id_Department from Municipality where Municipality like  '%" + muniStr + "%'";
-                                        SqlDataAdapter adapterDepart = new SqlDataAdapter(queryDepart, con);
-                                        DataTable dataDepart = new DataTable();
-                                        adapterDepart.Fill(dataDepart);
-                                        if (dataDepart.Rows.Count == 0)
-                                        {
-                                            muniStr = "";
-                                        }
-                                        else
-                                        {
-                                            ciudad = dataDepart.Rows[0].ItemArray[0].ToString();
-                                            depart = dataDepart.Rows[0].ItemArray[1].ToString();
-                                        }
-                                    }
-
-                                    while (!correo.Contains("@") || !correo.Contains(".com") || correo.Equals(""))
-                                    {
-                                        correo = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir el correo de la empresa", "Datos de factura Nit");
-                                        if (correo.Equals(""))
-                                        {
-                                            MessageBox.Show("Este campo no puede estar vacio");
-                                        }
-                                    }
-                                    //
-                                    string queryInsert = "INSERT INTO [Company] VALUES (" + nitStr + ",'" + nombreStr + "','" + prodStr + "','" + direcStr + "','" + telStr + "'," + depart + "," + ciudad + ",'" + correo + "')";
-                                    con.Open();
-                                    SqlCommand cmdInsertD = new SqlCommand(queryInsert, con);
-                                    cmdInsertD.ExecuteNonQuery();
-                                    con.Close();
-                                    //
+                                    nitStr = tdN.Rows[0].ItemArray[0].ToString();
+                                    nombreStr = tdN.Rows[0].ItemArray[1].ToString();
+                                    prodStr = tdN.Rows[0].ItemArray[2].ToString();
+                                    direcStr = tdN.Rows[0].ItemArray[3].ToString();
+                                    telStr = tdN.Rows[0].ItemArray[4].ToString();
+                                    correo = tdN.Rows[0].ItemArray[5].ToString();
+                                    
                                     Ticket1.TextoIzquierda("Nit: " + nitStr);
                                     Ticket1.TextoIzquierda("Nombre: " + nombreStr);
                                     Ticket1.TextoIzquierda("Dirc: " + direcStr);
@@ -883,7 +851,7 @@ namespace Tienda.Registros
 
                                 break;
 
-                            case DialogResult.No:
+                            case DialogResult.OK:
                                 string queryCC = "select * from [User] where Id_User = " + ID;
                                 SqlDataAdapter adC = new SqlDataAdapter(queryCC, con);
                                 DataTable tdC = new DataTable();
@@ -913,59 +881,29 @@ namespace Tienda.Registros
                                 else
                                 {
                                     MessageBox.Show("No existe este cliente");
-                                    //
-                                    nitStr = ID;
-                                    nombreStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir nombre de la empresa", "Datos de factura Nit");
-                                    nombreStr = nombreStr.Equals("") ? "Sin nombre" : nombreStr;
-                                    telStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir telefono de la empresa", "Datos de factura Nit");
-                                    telStr = telStr.Equals("") ? "Sin telefono" : telStr;
-                                    direcStr = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir dirección de la empresa", "Datos de factura Nit");
-                                    direcStr = direcStr.Equals("") ? "Sin direccion" : direcStr;
-                                    while (tipoDoc.Equals(""))
-                                    {
-                                        tipoDoc = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir tipo de documento", "Datos de factura Nit");
-                                        string queryTDoc = "SELECT id FROM [Tipo_Documento] where documento like '%" + tipoDoc + "%'";
-                                        SqlDataAdapter adTD = new SqlDataAdapter(queryTDoc, con);
-                                        DataTable dataTD = new DataTable();
-                                        adTD.Fill(dataTD);
-                                        if (dataTD.Rows.Count != 0)
-                                        {
-                                            tipoDoc = dataTD.Rows[0].ItemArray[0].ToString();
-                                        }
-                                        else
-                                        {
-                                            tipoDoc = "";
-                                            MessageBox.Show("Este campo no puede estar vacio");
-                                        }
-                                    }
-                                    while (!correo.Contains("@") || !correo.Contains(".com") || correo.Equals(""))
-                                    {
-                                        correo = Microsoft.VisualBasic.Interaction.InputBox("Por favor\nEsribir el correo de la empresa", "Datos de factura Nit");
-                                        if (correo.Equals(""))
-                                        {
-                                            MessageBox.Show("Este campo no puede estar vacio");
-                                        }
-                                    }
-                                    //
-                                    string queryInsert = "INSERT INTO [User] VALUES (" + nitStr + ",'" + nombreStr + "','" + telStr + "','" + direcStr + "',400799450, 1, " + tipoDoc + ",'','" + correo + "','0')";
-                                    con.Open();
-                                    SqlCommand cmdInsertD = new SqlCommand(queryInsert, con);
-                                    cmdInsertD.ExecuteNonQuery();
-                                    con.Close();
-                                    //
-                                    Ticket1.TextoIzquierda("Nit: " + nitStr);
+                                    RegistroUsuarios registro = new RegistroUsuarios(ID);
+                                    registro.ShowDialog();
+
+                                    string queryC = "select Id_User, [Name], Direction,Phone,mail from [User] where Id_User = " + ID;
+                                    SqlDataAdapter aC = new SqlDataAdapter(queryC, con);
+                                    DataTable tC = new DataTable();
+                                    aC.Fill(tC);
+                                    nitStr  = tC.Rows[0].ItemArray[0].ToString();
+                                    nombreStr = tC.Rows[0].ItemArray[1].ToString();
+                                    direcStr = tC.Rows[0].ItemArray[2].ToString();
+                                    telStr = tC.Rows[0].ItemArray[3].ToString();
+                                    correo = tC.Rows[0].ItemArray[4].ToString();
+                                    Ticket1.TextoIzquierda("Documento: " + nitStr);
                                     Ticket1.TextoIzquierda("Nombre: " + nombreStr);
                                     Ticket1.TextoIzquierda("Dirc: " + direcStr);
                                     Ticket1.TextoIzquierda("Tel: " + telStr);
                                 }
+
                                 break;
                             default: break;
                         }
 
-                        Ticket1.TextoIzquierda("");
-                        Ticket1.TextoIzquierda("");
-                        Ticket1.TextoCentro("Factura de Venta"); //imprime una linea de descripcion
-                        //con.Open();
+                        Ticket1.TextoCentro("Factura de Venta"); 
                         string queryIdFac = "select MAX(Id_Factura) + 1 from Factura ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
@@ -973,15 +911,10 @@ namespace Tienda.Registros
                         var idFactura = dt.Rows[0].ItemArray[0].ToString();
                         var facturaN = idFactura.Equals("") ? 0 + 1 : Convert.ToInt64(idFactura);
                         Ticket1.TextoIzquierda("No Fac:" + facturaN.ToString());
-                        //con.Close();
                         Ticket1.TextoIzquierda("Fecha:" + DateTime.Now.ToShortDateString() + " Hora:" + DateTime.Now.ToShortTimeString());
-                        Ticket1.TextoIzquierda("Atendio por: " + this.vendedor.Text);
-                        Ticket1.TextoIzquierda("");
                         ClsFactura.CreaTicket.LineasGuion();
-
                         ClsFactura.CreaTicket.EncabezadoVenta();
                         ClsFactura.CreaTicket.LineasGuion();
-                        var n = dataGridView2.RowCount;
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[3].Value.ToString();
@@ -996,21 +929,18 @@ namespace Tienda.Registros
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
                         //DateTimeNow.Short.ToString
                         string fecha = DateTime.Now.ToShortDateString().ToString();
-                        //
-
-                        //
                         con.Open();
                         string queryFacRem = "INSERT INTO CARTERA VALUES (1,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '" + nit + "')";
                         SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
                         cmdFact.ExecuteReader();
                         con.Close();
                         ClsFactura.CreaTicket.LineasGuion();
-                        Ticket1.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
-                        //Ticket1.AgregaTotales("Menos Descuento", 0); // imprime linea con decuento total
-                        //Ticket1.AgregaTotales("Mas IVA (19%)", 0); // imprime linea con ITBis total
-                        //Ticket1.AgregaTotales("Mas IVA (19%)", ivaComp); // imprime linea con ITBis total
+                        //Ticket1.AgregaTotales("Sub-Total", totalComp); 
+                        //Ticket1.AgregaTotales("Menos Descuento", 0); 
+                        //Ticket1.AgregaTotales("Mas IVA (19%)", 0); 
+                        //Ticket1.AgregaTotales("Mas IVA (19%)", ivaComp); 
                         //Ticket1.TextoIzquierda(" ");
-                        Ticket1.AgregaTotales("Total", totalComp); // imprime linea con total
+                        Ticket1.AgregaTotales("Total", totalComp); 
                         Ticket1.TextoIzquierda(" ");
                         var efec = this.efectivo.Checked;
                         var transf = this.transferencia.Checked;
@@ -1027,15 +957,11 @@ namespace Tienda.Registros
                             default: break;
                         }
                         con.Close();
-
-                        // Ticket1.LineasTotales(); // imprime linea 
-
                         Ticket1.TextoIzquierda(" ");
+                        Ticket1.TextoIzquierda("Atendio por: " + this.vendedor.Text);
                         Ticket1.TextoCentro("------------------------------------------");
                         Ticket1.TextoCentro("---     Gracias por preferirnos    -------");
                         Ticket1.TextoCentro("------------------------------------------");
-                        Ticket1.TextoIzquierda(" ");
-                        //
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora, correo);
 
@@ -1059,22 +985,24 @@ namespace Tienda.Registros
             try
             {
                 double cancela = this.cancelaCon.Text.Equals("") ? Convert.ToDouble(this.cancelaCon.Text = "0") : double.Parse(this.cancelaCon.Text, NumberStyles.Currency);
-
+                var cambio = 0.00;
                 if (this.cancelaCon.Text.Equals("0"))
                 {
                     this.cancelaCon.Text = this.totalVenta.Text;
                     this.cambioDe.Text = "0";
-                    MessageBox.Show("El cambio al cliente es: 0");
+                    cambio = double.Parse(this.cambioDe.Text);
                 }
                 else if (!this.cancelaCon.Text.Equals(""))
                 {
 
                     var value = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
 
-                    var cambio = cancela - value;
+                    cambio = cancela - value;
                     this.cambioDe.Text = cambio.ToString("C").Replace(",00", string.Empty);
-                    MessageBox.Show("El cambio al cliente es:" + cambio.ToString("C").Replace(",00", string.Empty), "CAMBIO");
+                    cambio.ToString("C").Replace(",00", string.Empty);
+
                 }
+                AlertCambio(cambio);
                 //IMPRIMIR FACTURA
                 var conteo = dataGridView2.Rows.Count;
                 if (conteo != 0)
@@ -1089,10 +1017,6 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");
                         Ticket1.TextoCentro("-------------------------------------------------------");
-
-                        Ticket1.TextoIzquierda("");
-
-                        //con.Open();
                         string queryIdFac = "select MAX(Id_Factura) + 1 from FacturaRem ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
@@ -1100,9 +1024,7 @@ namespace Tienda.Registros
                         var idFactura = dt.Rows[0].ItemArray[0].ToString();
                         var facturaN = idFactura.Equals("") ? 0 + 1 : Convert.ToInt64(idFactura);
                         Ticket1.TextoIzquierda("No Fac:" + facturaN.ToString());
-                        //con.Close();
                         Ticket1.TextoIzquierda("Fecha:" + DateTime.Now.ToShortDateString() + " Hora:" + DateTime.Now.ToShortTimeString());
-                        Ticket1.TextoIzquierda("");
                         FacturaRem.CreaTicket.LineasGuion();
 
                         FacturaRem.CreaTicket.EncabezadoVenta();
@@ -1122,17 +1044,14 @@ namespace Tienda.Registros
 
                         var totalComp = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
-                        //DateTimeNow.Short.ToString
                         string fecha = DateTime.Now.ToShortDateString().ToString();
-                        //
                         con.Open();
                         string queryFacRem = "INSERT INTO CARTERA VALUES (2,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '0')";
                         SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
                         cmdFact.ExecuteReader();
                         con.Close();
                         FacturaRem.CreaTicket.LineasGuion();
-                        Ticket1.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
-                        //Ticket1.TextoIzquierda(" ");
+                        //Ticket1.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
                         Ticket1.AgregaTotales("Total", totalComp); // imprime linea con total
                         Ticket1.TextoIzquierda(" ");
                         var efec = this.efectivo.Checked;
@@ -1157,15 +1076,9 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("------------------------------------------");
                         Ticket1.TextoCentro("---     Gracias por preferirnos    -------");
                         Ticket1.TextoCentro("------------------------------------------");
-                        Ticket1.TextoIzquierda(" ");
 
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora);
-
-
-
-
-                        //MessageBox.Show("Gracias por preferirnos");
                     }
                     catch (Exception ex)
                     {
@@ -1185,24 +1098,25 @@ namespace Tienda.Registros
         {
             try
             {
-
                 double cancela = this.cancelaCon.Text.Equals("") ? Convert.ToDouble(this.cancelaCon.Text = "0") : double.Parse(this.cancelaCon.Text, NumberStyles.Currency);
-
+                var cambio = 0.00;
                 if (this.cancelaCon.Text.Equals("0"))
                 {
                     this.cancelaCon.Text = this.totalVenta.Text;
                     this.cambioDe.Text = "0";
-                    MessageBox.Show("El cambio al cliente es: 0");
+                    cambio = double.Parse(this.cambioDe.Text);
                 }
                 else if (!this.cancelaCon.Text.Equals(""))
                 {
 
                     var value = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
 
-                    var cambio = cancela - value;
+                    cambio = cancela - value;
                     this.cambioDe.Text = cambio.ToString("C").Replace(",00", string.Empty);
-                    MessageBox.Show("El cambio al cliente es:" + cambio.ToString("C").Replace(",00", string.Empty), "CAMBIO");
+                    cambio.ToString("C").Replace(",00", string.Empty);
+
                 }
+                AlertCambio(cambio);
                 //IMPRIMIR FACTURA
                 var conteo = dataGridView2.Rows.Count;
                 if (conteo != 0)
@@ -1217,27 +1131,17 @@ namespace Tienda.Registros
                         Ticket3.TextoCentro("Tel. 3162882803");
                         Ticket3.TextoCentro("Villavicencio, Meta");
                         Ticket3.TextoCentro("------------------------------------------");
-
-
-                        Ticket3.TextoIzquierda("");
-                        //Ticket1.TextoCentro("Factura de Venta"); //imprime una linea de descripcion
-                        //con.Open();
                         string queryIdFac = "select MAX(Id_Factura) + 1 from FacturaRem ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
                         var idFactura = dt.Rows[0].ItemArray[0].ToString();
                         var facturaN = idFactura.Equals("") ? 0 + 1 : Convert.ToInt64(idFactura);
-                        Ticket3.TextoIzquierda("No Fac:" + facturaN.ToString());
-                        //con.Close();
+                        Ticket3.TextoIzquierda("N° Venta:" + facturaN.ToString());
                         Ticket3.TextoIzquierda("Fecha:" + DateTime.Now.ToShortDateString() + " Hora:" + DateTime.Now.ToShortTimeString());
-                        Ticket3.TextoIzquierda("");
                         FacturaSD.CreaTicket.LineasGuion();
-
                         FacturaSD.CreaTicket.EncabezadoVenta();
                         FacturaSD.CreaTicket.LineasGuion();
-                        var n = dataGridView2.RowCount;
-
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[3].Value.ToString();
@@ -1251,17 +1155,14 @@ namespace Tienda.Registros
 
                         var totalComp = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
-                        //DateTimeNow.Short.ToString
                         string fecha = DateTime.Now.ToShortDateString().ToString();
-                        //
                         con.Open();
                         string queryFacRem = "INSERT INTO CARTERA VALUES (2,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '0')";
                         SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
                         cmdFact.ExecuteReader();
                         con.Close();
                         FacturaSD.CreaTicket.LineasGuion();
-                        Ticket3.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
-                        //Ticket3.TextoIzquierda(" ");
+                        //Ticket3.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
                         Ticket3.AgregaTotales("Total", totalComp); // imprime linea con total
                         Ticket3.TextoIzquierda(" ");
                         var efec = this.efectivo.Checked;
@@ -1278,23 +1179,13 @@ namespace Tienda.Registros
                                 break;
                             default: break;
                         }
-                        con.Close();
-
-                        // Ticket1.LineasTotales(); // imprime linea 
                         Ticket3.TextoIzquierda(" ");
                         Ticket3.TextoIzquierda("Atendio por:" + this.vendedor.Text);
                         Ticket3.TextoCentro("------------------------------------------");
                         Ticket3.TextoCentro("---     Gracias por preferirnos    -------");
                         Ticket3.TextoCentro("------------------------------------------");
-                        Ticket3.TextoIzquierda(" ");
-
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket3.ImprimirTiket(impresora);
-
-
-
-
-                        //MessageBox.Show("Gracias por preferirnos");
                     }
                     catch (Exception ex)
                     {
@@ -1889,6 +1780,19 @@ namespace Tienda.Registros
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Numero de cotizacion");
+            }
+        }
+
+        public void AlertCambio(double pMessage)
+        {
+            try
+            {
+                MensageCambio msg = new MensageCambio(pMessage);
+                msg.ShowDialog();
+
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "AlertCambio");
             }
         }
     }

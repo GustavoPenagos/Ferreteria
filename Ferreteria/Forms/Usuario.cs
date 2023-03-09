@@ -32,12 +32,12 @@ namespace Tienda.Registros
         }
         private void registroProveedores_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistroUsuarios());
+            OpenFrom(new Registros.RegistroUsuarios(""));
         }
 
         private void registroProveedor_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistroUsuarios());
+            OpenFrom(new Registros.RegistroUsuarios(""));
         }
 
         private void button1_Click(object sender, EventArgs e)

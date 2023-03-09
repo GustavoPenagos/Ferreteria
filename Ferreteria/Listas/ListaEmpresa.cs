@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -168,31 +169,22 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 0)
                 {
-                    //Validacion de accion elminar
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
-                        string queryDelete = "delete from Company where Nit_Company = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryDelete, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListEmpresa();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
+                            string queryDelete = "delete from Company where Nit_Company = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryDelete, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListEmpresa();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }
@@ -206,51 +198,40 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 1)
                 {
-                    //Validacion de accion elminar
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        //
-                        string Name_Company = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
-                        string Products = dataGridView1.CurrentRow.Cells["Información"].Value.ToString();
-                        string Direction = dataGridView1.CurrentRow.Cells["Dirección"].Value.ToString();
-                        string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
-                        string ciudad = dataGridView1.CurrentRow.Cells["Ciudad"].Value.ToString();
-                        //
-                        string queryCiudad = "select Id_Municipality, Id_Department from Municipality where Municipality like '%" + ciudad + "%'";
-                        SqlDataAdapter adapter1 = new SqlDataAdapter(queryCiudad, con);
-                        DataTable data2 = new DataTable();
-                        adapter1.Fill(data2);
-                        if(data2.Rows.Count == 0 || data2 == null || data2.Rows.Count > 1)
-                        {
-                            MessageBox.Show("Ciudad no encontrada o necesita escribir el nombre completo","",MessageBoxButtons.OK,MessageBoxIcon.Warning);
-                            return;
-                        }
-                        var Id_Municipaly = data2.Rows[0].ItemArray[0].ToString();
-                        var Id_Department = data2.Rows[0].ItemArray[1].ToString();
-                        //
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
-                        string queryUpdate = "update Company set Name_Company='" + Name_Company + "', Products='" + Products + "', Direction='" + Direction + "'" +
-                            ", Phone='" + Phone + "', Id_Municipaly=" + Id_Municipaly + ", Id_Department=" + Id_Department + " where Nit_Company = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryUpdate, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListEmpresa();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            string Name_Company = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
+                            string Products = dataGridView1.CurrentRow.Cells["Información"].Value.ToString();
+                            string Direction = dataGridView1.CurrentRow.Cells["Dirección"].Value.ToString();
+                            string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
+                            string ciudad = dataGridView1.CurrentRow.Cells["Ciudad"].Value.ToString();
+                            string queryCiudad = "select Id_Municipality, Id_Department from Municipality where Municipality like '%" + ciudad + "%'";
+                            SqlDataAdapter adapter1 = new SqlDataAdapter(queryCiudad, con);
+                            DataTable data2 = new DataTable();
+                            adapter1.Fill(data2);
+                            if (data2.Rows.Count == 0 || data2 == null || data2.Rows.Count > 1)
+                            {
+                                MessageBox.Show("Ciudad no encontrada o necesita escribir el nombre completo", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
+                            }
+                            var Id_Municipaly = data2.Rows[0].ItemArray[0].ToString();
+                            var Id_Department = data2.Rows[0].ItemArray[1].ToString();
+                            //
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
+                            string queryUpdate = "update Company set Name_Company='" + Name_Company + "', Products='" + Products + "', Direction='" + Direction + "'" +
+                                ", Phone='" + Phone + "', Id_Municipaly=" + Id_Municipaly + ", Id_Department=" + Id_Department + " where Nit_Company = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListEmpresa();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }
@@ -259,7 +240,6 @@ namespace Tienda.Listas
                 con.Close();
                 MessageBox.Show("datagridviw - update " + ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
         private void Delete()

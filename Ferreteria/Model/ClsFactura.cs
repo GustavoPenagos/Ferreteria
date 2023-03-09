@@ -372,6 +372,7 @@ namespace DistribucionesArly_s
                 if (n == 0)
                 {
                     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
+                    
                     byte[] bytes = Encoding.ASCII.GetBytes(szString);
                     var base64EncodedBytes = System.Convert.ToBase64String(bytes).ToString();
                     string query = "INSERT INTO FACTURA VALUES('" + base64EncodedBytes + "')";
@@ -379,8 +380,16 @@ namespace DistribucionesArly_s
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.ExecuteNonQuery();
                     con.Close();
-                    SendCorreo correo = new SendCorreo();
-                    correo.SendMail(correos);
+                    if (!correos.Equals(""))
+                    {
+                        SendCorreo correo = new SendCorreo();
+                        correo.SendMail(correos);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cliente sin correo", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    
                 }
                 return true;
             }

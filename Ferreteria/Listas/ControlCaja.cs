@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -125,87 +126,20 @@ namespace Tienda.Listas
         {
             try
             {
-                string capital = ""; var sum = 0.00; var num = 0.00;
-                var date = DateTime.Now.ToShortDateString();
-                //
-                string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                if (PassW.Equals(""))
+                Password password = new Password();
+                password.ShowDialog();
+                switch (password.DialogResult)
                 {
-                    return;
-                }
-                string queryPass = ConfigurationManager.AppSettings["password"];
-                con.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                var passw = data.Rows[0].ItemArray[0].ToString();
-                con.Close();
-                //
-                if (PassW.Equals(passw))
-                { 
-                    double cont = 0.00; int r = 0;
-                    while (cont <= 0 && r != 3)
-                    {
-                        capital = Microsoft.VisualBasic.Interaction.InputBox("Valor de capital", "Capital");
-                        bool result = double.TryParse(capital.Trim(), out cont);
-                        if (result)
-                        {
-                            if (cont == 0)
-                            {
-                                MessageBox.Show("No es un valor valido","",MessageBoxButtons.OK,MessageBoxIcon.Error);
-                                r = r + 1;
-                            }
-                            else
-                            {
-                                r = r + 4;
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("No es un valor valido", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            r = r + 1;
-                        }
-                    }
-                    if (r == 3)
-                    {
-                        MessageBox.Show("No inserto un valor valido","",MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    string queryCapital = "INSERT INTO Cartera values (6, '" + capital.Trim() + "', '" + date + "', '0', '0','0')";
-                    con.Open();
-                    SqlCommand cmdCap = new SqlCommand(queryCapital, con);
-                    cmdCap.ExecuteNonQuery();
-                    con.Close();
-                    //
-                    string query = "INSERT INTO DineroBase VALUES('" + capital + "','" + date + "')";
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.ExecuteNonQuery();
-                    con.Close();
-                    //
-                    string queryConsult = "SELECT * FROM Cartera where Id_Cartera = 6";
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(queryConsult, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    var count = dt.Rows.Count;
-
-                    if (count > 0)
-                    {
-                        for (int i = 0; i < count; i++)
-                        {
-                            num = double.Parse(dt.Rows[i].ItemArray[2].ToString());
-                            sum = sum + num;
-                        }
-                        this.tBCapital.Text = sum.ToString("C").Replace(",00", string.Empty);
-                        con.Close();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Contraseña incorrecta");
-                }
-                Total();
+                    case DialogResult.OK:
+                        IngresarCapital ingresar = new IngresarCapital();
+                        ingresar.ShowDialog();
+                        Total();
+                        ControlCaja_Load(sender, e);
+                        break;
+                    case DialogResult.Cancel:
+                        break;
+                    default: break;
+                }       
             }
             catch (Exception ex)
             {
@@ -466,34 +400,22 @@ namespace Tienda.Listas
             {
                 if(e.ColumnIndex == 0)
                 {
-                    //Validacion de accion elminar
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"]; ;
-                    con.Open();
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    con.Close();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                        string queryDelete = "delete from cartera where Id = " + ID ;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryDelete, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        Listar();
-                    }
-                    else
-                    {
-                        con.Close();
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
+                            string queryDelete = "delete from cartera where Id = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryDelete, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            Listar();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }catch(Exception ex)

@@ -32,12 +32,12 @@ namespace Tienda.Forms
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistraEmpresa());
+            OpenFrom(new Registros.RegistraEmpresa(""));
         }
 
         private void pictureBox3_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistraEmpresa());
+            OpenFrom(new Registros.RegistraEmpresa(""));
         }
 
         private void button2_Click(object sender, EventArgs e)

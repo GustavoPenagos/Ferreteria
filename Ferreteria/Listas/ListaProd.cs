@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -150,29 +151,22 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 0)
                 {
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    if (PassW.Equals(passw))
-                    {
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                        string queryDelete = "delete from Producto  where Id_Prod  = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryDelete, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListaProducto();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
+                            string queryDelete = "delete from Producto  where Id_Prod  = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryDelete, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListaProducto();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }
@@ -186,42 +180,30 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 1)
                 {
-                    //Validacion de accion elminar
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        //
-                        string Nombre_Prod = dataGridView1.CurrentRow.Cells["Producto"].Value.ToString();
-                        string Marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
-                        string p1 = dataGridView1.CurrentRow.Cells["Precio Compra"].Value.ToString();
-                        double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
-                        string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
-                        //
-                        double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);
-                        //
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                        string queryUpdate = "UPDATE Producto SET Nombre_Prod = '" + Nombre_Prod + "'" +
-                            ", Precio_Prod = '" + Precio_Prod + "', Marca = '" + Marca + "', Utilidad = '" + Utilidad + "' " +
-                            ", Prec_Venta = '" + Prec_Venta + "' where Id_Prod  = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryUpdate, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListaProducto();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            string Nombre_Prod = dataGridView1.CurrentRow.Cells["Producto"].Value.ToString();
+                            string Marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
+                            string p1 = dataGridView1.CurrentRow.Cells["Precio Compra"].Value.ToString();
+                            double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
+                            string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
+                            double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
+                            string queryUpdate = "UPDATE Producto SET Nombre_Prod = '" + Nombre_Prod + "'" +
+                                ", Precio_Prod = '" + Precio_Prod + "', Marca = '" + Marca + "', Utilidad = '" + Utilidad + "' " +
+                                ", Prec_Venta = '" + Prec_Venta + "' where Id_Prod  = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListaProducto();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }

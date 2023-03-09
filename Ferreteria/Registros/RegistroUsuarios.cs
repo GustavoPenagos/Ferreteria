@@ -14,10 +14,11 @@ namespace Tienda.Registros
 {
     public partial class RegistroUsuarios : Form
     {
-        public RegistroUsuarios()
+        public RegistroUsuarios(string cc)
         {
             InitializeComponent();
             Tipos();
+            this.numeroDocumento.Text = cc;
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void RegistroUsuarios_Load(object sender, EventArgs e)
@@ -50,6 +51,7 @@ namespace Tienda.Registros
                 cmd.ExecuteNonQuery();
                 con.Close();
                 Clear();
+                DialogResult = DialogResult.Cancel;
                 
             }
             catch (Exception ex)

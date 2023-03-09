@@ -14,10 +14,11 @@ namespace Tienda.Registros
 {
     public partial class RegistraEmpresa : Form
     {
-        public RegistraEmpresa()
+        public RegistraEmpresa(string nit)
         {
             InitializeComponent();
             Tipos();
+            this.NiEmp.Text = nit;
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void RegistraEmpresa_Load(object sender, EventArgs e)

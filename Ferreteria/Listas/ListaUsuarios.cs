@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -171,30 +172,22 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 0)
                 {
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if(PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
-                        string queryDelete = "delete from [User] where Id_User = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryDelete, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListarUsuarios();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
+                            string queryDelete = "delete from [User] where Id_User = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryDelete, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListarUsuarios();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }
@@ -208,38 +201,28 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 1)
                 {
-                    string PassW = Microsoft.VisualBasic.Interaction.InputBox("Contraseña: ", "Datos de aprovacion para cambios");
-                    if (PassW.Equals(""))
+                    Password password = new Password();
+                    password.ShowDialog();
+                    switch (password.DialogResult)
                     {
-                        return;
-                    }
-                    string queryPass = ConfigurationManager.AppSettings["password"];
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryPass, con);
-                    DataTable data = new DataTable();
-                    adapter.Fill(data);
-                    var passw = data.Rows[0].ItemArray[0].ToString();
-                    //
-                    if (PassW.Equals(passw))
-                    {
-                        //
-                        string Name = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
-                        string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
-                        string Direction = dataGridView1.CurrentRow.Cells["Direccion"].Value.ToString();
-                        string mail = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
-                        //
-                        var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
-                        string queryUpdate = "update [User] set [Name] ='" + Name + "', Phone='" + Phone + "'" +
-                            ", Direction='" + Direction + "', mail='" + mail + "' " +
-                            "where Id_User = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(queryUpdate, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        ListarUsuarios();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Contraseña incorrecta", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        case DialogResult.OK:
+                            string Name = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
+                            string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
+                            string Direction = dataGridView1.CurrentRow.Cells["Direccion"].Value.ToString();
+                            string mail = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
+                            string queryUpdate = "update [User] set [Name] ='" + Name + "', Phone='" + Phone + "'" +
+                                ", Direction='" + Direction + "', mail='" + mail + "' " +
+                                "where Id_User = " + ID;
+                            con.Open();
+                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                            ListarUsuarios();
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                        default: break;
                     }
                 }
             }

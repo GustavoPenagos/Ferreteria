@@ -1558,10 +1558,10 @@ namespace Tienda.Registros
                     range3.Value = listCot[i].Unidad.ToString();
                     //
                     Range range4 = worksheet.Cells[14 + i, 11];
-                    range4.Value = listCot[i].VUnidad.ToString();
+                    range4.Value = listCot[i].VUnidad.ToString().Replace(".", "").Replace(",00","");
                     //
                     Range range5 = worksheet.Cells[14 + i, 12];
-                    range5.Value = listCot[i].SubTotal.ToString();
+                    range5.Value = listCot[i].SubTotal.ToString().Replace(".","").Replace(",00","");
 
                 }
                 Range range6 = worksheet.Cells[53, 12];
@@ -1576,16 +1576,16 @@ namespace Tienda.Registros
                 Range range9 = worksheet.Cells[59, 12];
                 range9.Formula = "=L53-L55+L57";
                 //
-                for (int i = 0; i < dataGridView2.Rows.Count; i++)
-                {
-                    Range range10 = worksheet.Cells[14 + i, 12];
-                    range10.NumberFormat = "$ #,##0";
-                }
-                for (int i = 0; i < 8; i++)
-                {
-                    Range range11 = worksheet.Cells[53 + i, 12];
-                    range11.NumberFormat = "$ #,##0";
-                }
+                //for (int i = 0; i < dataGridView2.Rows.Count; i++)
+                //{
+                //    Range range10 = worksheet.Cells[14 + i, 12];
+                //    range10.NumberFormat = "$ #,##0";
+                //}
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    Range range11 = worksheet.Cells[53 + i, 12];
+                //    range11.NumberFormat = "$ #,##0";
+                //}
                 string observacion = Microsoft.VisualBasic.Interaction.InputBox("Observaciones de cotización", "Datos de cotizacion");
                 observacion = observacion.Equals("") ? "NINGUNA" : observacion;
                 Range range12 = worksheet.Range["D53:F56"];

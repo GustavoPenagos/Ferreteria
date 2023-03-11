@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using Aspose.Pdf.Operators;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,7 +24,7 @@ namespace Ferreteria.Forms
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void IngresarCapital_Load(object sender, EventArgs e)
         {
-            this.dienro.Focus();
+            this.dinero.Focus();
         }
         //ACECPT
         private void button2_Click(object sender, EventArgs e)
@@ -52,7 +53,7 @@ namespace Ferreteria.Forms
         {
             try
             {
-                string capital = this.dienro.Text;
+                string capital = this.dinero.Text;
                 var sum = 0.00;
                 var num = 0.00;
                 var date = DateTime.Now.ToShortDateString();
@@ -89,6 +90,28 @@ namespace Ferreteria.Forms
             catch
             {
 
+            }
+        }
+
+        private void dienro_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dinero.Text.Equals(""))
+                {
+                    dineroMoneda.Text = "";
+                }
+                else
+                {
+                    long moneda = Convert.ToInt64(dinero.Text);
+
+                    dineroMoneda.Text = moneda.ToString("C").Replace(",00", string.Empty);
+                }
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "dineroMoneda");
             }
         }
     }

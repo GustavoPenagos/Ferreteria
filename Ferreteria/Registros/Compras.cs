@@ -17,6 +17,8 @@ using iTextSharp.text.pdf;
 using System.Diagnostics;
 using System.Threading;
 using Ferreteria.Forms;
+using System.Runtime.InteropServices;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace Tienda.Registros
 {
@@ -31,17 +33,15 @@ namespace Tienda.Registros
 
         private void Compras_Load(object sender, EventArgs e)
         {
-            NumeroCotizacion();
             try
             {
-                //
+                Disable();
                 string queryE = "select [Name] from [User] where estado = 1";
                 SqlDataAdapter adapterE = new SqlDataAdapter(queryE, con);
                 DataTable dataE = new DataTable();
                 adapterE.Fill(dataE);
                 if (dataE.Rows.Count == 0)
                 {
-                    Disable();
                     MessageBox.Show("Primero habilite un vendedor");
                     return;
                 }
@@ -49,35 +49,32 @@ namespace Tienda.Registros
                 {
                     this.vendedor.Text = dataE.Rows[0].ItemArray[0].ToString();
                 }
-
-                //
-                string queryP = "Select * from Producto order by Id_Prod desc";
-                SqlDataAdapter adapterD = new SqlDataAdapter(queryP, con);
-                DataTable dataD = new DataTable();
-                adapterD.Fill(dataD);
-                this.cBNombre.DisplayMember = "Nombre_Prod";
-                this.cBNombre.ValueMember = "Id_Prod";
-                this.cBNombre.DataSource = dataD;
-
-                Delete();
-                dataGridView2.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-                DatosCompra();
-                ListaCompra();
-                this.idProdC.Focus();
                 IngresarDinero();
-                //
                 string date = DateTime.Now.ToShortDateString();
                 string queryConsulta = "SELECT Dinero_Base FROM DineroBase WHERE Fecha LIKE '" + date + "'";
-                con.Open();
                 SqlDataAdapter ad = new SqlDataAdapter(queryConsulta, con);
                 DataTable dt = new DataTable();
                 ad.Fill(dt);
                 int cantidad = dt.Rows.Count;
-                con.Close();
-                if (cantidad == 0)
+                if (cantidad !=0)
                 {
-                    Disable();
-                    MessageBox.Show("Primero ingrese el dinero base");
+                    string queryP = "Select * from Producto order by Id_Prod desc";
+                    SqlDataAdapter adapterD = new SqlDataAdapter(queryP, con);
+                    DataTable dataD = new DataTable();
+                    adapterD.Fill(dataD);
+                    this.cBNombre.DisplayMember = "Nombre_Prod";
+                    this.cBNombre.ValueMember = "Id_Prod";
+                    this.cBNombre.DataSource = dataD;
+                    Delete();
+                    dataGridView2.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                    DatosCompra();
+                    ListaCompra();
+                    this.idProdC.Focus();
+                    NumeroCotizacion();
+                    Enable();
+                }
+                else
+                {
                     return;
                 }
             }
@@ -1389,62 +1386,33 @@ namespace Tienda.Registros
         {
             try
             {
-                string query = "";
                 string date = DateTime.Now.ToShortDateString();
+                DialogResult accion;
                 string queryConsulta = "SELECT Dinero_Base FROM DineroBase WHERE Fecha LIKE '" + date + "'";
-                con.Open();
                 SqlDataAdapter ad = new SqlDataAdapter(queryConsulta, con);
                 DataTable dt = new DataTable();
                 ad.Fill(dt);
                 int cantidad = dt.Rows.Count;
-                con.Close();
                 if (cantidad == 0)
                 {
-                    string dinero = ""; int intentos = 0;
-                    while (dinero.Equals("") && intentos <= 3)
+                    accion = DialogResult.No;
+                    while (accion == DialogResult.No)
                     {
-                        dinero = Microsoft.VisualBasic.Interaction.InputBox("Insertar dinero del día inteto (" + intentos + " de 3)", "Dinero base del día " + date);
-                        //
-                        if (dinero.Equals("no"))
+                        DineroBase dineroBase = new DineroBase();
+                        dineroBase.ShowDialog();
+                        switch (dineroBase.DialogResult)
                         {
-                            Disable();
-                            intentos = 4;
-                            return;
+                            case DialogResult.Yes:
+                                accion = DialogResult.Yes;
+                                break;
+                            case DialogResult.Cancel:
+                                accion = DialogResult.Cancel;
+                                break;
+                            default: break;
                         }
-                        //
-                        long numericValue;
-                        bool isNumber = long.TryParse(dinero, out numericValue);
-                        if (dinero.Equals(""))
-                        {
-                            return;
-                        }
-                        if (!isNumber)
-                        {
-                            MessageBox.Show("Solo debe insertar valores de dinero", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            dinero = "";
-                            intentos = intentos + 1;
-                        }
-                        if (dinero.Equals("") && dinero.Length < 4)
-                        {
-                            MessageBox.Show("Valor menor a $1.0000", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            dinero = "";
-                            intentos = intentos + 1;
-                        }
-                    }
-                    if (intentos >= 4)
-                    {
-                        MessageBox.Show("Maximo de intentos usados", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Disable();
-                    }
-                    else
-                    {
-                        query = "INSERT INTO DineroBase VALUES('" + dinero + "','" + date + "')";
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -1461,6 +1429,21 @@ namespace Tienda.Registros
                 panel3.Visible = false;
                 panel4.Visible = false;
                 panel11.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Disable");
+            }
+        }
+
+        private void Enable()
+        {
+            try
+            {
+                panel2.Visible = true;
+                panel3.Visible = true;
+                panel4.Visible = true;
+                panel11.Visible = true;
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -25,6 +26,7 @@ namespace Tienda
             //ptrHook = SetWindowsHookEx(13, objKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
             InitializeComponent();
         }
+        
         private void OpenFrom(object fromhijo)
         {
             try
@@ -128,101 +130,44 @@ namespace Tienda
 
         private void uOut_Click(object sender, EventArgs e)
         {
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
             try
             {
-                string ID = "";
-                ID = Microsoft.VisualBasic.Interaction.InputBox("Numero de identificacion", "Datos para ventas");
-                string consulta = "select estado from [User] where Id_User = " + ID + " and Id_Type_User = 3 ";
-                SqlDataAdapter adapter = new SqlDataAdapter(consulta, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                if(data.Rows.Count == 0)
+                Vendedor vendedor = new Vendedor();
+                vendedor.ShowDialog();
+                switch (vendedor.DialogResult)
                 {
-                    MessageBox.Show("No existe este vendedor");
-                    return;
-                }
-                else
-                {
-                    string estado = data.Rows[0].ItemArray[0].ToString();
-                    if (estado.Equals("1"))
-                    {
-                        string query = "update [User] set estado = 0 where Id_User = " + ID;
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand(query, con);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                        //MessageBox.Show("Vendedor (" + ID + ") Desactivado");
+                    case DialogResult.OK:
                         OpenFrom(new Registros.Compras());
-                    }
-                    else
-                    {
-                        MessageBox.Show("El vendedor ya esta desactivado");
-                    }
+                        break;
+                    case DialogResult.Cancel:
+                        break;
                 }
             }
             catch(Exception ex)
             {
-                con.Close();
-                MessageBox.Show("OUT " + ex.Message);
+                MessageBox.Show(ex.Message, "OUT ");
             }
         }
 
         private void uIn_Click(object sender, EventArgs e)
         {
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
+            
             try
             {
-                string ID = "";
-                ID = Microsoft.VisualBasic.Interaction.InputBox("Numero de identificacion", "Datos para ventas");
-                string consulta = "select estado from [User] where Id_User = " + ID + " and Id_Type_User = 3 ";
-                SqlDataAdapter adapter = new SqlDataAdapter(consulta, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                
-                if (data.Rows.Count == 0)
+                Vendedor vendedor = new Vendedor();
+                vendedor.ShowDialog();
+                switch(vendedor.DialogResult)
                 {
-                    MessageBox.Show("No existe este vendedor");
-                    return ;
-                } 
-                else
-                {
-                    //
-                    string queryVal = "select COUNT (*) from [User] where estado = 1";
-                    SqlDataAdapter adapterV = new SqlDataAdapter(queryVal, con);
-                    DataTable dataV = new DataTable();
-                    adapterV.Fill(dataV);
-                    int can = Convert.ToInt16(dataV.Rows[0].ItemArray[0].ToString());
-                    if (can > 0)
-                    {
-                        MessageBox.Show("Ya existe un vendedor habilitado\ndesactive el habilitado primero");
-                        return;
-                    }
-                    else
-                    {
-                        string estado = data.Rows[0].ItemArray[0].ToString();
-                        if (estado.Equals("0"))
-                        {
-                            string query = "update [User] set estado = 1 where Id_User = " + ID;
-                            con.Open();
-                            SqlCommand cmd = new SqlCommand(query, con);
-                            cmd.ExecuteNonQuery();
-                            con.Close();
-                            //MessageBox.Show("Vendedor (" + ID + ") Activo");
-                            OpenFrom(new Registros.Compras());
-                        }
-                        else
-                        {
-                            MessageBox.Show("El vendedor ya esta activo");
-                            return;
-                        }
-                    }
-                    //
+                    case DialogResult.OK:
+                        OpenFrom(new Registros.Compras());
+                        break;
+                    case DialogResult.Cancel:
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("IN " + ex.Message);
+                MessageBox.Show(ex.Message, "IN");
             }
         }
         //

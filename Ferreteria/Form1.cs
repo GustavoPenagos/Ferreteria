@@ -128,27 +128,6 @@ namespace Tienda
             }
         }
 
-        private void uOut_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Vendedor vendedor = new Vendedor();
-                vendedor.ShowDialog();
-                switch (vendedor.DialogResult)
-                {
-                    case DialogResult.OK:
-                        OpenFrom(new Registros.Compras());
-                        break;
-                    case DialogResult.Cancel:
-                        break;
-                }
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message, "OUT ");
-            }
-        }
-
         private void uIn_Click(object sender, EventArgs e)
         {
             
@@ -156,14 +135,16 @@ namespace Tienda
             {
                 Vendedor vendedor = new Vendedor();
                 vendedor.ShowDialog();
-                switch(vendedor.DialogResult)
+                switch (vendedor.DialogResult)
                 {
-                    case DialogResult.OK:
+                    case DialogResult.Yes:
                         OpenFrom(new Registros.Compras());
                         break;
-                    case DialogResult.Cancel:
+                    case DialogResult.No:
                         break;
-                }
+                    default: 
+                        break;
+                }   
             }
             catch (Exception ex)
             {

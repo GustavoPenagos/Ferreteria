@@ -79,7 +79,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(301, 13);
+            this.panel2.Size = new System.Drawing.Size(301, 10);
             this.panel2.TabIndex = 5;
             // 
             // label1
@@ -98,15 +98,16 @@
             this.idText.Location = new System.Drawing.Point(31, 55);
             this.idText.Name = "idText";
             this.idText.Size = new System.Drawing.Size(223, 32);
-            this.idText.TabIndex = 8;
+            this.idText.TabIndex = 1;
             this.idText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.idText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idText_KeyPress);
             // 
             // msgLabel
             // 
             this.msgLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
-            this.msgLabel.Location = new System.Drawing.Point(26, 90);
+            this.msgLabel.Location = new System.Drawing.Point(0, 90);
             this.msgLabel.Name = "msgLabel";
-            this.msgLabel.Size = new System.Drawing.Size(230, 28);
+            this.msgLabel.Size = new System.Drawing.Size(301, 28);
             this.msgLabel.TabIndex = 9;
             this.msgLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -124,6 +125,7 @@
             this.Name = "Vendedor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Vendedor";
+            this.Load += new System.EventHandler(this.Vendedor_Load);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.ResumeLayout(false);

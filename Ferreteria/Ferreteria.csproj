@@ -112,6 +112,12 @@
     <Compile Include="Forms\Empresa.designer.cs">
       <DependentUpon>Empresa.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\EmprUsr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EmprUsr.Designer.cs">
+      <DependentUpon>EmprUsr.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FinVenta.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -305,6 +311,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Empresa.resx">
       <DependentUpon>Empresa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EmprUsr.resx">
+      <DependentUpon>EmprUsr.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FinVenta.resx">
       <DependentUpon>FinVenta.cs</DependentUpon>

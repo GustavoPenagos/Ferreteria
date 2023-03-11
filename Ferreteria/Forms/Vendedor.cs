@@ -21,7 +21,14 @@ namespace Ferreteria.Forms
         {
             InitializeComponent();
         }
+
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
+
+        private void Vendedor_Load(object sender, EventArgs e)
+        {
+            this.idText.Focus();
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Habilitar();
@@ -38,8 +45,7 @@ namespace Ferreteria.Forms
                 adapter.Fill(data);
                 if (data.Rows.Count == 0)
                 {
-                    msgLabel.Text = "No existe este vendedor";
-                    
+                    msgLabel.Text = "Documento no existe";
                 }
                 else
                 {
@@ -50,8 +56,7 @@ namespace Ferreteria.Forms
                     int can = Convert.ToInt16(dataV.Rows[0].ItemArray[0].ToString());
                     if (can > 0)
                     {
-                        msgLabel.Text = "Ya existe un vendedor habilitado";
-                        
+                        msgLabel.Text = "Ya esta habilitado";   
                     }
                     else
                     {
@@ -64,12 +69,11 @@ namespace Ferreteria.Forms
                             SqlCommand cmd = new SqlCommand(query, con);
                             cmd.ExecuteNonQuery();
                             con.Close();
-                            DialogResult = DialogResult.OK;
+                            DialogResult = DialogResult.Yes;
                         }
                         else
                         {
-                            msgLabel.Text = "El vendedor ya esta activo";
-                            
+                            msgLabel.Text = "Ya esta activo";
                         }
                     }
                 }
@@ -91,8 +95,7 @@ namespace Ferreteria.Forms
                 adapter.Fill(data);
                 if (data.Rows.Count == 0)
                 {
-                    msgLabel.Text = "No existe este vendedor";
-                    DialogResult = DialogResult.Cancel;
+                    msgLabel.Text = "Documento no existe";
                 }
                 else
                 {
@@ -104,18 +107,29 @@ namespace Ferreteria.Forms
                         SqlCommand cmd = new SqlCommand(query, con);
                         cmd.ExecuteNonQuery();
                         con.Close();
-                        DialogResult = DialogResult.OK;
+                        DialogResult = DialogResult.No;
                     }
                     else
                     {
-                        msgLabel.Text = "El vendedor ya esta desactivado";
-                        DialogResult = DialogResult.Cancel;
+                        msgLabel.Text = "Ya esta desactivado";
                     }
                 }
             }
             catch(Exception ex)
             {
 
+            }
+        }
+
+        private void idText_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == Convert.ToChar(Keys.Escape))
+            {
+                DialogResult = DialogResult.Cancel;
+            }
+            if(e.KeyChar == Convert.ToChar(Keys.Enter))
+            {
+                Habilitar();
             }
         }
     }

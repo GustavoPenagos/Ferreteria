@@ -32,7 +32,6 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel11 = new System.Windows.Forms.Panel();
-            this.uOut = new System.Windows.Forms.PictureBox();
             this.uIn = new System.Windows.Forms.PictureBox();
             this.pictureBox9 = new System.Windows.Forms.PictureBox();
             this.panel9 = new System.Windows.Forms.Panel();
@@ -58,7 +57,6 @@
             this.panel10 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.panel11.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.uOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.uIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -105,18 +103,9 @@
             // 
             // panel11
             // 
-            this.panel11.Controls.Add(this.uOut);
             this.panel11.Controls.Add(this.uIn);
             resources.ApplyResources(this.panel11, "panel11");
             this.panel11.Name = "panel11";
-            // 
-            // uOut
-            // 
-            this.uOut.Cursor = System.Windows.Forms.Cursors.Hand;
-            resources.ApplyResources(this.uOut, "uOut");
-            this.uOut.Name = "uOut";
-            this.uOut.TabStop = false;
-            this.uOut.Click += new System.EventHandler(this.uOut_Click);
             // 
             // uIn
             // 
@@ -325,7 +314,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing_1);
             this.panel2.ResumeLayout(false);
             this.panel11.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.uOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
@@ -366,7 +354,6 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.PictureBox pictureBox7;
         private System.Windows.Forms.Panel panel10;
-        private System.Windows.Forms.PictureBox uOut;
         private System.Windows.Forms.Panel panel11;
         private System.Windows.Forms.PictureBox uIn;
     }

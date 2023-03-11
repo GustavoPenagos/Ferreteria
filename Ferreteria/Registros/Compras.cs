@@ -782,6 +782,7 @@ namespace Tienda.Registros
                                     }
                                 }
                                 break;
+                            default: break;
                         }
 
                         ClsFactura.CreaTicket Ticket1 = new ClsFactura.CreaTicket();

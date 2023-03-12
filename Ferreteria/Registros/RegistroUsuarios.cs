@@ -51,7 +51,7 @@ namespace Tienda.Registros
                 cmd.ExecuteNonQuery();
                 con.Close();
                 Clear();
-                DialogResult = DialogResult.Cancel;
+                DialogResult = DialogResult.OK;
                 
             }
             catch (Exception ex)

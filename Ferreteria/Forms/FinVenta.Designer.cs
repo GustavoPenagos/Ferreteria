@@ -54,10 +54,11 @@
             this.button2.Location = new System.Drawing.Point(34, 3);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(93, 36);
-            this.button2.TabIndex = 2;
+            this.button2.TabIndex = 1;
             this.button2.Text = "SI";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.button2_KeyPress);
             // 
             // button1
             // 
@@ -66,7 +67,7 @@
             this.button1.Location = new System.Drawing.Point(155, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(93, 36);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 2;
             this.button1.Text = "NO";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -102,6 +103,7 @@
             this.Name = "FinVenta";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FinVenta";
+            this.Load += new System.EventHandler(this.FinVenta_Load);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FinVenta_KeyPress);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();

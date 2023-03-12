@@ -16,6 +16,11 @@ namespace Ferreteria.Forms
         {
             InitializeComponent();
         }
+
+        private void FinVenta_Load(object sender, EventArgs e)
+        {
+            button2.Focus();
+        }
         //YES
         private void button2_Click(object sender, EventArgs e)
         {
@@ -32,5 +37,23 @@ namespace Ferreteria.Forms
         {
             
         }
+
+        private void button2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == Convert.ToChar(Keys.S) || e.KeyChar == Convert.ToChar(115))
+            {
+                DialogResult = DialogResult.Yes;
+            }
+            if(e.KeyChar == Convert.ToChar(Keys.N) || e.KeyChar == Convert.ToChar(110))
+            {
+                DialogResult = DialogResult.No;
+            }
+            if(e.KeyChar == Convert.ToChar(Keys.Escape))
+            {
+                DialogResult = DialogResult.No;
+            }
+        }
+
+        
     }
 }

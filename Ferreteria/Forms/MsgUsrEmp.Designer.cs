@@ -70,6 +70,7 @@
             this.button1.Text = "Persona";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.button1_KeyPress);
             // 
             // panel2
             // 
@@ -103,6 +104,7 @@
             this.Name = "MsgUsrEmp";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MsgUsrEmp";
+            this.Load += new System.EventHandler(this.MsgUsrEmp_Load);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.ResumeLayout(false);

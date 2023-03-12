@@ -573,36 +573,44 @@ namespace Tienda.Registros
         {
             try
             {
-                double total = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
-                double cancela = this.cancelaCon.Text.Equals("") ? total : double.Parse(this.cancelaCon.Text);
-                if (total > cancela)
+                if (dataGridView2.Rows.Count == 0)
                 {
-                    MessageBox.Show(cancela + " es menor a la venta de " + total);
-                    return;
+                    AbrirCajon.AbrirCaja imp = new AbrirCajon.AbrirCaja();
+                    string impresora = ConfigurationManager.AppSettings["empresora"];
+                    imp.ImprimirTiket(impresora);
                 }
-                FinVenta finVenta = new FinVenta();
-                finVenta.ShowDialog();
-                switch (finVenta.DialogResult)
+                else
                 {
-                    case DialogResult.Yes:
-                        var resultImp = this.rBImprimir.Checked;
-                        switch (resultImp)
-                        {
-                            case (true):
-                                SeleccionImp("yes");
-                                break;
-                            case (false):
-                                SeleccionImp("no");
-                                break;
-                            default: break;
-                        }
-                        break;
-                    case DialogResult.No:
-                        break;
-                    default: break;
+                    double total = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
+                    double cancela = this.cancelaCon.Text.Equals("") ? total : double.Parse(this.cancelaCon.Text);
+                    if (total > cancela)
+                    {
+                        MessageBox.Show(cancela + " es menor a la venta de " + total);
+                        return;
+                    }
+                    FinVenta finVenta = new FinVenta();
+                    finVenta.ShowDialog();
+                    switch (finVenta.DialogResult)
+                    {
+                        case DialogResult.Yes:
+                            var resultImp = this.rBImprimir.Checked;
+                            switch (resultImp)
+                            {
+                                case (true):
+                                    SeleccionImp("yes");
+                                    break;
+                                case (false):
+                                    SeleccionImp("no");
+                                    break;
+                                default: break;
+                            }
+                            break;
+                        case DialogResult.No:
+                            break;
+                        default: break;
+                    }
+
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -615,7 +623,6 @@ namespace Tienda.Registros
         {
             try
             {
-
                 if (a.Equals("yes"))
                 {
                     var resultImpNit = this.rBFactNit.Checked;
@@ -635,13 +642,8 @@ namespace Tienda.Registros
                 }
                 else
                 {
-                    //DateTimeNow.Short.ToString
                     string fecha = DateTime.Now.ToShortDateString().ToString();
-                    //Total Venta
                     int totalVenta = int.Parse(this.totalVenta.Text, NumberStyles.Currency);
-                    //
-
-                    //
                     con.Open();
                     string queryFacRem = "INSERT INTO CARTERA VALUES (5,'" + totalVenta + "','" + fecha + "','0','0','0')";
                     SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
@@ -650,7 +652,6 @@ namespace Tienda.Registros
                 }
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
                 var value3 = this.ventaBut3.Checked; var value4 = this.ventaBut4.Checked;
-                //
                 string v = "";
                 switch (true)
                 {
@@ -701,11 +702,6 @@ namespace Tienda.Registros
                 this.cambioDe.Text = "";
                 this.cancelaCon.Text = "";
                 this.totalVenta.Text = "";
-                //
-                AbrirCajon.AbrirCaja imp = new AbrirCajon.AbrirCaja();
-                string impresora = "POS-80";
-                imp.ImprimirTiket(impresora);
-                //
             }
             catch (Exception ex)
             {
@@ -767,7 +763,7 @@ namespace Tienda.Registros
                                     if(ID.Equals(""))
                                     {
                                         MessageBox.Show("Este Capo no puede estar vacio");
-                                        FacturacionNit();
+                                        return;
                                     }
                                 }
                                 break;
@@ -778,7 +774,6 @@ namespace Tienda.Registros
                                     if(ID.Equals(""))
                                     {
                                         MessageBox.Show("Este Capo no puede estar vacio");
-                                        FacturacionNit();
                                     }
                                 }
                                 break;
@@ -809,17 +804,11 @@ namespace Tienda.Registros
                                         cc = td.Rows[i].ItemArray[0].ToString();
                                         if (cc == ID)
                                         {
-                                            //
-                                            nit = td.Rows[i].ItemArray[0].ToString();
+                                            ID = td.Rows[i].ItemArray[0].ToString();
                                             nombre = td.Rows[i].ItemArray[1].ToString();
                                             direc = td.Rows[i].ItemArray[3].ToString();
                                             tel = td.Rows[i].ItemArray[4].ToString();
                                             correo = td.Rows[i].ItemArray[7].ToString();
-                                            //
-                                            Ticket1.TextoIzquierda("Nit: " + nit);
-                                            Ticket1.TextoIzquierda("Nombre: " + nombre);
-                                            Ticket1.TextoIzquierda("Dirc: " + direc);
-                                            Ticket1.TextoIzquierda("Tel: " + tel);
                                             break;
                                         }
                                     }
@@ -834,17 +823,11 @@ namespace Tienda.Registros
                                     DataTable tdN = new DataTable();
                                     adN.Fill(tdN);
 
-                                    nitStr = tdN.Rows[0].ItemArray[0].ToString();
-                                    nombreStr = tdN.Rows[0].ItemArray[1].ToString();
-                                    prodStr = tdN.Rows[0].ItemArray[2].ToString();
-                                    direcStr = tdN.Rows[0].ItemArray[3].ToString();
-                                    telStr = tdN.Rows[0].ItemArray[4].ToString();
+                                    ID = tdN.Rows[0].ItemArray[0].ToString();
+                                    nombre = tdN.Rows[0].ItemArray[1].ToString();
+                                    direc = tdN.Rows[0].ItemArray[3].ToString();
+                                    tel = tdN.Rows[0].ItemArray[4].ToString();
                                     correo = tdN.Rows[0].ItemArray[5].ToString();
-                                    
-                                    Ticket1.TextoIzquierda("Nit: " + nitStr);
-                                    Ticket1.TextoIzquierda("Nombre: " + nombreStr);
-                                    Ticket1.TextoIzquierda("Dirc: " + direcStr);
-                                    Ticket1.TextoIzquierda("Tel: " + telStr);
                                 }
 
                                 break;
@@ -861,17 +844,11 @@ namespace Tienda.Registros
                                         cc = tdC.Rows[i].ItemArray[0].ToString();
                                         if (cc == ID)
                                         {
-                                            //
-                                            cc = tdC.Rows[i].ItemArray[0].ToString();
+                                            ID = tdC.Rows[i].ItemArray[0].ToString();
                                             nombre = tdC.Rows[i].ItemArray[1].ToString();
                                             direc = tdC.Rows[i].ItemArray[3].ToString();
                                             tel = tdC.Rows[i].ItemArray[2].ToString();
                                             correo = tdC.Rows[i].ItemArray[8].ToString();
-                                            //
-                                            Ticket1.TextoIzquierda("Cedula: " + cc);
-                                            Ticket1.TextoIzquierda("Nombre: " + nombre);
-                                            Ticket1.TextoIzquierda("Dirc: " + direc);
-                                            Ticket1.TextoIzquierda("Tel: " + tel);
                                             break;
                                         }
                                     }
@@ -881,25 +858,24 @@ namespace Tienda.Registros
                                     MessageBox.Show("No existe este cliente");
                                     RegistroUsuarios registro = new RegistroUsuarios(ID);
                                     registro.ShowDialog();
-
                                     string queryC = "select Id_User, [Name], Direction,Phone,mail from [User] where Id_User = " + ID;
                                     SqlDataAdapter aC = new SqlDataAdapter(queryC, con);
                                     DataTable tC = new DataTable();
                                     aC.Fill(tC);
-                                    nitStr  = tC.Rows[0].ItemArray[0].ToString();
-                                    nombreStr = tC.Rows[0].ItemArray[1].ToString();
-                                    direcStr = tC.Rows[0].ItemArray[2].ToString();
-                                    telStr = tC.Rows[0].ItemArray[3].ToString();
+                                    ID  = tC.Rows[0].ItemArray[0].ToString();
+                                    nombre = tC.Rows[0].ItemArray[1].ToString();
+                                    direc = tC.Rows[0].ItemArray[2].ToString();
+                                    tel = tC.Rows[0].ItemArray[3].ToString();
                                     correo = tC.Rows[0].ItemArray[4].ToString();
-                                    Ticket1.TextoIzquierda("Documento: " + nitStr);
-                                    Ticket1.TextoIzquierda("Nombre: " + nombreStr);
-                                    Ticket1.TextoIzquierda("Dirc: " + direcStr);
-                                    Ticket1.TextoIzquierda("Tel: " + telStr);
                                 }
-
                                 break;
                             default: break;
                         }
+
+                        Ticket1.TextoIzquierda("Documento: " + ID);
+                        Ticket1.TextoIzquierda("Nombre: " + nombre);
+                        Ticket1.TextoIzquierda("Dirc: " + direc);
+                        Ticket1.TextoIzquierda("Tel: " + tel);
 
                         Ticket1.TextoCentro("Factura de Venta"); 
                         string queryIdFac = "select MAX(Id_Factura) + 1 from Factura ";

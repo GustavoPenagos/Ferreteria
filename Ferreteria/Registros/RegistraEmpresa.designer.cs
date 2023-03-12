@@ -222,7 +222,7 @@
             this.GuardarEmp.Location = new System.Drawing.Point(722, 609);
             this.GuardarEmp.Name = "GuardarEmp";
             this.GuardarEmp.Size = new System.Drawing.Size(137, 67);
-            this.GuardarEmp.TabIndex = 8;
+            this.GuardarEmp.TabIndex = 21;
             this.GuardarEmp.Text = "Guardar";
             this.GuardarEmp.UseVisualStyleBackColor = true;
             this.GuardarEmp.Click += new System.EventHandler(this.GuardarEmp_Click);
@@ -233,7 +233,7 @@
             this.mail.Location = new System.Drawing.Point(509, 547);
             this.mail.Name = "mail";
             this.mail.Size = new System.Drawing.Size(350, 30);
-            this.mail.TabIndex = 21;
+            this.mail.TabIndex = 8;
             this.mail.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label9

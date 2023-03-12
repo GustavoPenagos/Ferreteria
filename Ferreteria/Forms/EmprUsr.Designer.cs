@@ -109,6 +109,7 @@
             this.Name = "EmprUsr";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EmprUsr";
+            this.Load += new System.EventHandler(this.EmprUsr_Load);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel1.ResumeLayout(false);

@@ -36,10 +36,14 @@
             this.selecBus = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.multiFact = new System.Windows.Forms.TextBox();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.btnCorreo = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -115,8 +119,8 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.webBrowser1);
-            this.panel3.Controls.Add(this.multiFact);
+            this.panel3.Controls.Add(this.panel6);
+            this.panel3.Controls.Add(this.panel4);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 200);
             this.panel3.Name = "panel3";
@@ -126,22 +130,43 @@
             // webBrowser1
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(594, 0);
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(452, 549);
+            this.webBrowser1.Size = new System.Drawing.Size(1046, 449);
             this.webBrowser1.TabIndex = 1;
             // 
-            // multiFact
+            // panel4
             // 
-            this.multiFact.Dock = System.Windows.Forms.DockStyle.Left;
-            this.multiFact.Location = new System.Drawing.Point(0, 0);
-            this.multiFact.Multiline = true;
-            this.multiFact.Name = "multiFact";
-            this.multiFact.ReadOnly = true;
-            this.multiFact.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.multiFact.Size = new System.Drawing.Size(594, 549);
-            this.multiFact.TabIndex = 0;
+            this.panel4.BackColor = System.Drawing.Color.Maroon;
+            this.panel4.Controls.Add(this.btnCorreo);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(0, 449);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1046, 100);
+            this.panel4.TabIndex = 2;
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.webBrowser1);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(1046, 449);
+            this.panel6.TabIndex = 4;
+            // 
+            // btnCorreo
+            // 
+            this.btnCorreo.AutoSize = true;
+            this.btnCorreo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCorreo.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCorreo.Location = new System.Drawing.Point(619, 21);
+            this.btnCorreo.Name = "btnCorreo";
+            this.btnCorreo.Size = new System.Drawing.Size(137, 67);
+            this.btnCorreo.TabIndex = 4;
+            this.btnCorreo.Text = "Enviar correo";
+            this.btnCorreo.UseVisualStyleBackColor = true;
+            this.btnCorreo.Click += new System.EventHandler(this.btnCorreo_Click);
             // 
             // ControlFacturas
             // 
@@ -159,7 +184,9 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -172,8 +199,10 @@
         private System.Windows.Forms.TextBox buscaID;
         private System.Windows.Forms.ComboBox selecBus;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.TextBox multiFact;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Button btnCorreo;
     }
 }

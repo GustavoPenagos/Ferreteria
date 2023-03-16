@@ -79,7 +79,7 @@ namespace DistribucionesArly_s
             }
         }
 
-        public void SendEmailCot(string rutaDatosPDF, string correos)
+        public void SendEmailCot(string rutaDatosPDF, string correos, string tipo)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace DistribucionesArly_s
                 correo.From = new MailAddress("f.DistribucionesArlys@gmail.com", "Distribuciones Arly's", System.Text.Encoding.UTF8);//Correo de salida
                 correo.To.Add(correos); //Correo destino
                 correo.Subject = "Gracias por su compra Distribuciones Arly's"; //Asunto
-                correo.Body = "El día de hoy se realiza el envio de su cotizacion,\n Gracias por su compra"; //Mensaje del correo
+                correo.Body = "El día de hoy se realiza el envio de su " + tipo + ",\n Gracias por su compra";
                 correo.Attachments.Add(new Attachment(rutaDatosPDF));
                 correo.IsBodyHtml = true;
                 correo.Priority = MailPriority.Normal;
@@ -100,9 +100,6 @@ namespace DistribucionesArly_s
                 smtp.Send(correo);
                 //
                 correo.Dispose();
-                //
-
-
             }
             catch (Exception ex)
             {

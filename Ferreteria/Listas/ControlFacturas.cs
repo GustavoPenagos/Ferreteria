@@ -10,6 +10,11 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using DistribucionesArly_s;
 
 namespace Tienda.Listas
 {
@@ -71,9 +76,17 @@ namespace Tienda.Listas
                 da.Fill(dt);
                 var codeB64 = dt.Rows[0].ItemArray[1].ToString();
                 var B64ToByte = Convert.FromBase64String(codeB64);
-                var a = System.Text.Encoding.UTF8.GetString(B64ToByte);
-                con.Close();
-                this.multiFact.Text = a;
+                var convertText = Encoding.UTF8.GetString(B64ToByte);
+                string textPdf = ConfigurationManager.AppSettings["TxtPDF"];
+
+                var document = new Document();
+                var writer = PdfWriter.GetInstance(document, new FileStream(textPdf, FileMode.Create));
+                document.Open();
+                document.Add(new Paragraph(convertText));
+                document.Close();
+
+                webBrowser1.Stop();
+                webBrowser1.Navigate(textPdf);
 
             }
             catch (Exception ex)
@@ -87,8 +100,8 @@ namespace Tienda.Listas
         {
             try
             {
-                this.buscaID.Clear();
-                this.multiFact.Clear();
+                //this.buscaID.Clear();
+                //this.multiFact.Clear();
             }
             catch (Exception ex)
             {
@@ -147,5 +160,21 @@ namespace Tienda.Listas
             }
         }
 
+        private void btnCorreo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string textPdf = ConfigurationManager.AppSettings["TxtPDF"];
+                string correos = Microsoft.VisualBasic.Interaction.InputBox("Correo para enviar la cotización", "Datos de factura Nit");
+
+                SendCorreo correo = new SendCorreo();
+                correo.SendEmailCot(textPdf, correos, "Factura");
+                
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
     }
 }

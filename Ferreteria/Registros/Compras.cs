@@ -1699,7 +1699,7 @@ namespace Tienda.Registros
                             }
                         }
                         SendCorreo correos = new SendCorreo();
-                        correos.SendEmailCot(rutaDatosPDF, correo);
+                        correos.SendEmailCot(rutaDatosPDF, correo, "Cotizacion");
                         break;
                     default: break;
                 }

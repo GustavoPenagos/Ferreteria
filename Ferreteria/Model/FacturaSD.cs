@@ -193,25 +193,26 @@ namespace Tienda.Model
                     }
                     else
                     {
-                        
+
                         var articulo1 = ""; var articulo2 = "";
-                        if (Articulo.Length >= 12)
+
+                        if (Articulo.Length > 12)
                         {
-                            
+
                             for (int j = 0; j < Articulo.Length; j++)
                             {
                                 if (j == 12)
                                 {
                                     articulo1 = Articulo.Substring(0, 12);
                                 }
-                                if (j == (Articulo.Length-1))
+                                if (j == (Articulo.Length - 1))
                                 {
                                     int c = (Articulo.Length - 12);
                                     articulo2 = Articulo.Substring(12, c);
                                 }
                             }
                             Articulo = articulo1 + "\n" + articulo2;
-                            for (int i = 0; i < (13 - articulo2.Length); i++)
+                            for (int i = 0; i < (13 - articulo1.Length); i++)
                             {
                                 espacios += " ";
 
@@ -224,9 +225,13 @@ namespace Tienda.Model
                                 espacios += " ";
 
                             }
-                        }                        
+                        }
 
-                        elementos = Articulo + espacios;
+                        if (articulo1.Equals(""))
+                        {
+                            articulo1 = Articulo;
+                        }
+                        elementos = articulo1 + espacios;
                         nroEspacios = (5 - cant.ToString().Length);
                         espacios = "";
                         for (int i = 0; i < nroEspacios; i++)
@@ -253,7 +258,7 @@ namespace Tienda.Model
                         {
                             espacios += " ";
                         }
-                        elementos += espacios + subtotal.ToString();
+                        elementos += espacios + subtotal.ToString() + "\n" + articulo2;
                         line.AppendLine(elementos);
 
                     }

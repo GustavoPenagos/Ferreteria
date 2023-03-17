@@ -8,13 +8,12 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 using DistribucionesArly_s;
+using System.Drawing.Imaging;
+using Font = System.Drawing.Font;
 
 namespace Tienda.Listas
 {
@@ -74,20 +73,16 @@ namespace Tienda.Listas
                 SqlDataAdapter da = new SqlDataAdapter(queryBusca, con);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
-                var codeB64 = dt.Rows[0].ItemArray[1].ToString();
-                var B64ToByte = Convert.FromBase64String(codeB64);
-                var convertText = Encoding.UTF8.GetString(B64ToByte);
-                string textPdf = ConfigurationManager.AppSettings["TxtPDF"];
+                string codeB64 = dt.Rows[0].ItemArray[1].ToString();
+                con.Close();
+                byte[] B64ToByte = Convert.FromBase64String(codeB64);
+                string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDFFactura"];
+                File.WriteAllBytes(rutaDatosPDF, B64ToByte);
 
-                var document = new Document();
-                var writer = PdfWriter.GetInstance(document, new FileStream(textPdf, FileMode.Create));
-                document.Open();
-                document.Add(new Paragraph(convertText));
-                document.Close();
-
+                
                 webBrowser1.Stop();
-                webBrowser1.Navigate(textPdf);
-
+                webBrowser1.Navigate(rutaDatosPDF);
+                
             }
             catch (Exception ex)
             {
@@ -122,15 +117,13 @@ namespace Tienda.Listas
             try
             {
                 string rutaPdf = ConfigurationManager.AppSettings["PathPDF"];
-                //
                 Process[] processes = Process.GetProcessesByName("Acrobat");
 
-                // Finalizar cada proceso de Adobe Acrobat
                 for (int i = 0; i < processes.Length-1;i++)
                 {
                     processes[i].Kill();
                 }
-                //
+                
                 Thread.Sleep(100);
                 string queryBusca = "SELECT * FROM " + factura.ToString() + " WHERE Id_Factura = " + barras;
                 con.Open();
@@ -142,16 +135,13 @@ namespace Tienda.Listas
                     MessageBox.Show("No hay cotizaciones con ese numero", "Vacio", MessageBoxButtons.OK,MessageBoxIcon.Warning);
                     return;
                 }
-                var codeB64 = dt.Rows[0].ItemArray[1].ToString();
-                var B64ToByte = Convert.FromBase64String(codeB64);
+                string codeB64 = dt.Rows[0].ItemArray[1].ToString();
+                byte[] B64ToByte = Convert.FromBase64String(codeB64);
                 con.Close();
-                // Guarda los bytes en un archivo PDF
+
                 File.WriteAllBytes(rutaPdf, B64ToByte);
                 webBrowser1.Stop();
                 webBrowser1.Navigate(rutaPdf);
-                //webBrowser1.Dispose();
-
-
             }
             catch(Exception ex)
             {
@@ -164,16 +154,18 @@ namespace Tienda.Listas
         {
             try
             {
-                string textPdf = ConfigurationManager.AppSettings["TxtPDF"];
+
+                string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDFFactura"];
                 string correos = Microsoft.VisualBasic.Interaction.InputBox("Correo para enviar la cotización", "Datos de factura Nit");
 
                 SendCorreo correo = new SendCorreo();
-                correo.SendEmailCot(textPdf, correos, "Factura");
-                
+                correo.SendEmailCot(rutaDatosPDF, correos, "Factura");
+                MessageBox.Show("Correo enviado", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
             catch(Exception ex)
             {
-
+                MessageBox.Show(ex.Message, "BTN Correo");
             }
         }
     }

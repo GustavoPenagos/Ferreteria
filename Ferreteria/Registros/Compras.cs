@@ -19,6 +19,7 @@ using System.Threading;
 using Ferreteria.Forms;
 using System.Runtime.InteropServices;
 using Org.BouncyCastle.Crypto.Engines;
+using System.Linq;
 
 namespace Tienda.Registros
 {
@@ -720,6 +721,7 @@ namespace Tienda.Registros
                 if (this.cancelaCon.Text.Equals("0"))
                 {
                     this.cancelaCon.Text = this.totalVenta.Text;
+                    cancela = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                     this.cambioDe.Text = "0";
                     cambio = double.Parse(this.cambioDe.Text);
                 }
@@ -737,13 +739,9 @@ namespace Tienda.Registros
                 var conteo = dataGridView2.Rows.Count;
                 if (conteo != 0)
                 {
-                    string nitStr = "";
-                    string nombreStr = "";
-                    string direcStr = "";
-                    string telStr = "";
-                    string prodStr = "";
                     string correo = "";
                     string ID = "";
+                    string eP = "";
                     //
                     var cc = ""; int i = 0;
                     var nombre = "";
@@ -782,10 +780,11 @@ namespace Tienda.Registros
 
                         ClsFactura.CreaTicket Ticket1 = new ClsFactura.CreaTicket();
 
-                        Ticket1.TextoCentro("Distribuciones Arly's ");
+                        Ticket1.TextoCentro("Distribuciones Arly's");
+                        Ticket1.TextoCentro("Regimen comuún");
                         Ticket1.TextoCentro("NIT: 40079945-0");
                         Ticket1.TextoCentro("Nombre empleado");
-                        Ticket1.TextoCentro("Calle 19 sur # 45B - 34, (Catumare)");
+                        Ticket1.TextoCentro("Calle 19 sur # 45B - 34");
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");
                         Ticket1.TextoCentro("-------------------------------------------------------");
@@ -809,6 +808,7 @@ namespace Tienda.Registros
                                             direc = td.Rows[i].ItemArray[3].ToString();
                                             tel = td.Rows[i].ItemArray[4].ToString();
                                             correo = td.Rows[i].ItemArray[7].ToString();
+                                            eP = !ID.Equals("") ? "NIT" : "";
                                             break;
                                         }
                                     }
@@ -828,6 +828,7 @@ namespace Tienda.Registros
                                     direc = tdN.Rows[0].ItemArray[3].ToString();
                                     tel = tdN.Rows[0].ItemArray[4].ToString();
                                     correo = tdN.Rows[0].ItemArray[5].ToString();
+                                    eP = !ID.Equals("") ? "NIT" : "";
                                 }
 
                                 break;
@@ -849,6 +850,7 @@ namespace Tienda.Registros
                                             direc = tdC.Rows[i].ItemArray[3].ToString();
                                             tel = tdC.Rows[i].ItemArray[2].ToString();
                                             correo = tdC.Rows[i].ItemArray[8].ToString();
+                                            eP = !ID.Equals("") ? "Documento" : "";
                                             break;
                                         }
                                     }
@@ -872,7 +874,7 @@ namespace Tienda.Registros
                             default: break;
                         }
 
-                        Ticket1.TextoIzquierda("Documento: " + ID);
+                        Ticket1.TextoIzquierda(eP + " : " + ID);
                         Ticket1.TextoIzquierda("Nombre: " + nombre);
                         Ticket1.TextoIzquierda("Dirc: " + direc);
                         Ticket1.TextoIzquierda("Tel: " + tel);
@@ -922,8 +924,8 @@ namespace Tienda.Registros
                         switch (true)
                         {
                             case true when efec:
-                                Ticket1.AgregaTotales("Efectivo Entregado:", double.Parse(this.cancelaCon.Text, NumberStyles.Currency));
-                                Ticket1.AgregaTotales("Efectivo Devuelto:", double.Parse(this.cambioDe.Text, NumberStyles.Currency));
+                                Ticket1.AgregaTotales("Efectivo Entregado:", double.Parse(cancela.ToString()));
+                                Ticket1.AgregaTotales("Efectivo Devuelto:", double.Parse(cambio.ToString()));
                                 break;
                             case true when transf:
                                 Ticket1.AgregaTotales("Pago por transferencia:", double.Parse(this.cancelaCon.Text, NumberStyles.Currency));
@@ -937,7 +939,18 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("---     Gracias por preferirnos    -------");
                         Ticket1.TextoCentro("------------------------------------------");
                         string impresora = ConfigurationManager.AppSettings["empresora"];
-                        Ticket1.ImprimirTiket(impresora, correo);
+                        Ticket1.ImprimirTiket(impresora);
+                        string tipoPago = "";
+                        if(efec == true)
+                        {
+                            tipoPago = "Efectivo";
+                        }
+                        else
+                        {
+                            tipoPago = "transferencia";
+                        }
+                        
+                        ExcelFactura(correo, nombre, direc, tel, ID, tipoPago, cancela.ToString(), cambio.ToString(), "Factura", 0);
 
                     }
                     catch (Exception ex)
@@ -963,6 +976,7 @@ namespace Tienda.Registros
                 if (this.cancelaCon.Text.Equals("0"))
                 {
                     this.cancelaCon.Text = this.totalVenta.Text;
+                    cancela = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                     this.cambioDe.Text = "0";
                     cambio = double.Parse(this.cambioDe.Text);
                 }
@@ -987,7 +1001,7 @@ namespace Tienda.Registros
 
                         Ticket1.TextoCentro("Distribuciones Arly's ");
                         //Ticket3.TextoCentro("NIT: 40079945-0");
-                        Ticket1.TextoCentro("Calle 19 sur # 45B - 34, (Catumare)");
+                        Ticket1.TextoCentro("Calle 19 sur # 45B - 34");
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");
                         Ticket1.TextoCentro("-------------------------------------------------------");
@@ -1053,6 +1067,8 @@ namespace Tienda.Registros
 
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora);
+
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "FacturaRem", 0);
                     }
                     catch (Exception ex)
                     {
@@ -1101,7 +1117,7 @@ namespace Tienda.Registros
 
                         Ticket3.TextoCentro("Distribuciones Arly's ");
                         Ticket3.TextoCentro("NIT: 40079945-0");
-                        Ticket3.TextoCentro("Calle 19 sur # 45B - 34, (Catumare)");
+                        Ticket3.TextoCentro("Calle 19 sur # 45B - 34");
                         Ticket3.TextoCentro("Tel. 3162882803");
                         Ticket3.TextoCentro("Villavicencio, Meta");
                         Ticket3.TextoCentro("------------------------------------------");
@@ -1160,6 +1176,8 @@ namespace Tienda.Registros
                         Ticket3.TextoCentro("------------------------------------------");
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket3.ImprimirTiket(impresora);
+
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "FacturaRem", 1);
                     }
                     catch (Exception ex)
                     {
@@ -1470,8 +1488,7 @@ namespace Tienda.Registros
                     cotizacion.Unidad = r.Cells["Tipo Unidad"].Value.ToString();
                     cotizacion.VUnidad = r.Cells["precio unidad"].Value.ToString();
                     cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
-                    //cotizacion.VUnidad = double.Parse(r.Cells["precio unidad"].Value.ToString(), NumberStyles.Currency);
-                    //cotizacion.SubTotal = double.Parse(r.Cells["Precio total"].Value.ToString(), NumberStyles.Currency);
+                    
 
                     listCot.Add(cotizacion);
                 }
@@ -1651,17 +1668,14 @@ namespace Tienda.Registros
                 worksheet.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, rutaDatosPDF);
                 workbook.Close();
                 excel.Quit();
-                //
+                
                 Process[] processes = Process.GetProcessesByName("Excel");
-
-                // Excel
                 for (int i = 0; i < processes.Length; i++)
                 {
                     processes[i].Kill();
                 }
-                //
+                
                 Thread.Sleep(100);
-                //
                 PdfReader reader = new PdfReader(rutaDatosPDF);
 
                 using (MemoryStream ms = new MemoryStream())
@@ -1677,8 +1691,7 @@ namespace Tienda.Registros
                     cmd.ExecuteNonQuery();
                     con.Close();
                 }
-                //
-                
+                                
                 DialogResult sendEmail = MessageBox.Show("¿Enviar correo?", "Seleccionar", MessageBoxButtons.YesNo);
                 switch (sendEmail)
                 {
@@ -1743,6 +1756,266 @@ namespace Tienda.Registros
             }catch(Exception ex)
             {
                 MessageBox.Show(ex.Message, "AlertCambio");
+            }
+        }
+
+        public void ExcelFactura(string correo, string nombre, string direccion, string telefono, string ID, string tipoPago, string cancelaCon, string cambioDe, string ftra, int estado)
+        {
+            try
+            {
+                if (dataGridView2.Rows.Count < 1)
+                {
+                    MessageBox.Show("Datos de factura estan vacios", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                NuevaFactura();
+                string rutaDatos = ConfigurationManager.AppSettings["PathExcelFactura"];
+                string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDFFactura"];
+
+                List<Cotizacion> listCot = new List<Cotizacion>();
+
+                foreach (DataGridViewRow r in dataGridView2.Rows)
+                {
+                    Cotizacion cotizacion = new Cotizacion();
+
+                    cotizacion.Codigo = r.Cells["ID"].Value.ToString();
+                    cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
+                    cotizacion.Cant = r.Cells["Cantidad"].Value.ToString();
+                    cotizacion.Unidad = r.Cells["Tipo Unidad"].Value.ToString();
+                    cotizacion.VUnidad = r.Cells["precio unidad"].Value.ToString();
+                    cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
+
+
+                    listCot.Add(cotizacion);
+                }
+                //
+                string queryCont = "SELECT Id_Factura FROM " + ftra + " order by Id_Factura desc";
+                SqlDataAdapter adapter = new SqlDataAdapter(queryCont, con);
+                DataTable data = new DataTable();
+                adapter.Fill(data);
+                var Fac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
+                var nFac = Fac + 1;
+                //
+                string dateda = DateTime.Now.ToShortDateString();
+                Application excel = new Application();
+                Workbook workbook = excel.Workbooks.Open(rutaDatos);
+                Worksheet worksheet = workbook.Worksheets[1];
+                //Insert data from company
+
+                Range nf = worksheet.Cells[5, 12];
+                nf.Value = nFac;
+
+                Range dia = worksheet.Cells[7, 12];
+                dia.Value = dateda;
+                //Insert personal data
+                if(estado != 1)
+                {
+                    nombre = nombre.Equals("") ? Microsoft.VisualBasic.Interaction.InputBox("Nombre del cliente", "Datos de cotizacion") : nombre;
+                    Range range0 = worksheet.Cells[9, 2];
+                    range0.Value = nombre;
+
+                    direccion = direccion.Equals("") ? Microsoft.VisualBasic.Interaction.InputBox("Direccion del cliente", "Datos de cotizacion") : direccion;
+                    Range range01 = worksheet.Cells[10, 2];
+                    range01.Value = direccion;
+
+                    telefono = telefono.Equals("") ? Microsoft.VisualBasic.Interaction.InputBox("Telefono del cliente", "Datos de cotizacion") : telefono;
+                    Range range02 = worksheet.Cells[11, 2];
+                    range02.Value = telefono;
+
+                    ID = ID.Equals("") ? Microsoft.VisualBasic.Interaction.InputBox("Documento del cliente", "Datos de cotizacion") : ID;
+                    Range range03 = worksheet.Cells[9, 9];
+                    range03.Value = ID;
+
+                    Range range04 = worksheet.Cells[10, 9];
+                    range04.Value = "Villavicencio";
+                }
+                //
+                for (int i = 0; i < dataGridView2.Rows.Count; i++)
+                {
+                    // Agregar un campo en la fila n, columna n
+                    Range range = worksheet.Cells[14 + i, 1];
+                    range.Value = listCot[i].Codigo.ToString();
+                    //
+                    Range range1 = worksheet.Cells[14 + i, 3];
+                    range1.Value = listCot[i].Nombre.ToString();
+                    //
+                    Range range2 = worksheet.Cells[14 + i, 8];
+                    range2.Value = listCot[i].Cant.ToString();
+                    //
+                    Range range3 = worksheet.Cells[14 + i, 9];
+                    range3.Value = listCot[i].Unidad.ToString();
+                    //
+                    Range range4 = worksheet.Cells[14 + i, 11];
+                    range4.Value = listCot[i].VUnidad.ToString().Replace(".", "").Replace(",00", "");
+                    //
+                    Range range5 = worksheet.Cells[14 + i, 12];
+                    range5.Value = listCot[i].SubTotal.ToString().Replace(".", "").Replace(",00", "");
+
+                }
+                Range range6 = worksheet.Cells[53, 12];
+                range6.Formula = "=SUM(L14:M51)";
+                
+                Range range7 = worksheet.Cells[55, 12];
+                range7.Value = "$0";
+                
+                Range range8 = worksheet.Cells[57, 12];
+                range8.Value = "$0";
+                
+                Range range9 = worksheet.Cells[59, 12];
+                range9.Formula = "=L53-L55+L57";
+
+                Range range12 = worksheet.Range["D53:F56"];
+                range12.Value = tipoPago;
+
+                if (tipoPago.Equals("Efectivo"))
+                {
+                    Range range13 = worksheet.Range["D57:F58"];
+                    range13.Value = cancelaCon;
+
+                    Range range14 = worksheet.Range["D59:F60"];
+                    range14.Value = cambioDe;
+                }
+                else
+                {
+                    Range range13 = worksheet.Range["D57:F58"];
+                    range13.Value = cancelaCon;
+                }           
+
+                workbook.Save();
+                workbook.Close();
+                excel.Quit();
+                
+                ExportToPDFFactura(rutaDatos, rutaDatosPDF, correo, ftra);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Cotizacion ");
+            }
+        }
+
+        public void NuevaFactura()
+        {
+            try
+            {
+                string rutaDatos = ConfigurationManager.AppSettings["PathExcelFactura"];
+
+                Excel.Application excel = new Excel.Application();
+                Excel.Workbook workbook = excel.Workbooks.Open(rutaDatos);
+                Excel.Worksheet worksheet = workbook.ActiveSheet;
+                //DELETE DATA FROM CLIENT
+                worksheet.Range["B9:G9"].ClearContents();
+                worksheet.Range["B10:G10"].ClearContents();
+                worksheet.Range["B11:G11"].ClearContents();
+                worksheet.Range["I9:M9"].ClearContents();
+                worksheet.Range["I10:M10"].ClearContents();
+                //DELETE DATA FROM COTIZACION
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["A" + n + ":" + "B" + n].ClearContents();
+                }
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["C" + n + ":" + "G" + n].ClearContents();
+                }
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["H" + n].ClearContents();
+                }
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["I" + n + ":" + "J" + n].ClearContents();
+                }
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["K" + n].ClearContents();
+                }
+                for (int i = 0; i < 38; i++)
+                {
+                    var n = 14 + i;
+                    worksheet.Range["L" + n + ":" + "M" + n].ClearContents();
+                }
+                worksheet.Range["D57:F58"].ClearComments();
+                worksheet.Range["D59:F60"].ClearComments();
+                
+
+                workbook.Save();
+                workbook.Close();
+                excel.Quit();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "NuevaCotizacion");
+            }
+        }
+
+        public void ExportToPDFFactura(string rutaDatos, string rutaDatosPDF, string correo, string ftra)
+        {
+            try
+            {
+                
+                Excel.Application excel = new Excel.Application();
+                Excel.Workbook workbook = excel.Workbooks.Open(rutaDatos);
+                Excel.Worksheet worksheet = workbook.ActiveSheet;
+                worksheet.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, rutaDatosPDF);
+                workbook.Close();
+                excel.Quit();
+
+                Process[] processes = Process.GetProcessesByName("Excel");
+                for (int i = 0; i < processes.Length; i++)
+                {
+                    processes[i].Kill();
+                }
+
+                Thread.Sleep(100);
+                PdfReader reader = new PdfReader(rutaDatosPDF);
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    PdfStamper stamper = new PdfStamper(reader, ms);
+                    stamper.Close();
+                    reader.Close();
+                    byte[] bytes = ms.ToArray();
+                    var base64EncodedBytes = System.Convert.ToBase64String(bytes).ToString();
+                    string query = "INSERT INTO " + ftra + " VALUES('" + base64EncodedBytes + "')";
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+
+                if (ftra.Equals("Factura"))
+                {
+                    DialogResult sendEmail = MessageBox.Show("¿Enviar correo?", "Seleccionar", MessageBoxButtons.YesNo);
+                    switch (sendEmail)
+                    {
+                        case DialogResult.Yes:
+                            Process[] processes1 = Process.GetProcessesByName("Acrobat");
+
+                            for (int i = 0; i < processes1.Length - 1; i++)
+                            {
+                                processes1[i].Kill();
+                            }
+                            SendCorreo correos = new SendCorreo();
+                            correos.SendEmailCot(rutaDatosPDF, correo, "Factura");
+                            MessageBox.Show("Correo enviado", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            break;
+                        case DialogResult.No:
+                            MessageBox.Show("Envio de correo cancelado", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            break;
+                        default: break;
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ExportToPDF");
             }
         }
     }

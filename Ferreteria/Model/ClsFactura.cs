@@ -192,7 +192,8 @@ namespace DistribucionesArly_s
                     else
                     {
                         var articulo1 = ""; var articulo2 = "";
-                        if (Articulo.Length >= 12)
+                        
+                        if (Articulo.Length > 12)
                         {
 
                             for (int j = 0; j < Articulo.Length; j++)
@@ -208,7 +209,7 @@ namespace DistribucionesArly_s
                                 }
                             }
                             Articulo = articulo1 + "\n" + articulo2;
-                            for (int i = 0; i < (13 - articulo2.Length); i++)
+                            for (int i = 0; i < (13 - articulo1.Length); i++)
                             {
                                 espacios += " ";
 
@@ -222,7 +223,12 @@ namespace DistribucionesArly_s
 
                             }
                         }
-                        elementos = Articulo + espacios;
+                        
+                        if (articulo1.Equals(""))
+                        {
+                            articulo1 = Articulo;
+                        }
+                        elementos = articulo1 + espacios;
                         nroEspacios = (5 - cant.ToString().Length);
                         espacios = "";
                         for (int i = 0; i < nroEspacios; i++)
@@ -249,7 +255,7 @@ namespace DistribucionesArly_s
                         {
                             espacios += " ";
                         }
-                        elementos += espacios + subtotal.ToString();
+                        elementos += espacios + subtotal.ToString() + "\n" + articulo2;
                         line.AppendLine(elementos);
 
                     }
@@ -261,19 +267,19 @@ namespace DistribucionesArly_s
                 }
             }
 
-            public void ImprimirTiket(string stringimpresora, string correo)
+            public void ImprimirTiket(string stringimpresora)
             {
-                RawPrinterHelper.SendStringToPrinter(stringimpresora, line.ToString(), 0, correo);
+                RawPrinterHelper.SendStringToPrinter(stringimpresora, line.ToString());
                 line = new StringBuilder();
                 //
                 string cajon0 = "\x1B" + "p" + "\x00" + "\x0F" + "\x96";   		// caracteres de apertura cajon 0
-                RawPrinterHelper.SendStringToPrinter(stringimpresora, cajon0, 1,"");
+                RawPrinterHelper.SendStringToPrinter(stringimpresora, cajon0);
                 
                 //
                 string corte = "\x1B" + "m";                  					// caracteres de corte
                 string avance = "\x1B" + "d" + "\x3";        					// avanza 3 renglones
-                RawPrinterHelper.SendStringToPrinter(stringimpresora, avance, 1,""); 		// avanza
-                RawPrinterHelper.SendStringToPrinter(stringimpresora, corte, 1,""); 		// corta
+                RawPrinterHelper.SendStringToPrinter(stringimpresora, avance); 		// avanza
+                RawPrinterHelper.SendStringToPrinter(stringimpresora, corte); 		// corta
                 //
             }
         }
@@ -355,7 +361,7 @@ namespace DistribucionesArly_s
                 return bSuccess;
             }
 
-            public static bool SendStringToPrinter(string szPrinterName, string szString, int n, string correos)
+            public static bool SendStringToPrinter(string szPrinterName, string szString)
             {
                 
                 IntPtr pBytes;
@@ -368,29 +374,6 @@ namespace DistribucionesArly_s
                 // Send the converted ANSI string to the printer.
                 SendBytesToPrinter(szPrinterName, pBytes, dwCount);
                 Marshal.FreeCoTaskMem(pBytes);
-                //
-                if (n == 0)
-                {
-                    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
-                    
-                    byte[] bytes = Encoding.ASCII.GetBytes(szString);
-                    var base64EncodedBytes = System.Convert.ToBase64String(bytes).ToString();
-                    string query = "INSERT INTO FACTURA VALUES('" + base64EncodedBytes + "')";
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.ExecuteNonQuery();
-                    con.Close();
-                    if (!correos.Equals(""))
-                    {
-                        SendCorreo correo = new SendCorreo();
-                        correo.SendMail(correos);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Cliente sin correo", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    
-                }
                 return true;
             }
         }

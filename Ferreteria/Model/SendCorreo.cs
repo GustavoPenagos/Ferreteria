@@ -47,8 +47,7 @@ namespace DistribucionesArly_s
                         document.Open();
                         document.Add(new Paragraph(File.ReadAllText(pathTxt)));
                         document.Close();
-                        //
-
+                        
                         MailMessage correo = new MailMessage();
 
                         correo.From = new MailAddress("f.DistribucionesArlys@gmail.com", "Distribuciones Arly's", System.Text.Encoding.UTF8);//Correo de salida
@@ -98,7 +97,7 @@ namespace DistribucionesArly_s
                 ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
                 smtp.EnableSsl = true;//True si el servidor de correo permite ssl
                 smtp.Send(correo);
-                //
+
                 correo.Dispose();
             }
             catch (Exception ex)

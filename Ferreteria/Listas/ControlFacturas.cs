@@ -159,7 +159,7 @@ namespace Tienda.Listas
                 string correos = Microsoft.VisualBasic.Interaction.InputBox("Correo para enviar la cotización", "Datos de factura Nit");
 
                 SendCorreo correo = new SendCorreo();
-                correo.SendEmailCot(rutaDatosPDF, correos, "Factura");
+                correo.SendEmailCot(rutaDatosPDF, correos, "Factura","");
                 MessageBox.Show("Correo enviado", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }

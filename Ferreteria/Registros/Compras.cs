@@ -1477,10 +1477,10 @@ namespace Tienda.Registros
                 string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDF"];
 
                 List<Cotizacion> listCot = new List<Cotizacion>();
+                Cotizacion cotizacion = new Cotizacion();
 
                 foreach (DataGridViewRow r in dataGridView2.Rows)
                 {
-                    Cotizacion cotizacion = new Cotizacion();
 
                     cotizacion.Codigo = r.Cells["ID"].Value.ToString();
                     cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
@@ -1588,7 +1588,7 @@ namespace Tienda.Registros
                 workbook.Close();
                 excel.Quit();
                 //
-                ExportToPDF(rutaDatos, rutaDatosPDF);
+                ExportToPDF(rutaDatos, rutaDatosPDF, cotizacion.Nombre.ToString());
             }
             catch (Exception ex)
             {
@@ -1657,7 +1657,7 @@ namespace Tienda.Registros
             }
         }
 
-        public void ExportToPDF(string rutaDatos, string rutaDatosPDF)
+        public void ExportToPDF(string rutaDatos, string rutaDatosPDF, string nombre)
         {
             try
             {
@@ -1712,7 +1712,7 @@ namespace Tienda.Registros
                             }
                         }
                         SendCorreo correos = new SendCorreo();
-                        correos.SendEmailCot(rutaDatosPDF, correo, "Cotizacion");
+                        correos.SendEmailCot(rutaDatosPDF, correo, "Cotizacion", nombre);
                         break;
                     default: break;
                 }
@@ -1885,7 +1885,7 @@ namespace Tienda.Registros
                 workbook.Close();
                 excel.Quit();
                 
-                ExportToPDFFactura(rutaDatos, rutaDatosPDF, correo, ftra);
+                ExportToPDFFactura(rutaDatos, rutaDatosPDF, correo, ftra, nombre);
             }
             catch (Exception ex)
             {
@@ -1954,7 +1954,7 @@ namespace Tienda.Registros
             }
         }
 
-        public void ExportToPDFFactura(string rutaDatos, string rutaDatosPDF, string correo, string ftra)
+        public void ExportToPDFFactura(string rutaDatos, string rutaDatosPDF, string correo, string ftra, string nombre)
         {
             try
             {
@@ -2002,7 +2002,7 @@ namespace Tienda.Registros
                                 processes1[i].Kill();
                             }
                             SendCorreo correos = new SendCorreo();
-                            correos.SendEmailCot(rutaDatosPDF, correo, "Factura");
+                            correos.SendEmailCot(rutaDatosPDF, correo, "Factura", nombre);
                             MessageBox.Show("Correo enviado", "Correo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             break;
                         case DialogResult.No:

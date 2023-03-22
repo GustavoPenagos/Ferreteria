@@ -268,6 +268,7 @@
       <DependentUpon>ListaVentas.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\AbrirCajon.cs" />
+    <Compile Include="Model\BodyMail.cs" />
     <Compile Include="Model\ClsFactura.cs" />
     <Compile Include="Model\Cotizacion.cs" />
     <Compile Include="Model\FacturaRem.cs" />

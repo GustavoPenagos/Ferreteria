@@ -207,6 +207,7 @@ namespace Tienda.Listas
                             string Products = dataGridView1.CurrentRow.Cells["Información"].Value.ToString();
                             string Direction = dataGridView1.CurrentRow.Cells["Dirección"].Value.ToString();
                             string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
+                            string Correo = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
                             string ciudad = dataGridView1.CurrentRow.Cells["Ciudad"].Value.ToString();
                             string queryCiudad = "select Id_Municipality, Id_Department from Municipality where Municipality like '%" + ciudad + "%'";
                             SqlDataAdapter adapter1 = new SqlDataAdapter(queryCiudad, con);
@@ -221,8 +222,9 @@ namespace Tienda.Listas
                             var Id_Department = data2.Rows[0].ItemArray[1].ToString();
                             //
                             var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
-                            string queryUpdate = "update Company set Name_Company='" + Name_Company + "', Products='" + Products + "', Direction='" + Direction + "'" +
-                                ", Phone='" + Phone + "', Id_Municipaly=" + Id_Municipaly + ", Id_Department=" + Id_Department + " where Nit_Company = " + ID;
+                            string queryUpdate = "update Company set Name_Company = '" + Name_Company + "', Products='" + Products + "', Direction='" + Direction + "'" +
+                                ", Phone='" + Phone + "', Id_Municipaly=" + Id_Municipaly + ", Id_Department=" + Id_Department + "" +
+                                ", Mail = '"+Correo+"' where Nit_Company = " + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryUpdate, con);
                             cmd.ExecuteNonQuery();

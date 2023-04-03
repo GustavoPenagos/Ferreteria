@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Word;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataTable = System.Data.DataTable;
 
 namespace Tienda.Registros
 {
@@ -43,17 +45,33 @@ namespace Tienda.Registros
                 var unidad = this.unidProd.SelectedValue;
                 var marca = this.marcaProd.Text;
                 var utilidad = this.utilidad.Text;
+                var cantidad = this.txbCantidad.Text;
                 string query = "INSERT INTO Producto VALUES (" + ID + ",'" + producto + "'," + precProd + "," + unidad + ", '" + marca + "','" + utilidad + "','" + precVenta + "')";
                 SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
+                
+                string queryInsertCant = "insert into Bodega values (" + ID + ", '" + cantidad + "')";
+                SqlCommand cmdInsert = new SqlCommand(queryInsertCant, con);
+                con.Open();
+                cmdInsert.ExecuteNonQuery();
+                con.Close();
+                
+                string queryCantidad = "SELECT cantidad from Bodega where Id_Prod = " + this.idProd.Text + "";
+                SqlDataAdapter adapter = new SqlDataAdapter(queryCantidad, con);
+                DataTable data = new DataTable();
+                adapter.Fill(data);
+                cantidad = data.Rows[0].ItemArray[0].ToString();
                 Clear();
+                this.txtCantidad.Text = cantidad;
+                this.idProd.Focus();
+                
             }
             catch (Exception ex)
             {
                 con.Close();
-                MessageBox.Show("Error registro no guardado" + ex,"", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error registro no guardado" + ex.Message,"", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -87,8 +105,6 @@ namespace Tienda.Registros
             if (e.KeyChar == Convert.ToChar(Keys.Enter))
             {
                 InsertarProd();
-
-                this.idProd.Focus();
             }
         }
 
@@ -100,6 +116,7 @@ namespace Tienda.Registros
             this.nomProd.Clear();
             this.marcaProd.Clear();
             this.utilidad.Clear();
+            this.txbCantidad.Clear();
         }
 
         private void utilidad_TextChanged(object sender, EventArgs e)
@@ -119,6 +136,14 @@ namespace Tienda.Registros
             {
                 MessageBox.Show("El campo de precios no puede estar vacio");
                 MessageBox.Show(ex.Message, "Caluculo de precio");
+            }
+        }
+
+        private void idProd_KeyPress_1(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
             }
         }
     }

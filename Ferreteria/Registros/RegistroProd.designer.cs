@@ -44,6 +44,9 @@
             this.unidProd = new System.Windows.Forms.ComboBox();
             this.guardarProd = new System.Windows.Forms.Button();
             this.precioFinal = new System.Windows.Forms.TextBox();
+            this.txbCantidad = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtCantidad = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -137,7 +140,7 @@
             this.idProd.Size = new System.Drawing.Size(329, 30);
             this.idProd.TabIndex = 1;
             this.idProd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.idProd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress);
+            this.idProd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress_1);
             // 
             // nomProd
             // 
@@ -157,7 +160,7 @@
             this.precioProd.Size = new System.Drawing.Size(329, 30);
             this.precioProd.TabIndex = 4;
             this.precioProd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.precioProd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress);
+            this.precioProd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress_1);
             // 
             // marcaProd
             // 
@@ -195,10 +198,10 @@
             this.guardarProd.AutoSize = true;
             this.guardarProd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.guardarProd.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.guardarProd.Location = new System.Drawing.Point(674, 491);
+            this.guardarProd.Location = new System.Drawing.Point(674, 538);
             this.guardarProd.Name = "guardarProd";
             this.guardarProd.Size = new System.Drawing.Size(137, 67);
-            this.guardarProd.TabIndex = 7;
+            this.guardarProd.TabIndex = 8;
             this.guardarProd.Text = "Guardar";
             this.guardarProd.UseVisualStyleBackColor = true;
             this.guardarProd.Click += new System.EventHandler(this.guardarProd_Click);
@@ -214,11 +217,45 @@
             this.precioFinal.TabIndex = 22;
             this.precioFinal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // txbCantidad
+            // 
+            this.txbCantidad.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txbCantidad.Location = new System.Drawing.Point(482, 471);
+            this.txbCantidad.Name = "txbCantidad";
+            this.txbCantidad.Size = new System.Drawing.Size(329, 30);
+            this.txbCantidad.TabIndex = 7;
+            this.txbCantidad.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txbCantidad.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.label8.Location = new System.Drawing.Point(359, 476);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(97, 25);
+            this.label8.TabIndex = 24;
+            this.label8.Text = "Cantidad:";
+            // 
+            // txtCantidad
+            // 
+            this.txtCantidad.Cursor = System.Windows.Forms.Cursors.No;
+            this.txtCantidad.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCantidad.Location = new System.Drawing.Point(833, 473);
+            this.txtCantidad.Name = "txtCantidad";
+            this.txtCantidad.ReadOnly = true;
+            this.txtCantidad.Size = new System.Drawing.Size(185, 30);
+            this.txtCantidad.TabIndex = 25;
+            this.txtCantidad.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // RegistroProd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1244, 737);
+            this.Controls.Add(this.txtCantidad);
+            this.Controls.Add(this.txbCantidad);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.precioFinal);
             this.Controls.Add(this.guardarProd);
             this.Controls.Add(this.unidProd);
@@ -262,5 +299,8 @@
         private System.Windows.Forms.ComboBox unidProd;
         private System.Windows.Forms.Button guardarProd;
         private System.Windows.Forms.TextBox precioFinal;
+        private System.Windows.Forms.TextBox txbCantidad;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtCantidad;
     }
 }

@@ -151,6 +151,22 @@ namespace Tienda
                 MessageBox.Show(ex.Message, "IN");
             }
         }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.lbFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            timer1.Enabled = true;
+            timer2.Enabled = true;
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            this.lbHora.Text = DateTime.Now.ToString("hh:mm:ss");
+        }
         //
         //[StructLayout(LayoutKind.Sequential)]
         //private struct KBDLLHOOKSTRUCT

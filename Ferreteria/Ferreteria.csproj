@@ -54,10 +54,11 @@
     <ApplicationIcon>Imagen1.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>BD8D69AA588EFE83FBB747EC6389AFBAD961158A</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>684F37DB2A3121BC16884A0C14B6EB363D08E797</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Ferreteria_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>

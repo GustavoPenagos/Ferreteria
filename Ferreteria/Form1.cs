@@ -165,7 +165,7 @@ namespace Tienda
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            this.lbHora.Text = DateTime.Now.ToString("hh:mm:ss");
+            this.lbHora.Text = DateTime.Now.ToString("hh:mm tt");
         }
         //
         //[StructLayout(LayoutKind.Sequential)]

@@ -414,7 +414,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel3.Location = new System.Drawing.Point(1036, 252);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(200, 819);
+            this.panel3.Size = new System.Drawing.Size(200, 536);
             this.panel3.TabIndex = 2;
             // 
             // cambioDe
@@ -473,7 +473,7 @@
             this.panel7.Controls.Add(this.transferencia);
             this.panel7.Controls.Add(this.efectivo);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(0, 518);
+            this.panel7.Location = new System.Drawing.Point(0, 235);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(200, 172);
             this.panel7.TabIndex = 1;
@@ -510,7 +510,7 @@
             // 
             this.panel6.Controls.Add(this.fCompra);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel6.Location = new System.Drawing.Point(0, 690);
+            this.panel6.Location = new System.Drawing.Point(0, 407);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(200, 129);
             this.panel6.TabIndex = 0;
@@ -535,7 +535,7 @@
             this.panel4.Controls.Add(this.panel10);
             this.panel4.Controls.Add(this.panel9);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 942);
+            this.panel4.Location = new System.Drawing.Point(0, 659);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(1036, 129);
             this.panel4.TabIndex = 3;
@@ -687,7 +687,7 @@
             this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel11.Location = new System.Drawing.Point(0, 252);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(1036, 690);
+            this.panel11.Size = new System.Drawing.Size(1036, 407);
             this.panel11.TabIndex = 4;
             // 
             // dataGridView2
@@ -725,7 +725,7 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView2.Size = new System.Drawing.Size(1036, 690);
+            this.dataGridView2.Size = new System.Drawing.Size(1036, 407);
             this.dataGridView2.TabIndex = 0;
             this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
             // 
@@ -733,7 +733,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1236, 1071);
+            this.ClientSize = new System.Drawing.Size(1236, 788);
             this.Controls.Add(this.panel11);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);

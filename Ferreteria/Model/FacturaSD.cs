@@ -208,7 +208,14 @@ namespace Tienda.Model
                                 if (j == (Articulo.Length - 1))
                                 {
                                     int c = (Articulo.Length - 12);
-                                    articulo2 = Articulo.Substring(12, c);
+                                    if (c >= 24)
+                                    {
+                                        articulo2 = Articulo.Substring(12, 12);
+                                    }
+                                    else
+                                    {
+                                        articulo2 = Articulo.Substring(12, c);
+                                    }
                                 }
                             }
                             Articulo = articulo1 + "\n" + articulo2;

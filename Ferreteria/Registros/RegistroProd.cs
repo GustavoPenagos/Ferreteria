@@ -123,12 +123,20 @@ namespace Tienda.Registros
         {
             try
             {
+                string[] partPrecio;
                 if (!this.utilidad.Text.Equals(""))
                 {
                     double util = Convert.ToDouble(this.utilidad.Text);
                     double precProd = Convert.ToDouble(this.precioProd.Text);
                     double precVenta = Math.Round(((util / 100) + 1) * precProd);
-                    this.precioFinal.Text = precVenta.ToString("C");
+                    string strPrecVenta = precVenta.ToString("C");
+                    partPrecio = strPrecVenta.Trim().Replace("$",string.Empty).Split('.');
+                    string sinCentavos = partPrecio[1].Replace(",00", string.Empty).ToString();
+                    double conDecimal = double.Parse(sinCentavos.Substring(0, 1) + "," + sinCentavos.Substring(1, 2));
+                    double aprox = (double)Math.Ceiling(conDecimal);
+
+                    var precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
                 }
 
             }

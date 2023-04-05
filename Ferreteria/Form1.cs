@@ -154,7 +154,7 @@ namespace Tienda
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            this.lbFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
+            this.lbFecha.Text = DateTime.Now.ToString("dd/MMM/yyyy").Replace(".",string.Empty);
         }
 
         private void Form1_Load(object sender, EventArgs e)

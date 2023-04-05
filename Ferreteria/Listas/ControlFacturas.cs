@@ -68,15 +68,21 @@ namespace Tienda.Listas
             try
             {
                 webBrowser1.DocumentText = string.Empty;
-                string queryBusca = "SELECT * FROM " + factura.ToString() + " WHERE Id_Factura = " + barras;
+                string queryBusca = "SELECT Factura FROM " + factura.ToString() + " WHERE Id_Factura = " + barras;
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(queryBusca, con);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
-                string codeB64 = dt.Rows[0].ItemArray[1].ToString();
+                string codeB64 = dt.Rows[0].ItemArray[0].ToString();
                 con.Close();
                 byte[] B64ToByte = Convert.FromBase64String(codeB64);
                 string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDFFactura"];
+                Process[] processes = Process.GetProcessesByName("Acrobat");
+                for (int i = 0; i < processes.Length-1; i++)
+                {
+                    processes[i].Kill();
+                }
+                Thread.Sleep(100);
                 File.WriteAllBytes(rutaDatosPDF, B64ToByte);
 
                 

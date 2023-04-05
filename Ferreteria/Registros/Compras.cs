@@ -37,6 +37,7 @@ namespace Tienda.Registros
             try
             {
                 Disable();
+
                 string queryE = "select [Name] from [User] where estado = 1";
                 SqlDataAdapter adapterE = new SqlDataAdapter(queryE, con);
                 DataTable dataE = new DataTable();
@@ -57,7 +58,7 @@ namespace Tienda.Registros
                 DataTable dt = new DataTable();
                 ad.Fill(dt);
                 int cantidad = dt.Rows.Count;
-                if (cantidad !=0)
+                if (cantidad != 0)
                 {
                     string queryP = "Select * from Producto order by Id_Prod desc";
                     SqlDataAdapter adapterD = new SqlDataAdapter(queryP, con);
@@ -67,12 +68,22 @@ namespace Tienda.Registros
                     this.cBNombre.ValueMember = "Id_Prod";
                     this.cBNombre.DataSource = dataD;
                     Delete();
-                    dataGridView2.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                    
+                    
                     DatosCompra();
                     ListaCompra();
                     this.idProdC.Focus();
                     NumeroCotizacion();
                     Enable();
+                    dataGridView2.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                    dataGridView2.Columns["ID"].Visible = false;
+                    dataGridView2.Columns["# Venta"].Visible = false;
+                    dataGridView2.Columns["# Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    dataGridView2.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                    dataGridView2.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    dataGridView2.Columns["Precio Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    dataGridView2.Columns["Tipo Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    
                 }
                 else
                 {
@@ -1796,7 +1807,7 @@ namespace Tienda.Registros
                 var Fac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
                 var nFac = Fac + 1;
                 //
-                string dateda = DateTime.Now.ToShortDateString();
+                string dateda = DateTime.Now.ToString("dd/MMM/yyyy").Replace(".",string.Empty);
                 Application excel = new Application();
                 Workbook workbook = excel.Workbooks.Open(rutaDatos);
                 Worksheet worksheet = workbook.Worksheets[1];
@@ -1997,7 +2008,7 @@ namespace Tienda.Registros
                         case DialogResult.Yes:
                             Process[] processes1 = Process.GetProcessesByName("Acrobat");
 
-                            for (int i = 0; i < processes1.Length - 1; i++)
+                            for (int i = 0; i < processes1.Length-1; i++)
                             {
                                 processes1[i].Kill();
                             }

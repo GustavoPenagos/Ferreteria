@@ -54,14 +54,14 @@
             this.carroCompra = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.lbHora = new System.Windows.Forms.Label();
+            this.panel13 = new System.Windows.Forms.Panel();
             this.lbFecha = new System.Windows.Forms.Label();
+            this.panel12 = new System.Windows.Forms.Panel();
+            this.lbHora = new System.Windows.Forms.Label();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.panel10 = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.panel12 = new System.Windows.Forms.Panel();
-            this.panel13 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uIn)).BeginInit();
@@ -73,9 +73,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
-            this.panel12.SuspendLayout();
             this.panel13.SuspendLayout();
+            this.panel12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -297,17 +297,29 @@
             resources.ApplyResources(this.panel3, "panel3");
             this.panel3.Name = "panel3";
             // 
-            // lbHora
+            // panel13
             // 
-            resources.ApplyResources(this.lbHora, "lbHora");
-            this.lbHora.ForeColor = System.Drawing.Color.White;
-            this.lbHora.Name = "lbHora";
+            this.panel13.Controls.Add(this.lbFecha);
+            resources.ApplyResources(this.panel13, "panel13");
+            this.panel13.Name = "panel13";
             // 
             // lbFecha
             // 
             resources.ApplyResources(this.lbFecha, "lbFecha");
             this.lbFecha.ForeColor = System.Drawing.Color.White;
             this.lbFecha.Name = "lbFecha";
+            // 
+            // panel12
+            // 
+            this.panel12.Controls.Add(this.lbHora);
+            resources.ApplyResources(this.panel12, "panel12");
+            this.panel12.Name = "panel12";
+            // 
+            // lbHora
+            // 
+            resources.ApplyResources(this.lbHora, "lbHora");
+            this.lbHora.ForeColor = System.Drawing.Color.White;
+            this.lbHora.Name = "lbHora";
             // 
             // pictureBox7
             // 
@@ -330,18 +342,6 @@
             // timer2
             // 
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // panel12
-            // 
-            this.panel12.Controls.Add(this.lbHora);
-            resources.ApplyResources(this.panel12, "panel12");
-            this.panel12.Name = "panel12";
-            // 
-            // panel13
-            // 
-            this.panel13.Controls.Add(this.lbFecha);
-            resources.ApplyResources(this.panel13, "panel13");
-            this.panel13.Name = "panel13";
             // 
             // Form1
             // 
@@ -367,9 +367,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
-            this.panel12.ResumeLayout(false);
             this.panel13.ResumeLayout(false);
+            this.panel12.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             this.ResumeLayout(false);
 
         }

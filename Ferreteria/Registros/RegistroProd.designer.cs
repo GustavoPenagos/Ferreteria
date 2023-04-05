@@ -146,7 +146,7 @@
             // 
             this.nomProd.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nomProd.Location = new System.Drawing.Point(482, 217);
-            this.nomProd.MaxLength = 36;
+            this.nomProd.MaxLength = 50;
             this.nomProd.Name = "nomProd";
             this.nomProd.Size = new System.Drawing.Size(329, 30);
             this.nomProd.TabIndex = 2;

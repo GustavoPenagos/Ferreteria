@@ -20,11 +20,11 @@ namespace Tienda.Registros
         public RegistroProd()
         {
             InitializeComponent();
-            Unidades();
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void RegistroProd_Load(object sender, EventArgs e)
         {
+            Unidades();
             this.idProd.Focus();
         }
 
@@ -39,7 +39,7 @@ namespace Tienda.Registros
             {
                 double util = Convert.ToDouble(this.utilidad.Text);
                 double precProd = Convert.ToDouble(this.precioProd.Text);
-                double precVenta = Math.Round(((util / 100) + 1) * precProd);
+                double precVenta = double.Parse(this.precioFinal.Text.Trim().Replace("$",string.Empty).Replace(".",string.Empty), NumberStyles.Number);
                 var ID = this.idProd.Text;
                 var producto = this.nomProd.Text;
                 var unidad = this.unidProd.SelectedValue;
@@ -124,6 +124,7 @@ namespace Tienda.Registros
             try
             {
                 string[] partPrecio;
+                decimal precioF = 0;
                 if (!this.utilidad.Text.Equals(""))
                 {
                     double util = Convert.ToDouble(this.utilidad.Text);
@@ -134,8 +135,17 @@ namespace Tienda.Registros
                     string sinCentavos = partPrecio[1].Replace(",00", string.Empty).ToString();
                     double conDecimal = double.Parse(sinCentavos.Substring(0, 1) + "," + sinCentavos.Substring(1, 2));
                     double aprox = (double)Math.Ceiling(conDecimal);
-
-                    var precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    if (aprox >= 10)
+                    {
+                        aprox = 0;
+                        double partPrecioF = double.Parse(partPrecio[0]) + 1;
+                        partPrecio[0] = partPrecioF.ToString();
+                        precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    }
+                    else
+                    {
+                        precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    }
                     this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
                 }
 

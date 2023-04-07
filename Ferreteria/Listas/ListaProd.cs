@@ -31,7 +31,16 @@ namespace Tienda.Listas
             dataGridView1.Columns["Precio Venta"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.selectBus.Text = "Nombre";
+
+            dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Precio Compra"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Utilidad (%)"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+
+            this.selectBus.Text = "ID";
         }
 
         private void buscaProd_Click(object sender, EventArgs e)
@@ -114,6 +123,7 @@ namespace Tienda.Listas
                 da.Fill(dt);
                 dataGridView1.DataSource = dt;
                 con.Close();
+
             }
             catch (Exception ex)
             {

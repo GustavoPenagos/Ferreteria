@@ -1,4 +1,6 @@
-﻿using Ferreteria.Forms;
+﻿using Aspose.Pdf;
+using Ferreteria.Forms;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Color = System.Drawing.Color;
+using DataTable = System.Data.DataTable;
 
 namespace Tienda.Listas
 {
@@ -25,7 +29,7 @@ namespace Tienda.Listas
 
         private void ListaBodega_Load(object sender, EventArgs e)
         {
-            OrdenarLista();
+            Listar();
             Delete();
             dataGridView1.Columns["ID"].ReadOnly= true;
             dataGridView1.Columns["Producto"].ReadOnly = true;
@@ -34,7 +38,19 @@ namespace Tienda.Listas
             dataGridView1.Columns["Unidad"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.selecBus.Text = "Nombre";
+
+            dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Precio"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Valor total"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            this.selecBus.Text = "ID";
+            
+            
+
+
         }
         private void verProducto_Click(object sender, EventArgs e)
         {
@@ -106,21 +122,28 @@ namespace Tienda.Listas
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OrdenarLista();
+            Ordenar();
         }
 
-        private void OrdenarLista()
+        public void Ordenar()
+        {
+            DataGridViewColumn column = dataGridView1.Columns["Cantidad"];
+            dataGridView1.Sort(column, ListSortDirection.Ascending);
+        }
+
+        private void Listar()
         {
             try
             {
-                string query1 = "SELECT *  FROM lista_bodega ORDER BY Cantidad asc;";
+                string query1 = "SELECT *  FROM lista_bodega";
                 con.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
                 dataGridView1.DataSource = dataTable;
                 con.Close();
-                this.nombreProducto.Text = "OrdenarLista";
+                DataGridViewColumn column = dataGridView1.Columns["Cantidad"];
+                dataGridView1.Sort(column, ListSortDirection.Ascending);
             }
             catch (Exception ex)
             {
@@ -168,7 +191,7 @@ namespace Tienda.Listas
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();
                             con.Close();
-                            OrdenarLista();
+                            Listar();
                             break;
                         case DialogResult.Cancel:
                             break;
@@ -198,7 +221,7 @@ namespace Tienda.Listas
                             SqlCommand cmd = new SqlCommand(queryUpdate, con);
                             cmd.ExecuteNonQuery();
                             con.Close();
-                            OrdenarLista();
+                            Listar();
                             break;
                         case DialogResult.Cancel:
                             break;
@@ -230,5 +253,35 @@ namespace Tienda.Listas
             update.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(update);
         }
+
+        public void SumaTotal()
+        {
+            try
+            {
+                int cantidad = 0;
+                double precio = 0;
+                double resultM = 0;
+                double result = 0;
+                foreach(DataGridViewRow data in dataGridView1.Rows)
+                {
+                    cantidad = Convert.ToInt32(data.Cells["Cantidad"].Value.ToString());
+                    precio = double.Parse(data.Cells["Precio"].Value.ToString().Trim().Replace("$",string.Empty).Replace(",00",string.Empty).Replace(".",string.Empty), NumberStyles.Number);
+                    resultM = cantidad * precio;
+                    result += resultM;
+                }
+                DineroTotal dinero = new DineroTotal(result.ToString("C").Replace(",00", string.Empty));
+                dinero.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "SumaTotal");
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SumaTotal();
+        }
+
     }
 }

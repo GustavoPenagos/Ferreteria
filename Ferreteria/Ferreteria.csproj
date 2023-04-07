@@ -142,6 +142,12 @@
     <Compile Include="Forms\DineroBase.Designer.cs">
       <DependentUpon>DineroBase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DineroTotal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DineroTotal.Designer.cs">
+      <DependentUpon>DineroTotal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Empresa.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -345,6 +351,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DineroBase.resx">
       <DependentUpon>DineroBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DineroTotal.resx">
+      <DependentUpon>DineroTotal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Empresa.resx">
       <DependentUpon>Empresa.cs</DependentUpon>

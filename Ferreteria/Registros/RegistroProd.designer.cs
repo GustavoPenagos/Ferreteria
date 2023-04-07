@@ -210,7 +210,7 @@
             // 
             this.precioFinal.Cursor = System.Windows.Forms.Cursors.No;
             this.precioFinal.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.precioFinal.Location = new System.Drawing.Point(833, 425);
+            this.precioFinal.Location = new System.Drawing.Point(833, 427);
             this.precioFinal.Name = "precioFinal";
             this.precioFinal.ReadOnly = true;
             this.precioFinal.Size = new System.Drawing.Size(185, 30);

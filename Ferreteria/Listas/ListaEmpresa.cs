@@ -27,9 +27,15 @@ namespace Tienda.Listas
             ListEmpresa();
             Delete();
             dataGridView1.Columns["NIT"].ReadOnly = true;
-            //dataGridView1.Columns["Nombre"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+
+            dataGridView1.Columns["NIT"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Información"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Dirección"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Telefono"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Ciudad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.empComBox.Text = "Nombre";
         }
         private void buscarEmp_Click(object sender, EventArgs e)

@@ -62,11 +62,13 @@
             // 
             this.dinero.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.dinero.Location = new System.Drawing.Point(42, 49);
-            this.dinero.MaxLength = 12;
+            this.dinero.MaxLength = 1;
             this.dinero.Name = "dinero";
             this.dinero.ReadOnly = true;
             this.dinero.Size = new System.Drawing.Size(216, 32);
             this.dinero.TabIndex = 8;
+            this.dinero.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.dinero.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dinero_KeyPress);
             // 
             // label1
             // 

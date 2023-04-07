@@ -180,7 +180,7 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 0)
                 {
-                    Password password = new Password();
+                    Password password = new Password("");
                     password.ShowDialog();
                     switch (password.DialogResult)
                     {
@@ -209,7 +209,7 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 1)
                 {
-                    Password password = new Password();
+                    Password password = new Password("");
                     password.ShowDialog();
                     switch (password.DialogResult)
                     {
@@ -269,8 +269,19 @@ namespace Tienda.Listas
                     resultM = cantidad * precio;
                     result += resultM;
                 }
-                DineroTotal dinero = new DineroTotal(result.ToString("C").Replace(",00", string.Empty));
-                dinero.ShowDialog();
+                Password password = new Password("");
+                password.ShowDialog();
+                switch (password.DialogResult)
+                {
+                    case DialogResult.OK:
+                        DineroTotal dinero = new DineroTotal(result.ToString("C").Replace(",00", string.Empty));
+                        dinero.ShowDialog();
+                        break;
+                    case DialogResult.Cancel:
+                        break;
+                    default: break;
+                }
+                
             }
             catch(Exception ex)
             {

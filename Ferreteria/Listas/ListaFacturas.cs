@@ -134,7 +134,7 @@ namespace Tienda.Listas
             {
                 if (e.ColumnIndex == 0)
                 {
-                    Password password = new Password();
+                    Password password = new Password("");
                     password.ShowDialog();
                     switch (password.DialogResult)
                     {

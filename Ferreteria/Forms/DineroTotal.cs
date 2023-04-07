@@ -20,7 +20,7 @@ namespace Ferreteria.Forms
 
         private void DineroTotal_Load(object sender, EventArgs e)
         {
-
+            this.dinero.Focus();
         }
 
         public void Mostar(string dinero)
@@ -36,6 +36,11 @@ namespace Ferreteria.Forms
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+        }
+
+        private void dinero_KeyPress(object sender, KeyPressEventArgs e)
         {
             DialogResult = DialogResult.OK;
         }

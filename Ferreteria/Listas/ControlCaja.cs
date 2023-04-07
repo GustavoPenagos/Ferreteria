@@ -1,4 +1,5 @@
 ﻿using Ferreteria.Forms;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataTable = System.Data.DataTable;
 
 namespace Tienda.Listas
 {
@@ -129,7 +131,7 @@ namespace Tienda.Listas
         {
             try
             {
-                Password password = new Password();
+                Password password = new Password("");
                 password.ShowDialog();
                 switch (password.DialogResult)
                 {
@@ -403,7 +405,7 @@ namespace Tienda.Listas
             {
                 if(e.ColumnIndex == 0)
                 {
-                    Password password = new Password();
+                    Password password = new Password("Control");
                     password.ShowDialog();
                     switch (password.DialogResult)
                     {
@@ -436,6 +438,22 @@ namespace Tienda.Listas
             button.Text = "Eliminar";
             button.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(button);
+        }
+
+        private void pictureBox8_Click(object sender, EventArgs e)
+        {
+            CambiarAdmin admin = new CambiarAdmin();
+            admin.ShowDialog();
+            switch (admin.DialogResult)
+            {
+                case DialogResult.OK:
+                    MessageBox.Show("Administrador cambiado", "Exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                case DialogResult.Cancel:
+
+                    break;
+                default: break;
+            }
         }
     }
 }

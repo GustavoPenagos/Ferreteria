@@ -100,7 +100,19 @@ namespace Tienda
 
         private void control_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Forms.Control());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Forms.Control());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+
+            }
+            
         }
 
         private void pictureBox5_Click(object sender, EventArgs e)
@@ -166,6 +178,22 @@ namespace Tienda
         private void timer2_Tick(object sender, EventArgs e)
         {
             this.lbHora.Text = DateTime.Now.ToString("hh:mm tt");
+        }
+
+        private void pictureBox8_Click(object sender, EventArgs e)
+        {
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Forms.Control());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+
+            }
         }
         //
         //[StructLayout(LayoutKind.Sequential)]

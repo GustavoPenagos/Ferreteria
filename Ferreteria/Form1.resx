@@ -3695,7 +3695,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAZIAAAFLCAYAAAD8swodAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAA1ZpJREFUeF7sXQdYE1kXXZqAKDYEpNh717X33teua1u7a1nr7tp37b9lddW194pI
+        vAAADrwBlbxySQAA1ZpJREFUeF7sXQdYE1kXXZqAKDYEpNh717X33teua1u7a1nr7tp37b9lddW194pI
         ky6IUlRAkCYoAtJLQu81CUnef++QIGWQJARFnfN953svmcnMZCD3zH3vvnt/YMCAAQMGDBgwYMCAAQMG
         DBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAYPaRH5+fv2MjIwmwMZiJiQk
         GJw7d27TmTNntgG3VsFtsM9mFoulLzoUAwYMGDD41pGamtr0w4cP7S0sLGZv2bLlLPBMp06dQps0aZJR
@@ -4657,65 +4657,23 @@
   <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;panel13.Name" xml:space="preserve">
-    <value>panel13</value>
+  <data name="lbFecha.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="&gt;&gt;panel13.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="lbFecha.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 20.25pt, style=Bold</value>
   </data>
-  <data name="&gt;&gt;panel13.Parent" xml:space="preserve">
-    <value>panel3</value>
+  <data name="lbFecha.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
   </data>
-  <data name="&gt;&gt;panel13.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="lbFecha.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 62</value>
   </data>
-  <data name="&gt;&gt;panel12.Name" xml:space="preserve">
-    <value>panel12</value>
+  <data name="lbFecha.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
   </data>
-  <data name="&gt;&gt;panel12.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panel12.Parent" xml:space="preserve">
-    <value>panel3</value>
-  </data>
-  <data name="&gt;&gt;panel12.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;pictureBox7.Name" xml:space="preserve">
-    <value>pictureBox7</value>
-  </data>
-  <data name="&gt;&gt;pictureBox7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;pictureBox7.Parent" xml:space="preserve">
-    <value>panel3</value>
-  </data>
-  <data name="&gt;&gt;pictureBox7.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="panel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
-  </data>
-  <data name="panel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>220, 687</value>
-  </data>
-  <data name="panel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>580, 62</value>
-  </data>
-  <data name="panel3.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;panel3.Name" xml:space="preserve">
-    <value>panel3</value>
-  </data>
-  <data name="&gt;&gt;panel3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panel3.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panel3.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="lbFecha.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;lbFecha.Name" xml:space="preserve">
     <value>lbFecha</value>
@@ -4753,35 +4711,23 @@
   <data name="&gt;&gt;panel13.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="lbFecha.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="lbHora.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="lbFecha.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="lbHora.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 20.25pt, style=Bold</value>
   </data>
-  <data name="lbFecha.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lbHora.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="lbFecha.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 62</value>
+  <data name="lbHora.Size" type="System.Drawing.Size, System.Drawing">
+    <value>174, 62</value>
   </data>
-  <data name="lbFecha.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+  <data name="lbHora.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
-  <data name="lbFecha.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+  <data name="lbHora.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>
-  </data>
-  <data name="&gt;&gt;lbFecha.Name" xml:space="preserve">
-    <value>lbFecha</value>
-  </data>
-  <data name="&gt;&gt;lbFecha.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lbFecha.Parent" xml:space="preserve">
-    <value>panel13</value>
-  </data>
-  <data name="&gt;&gt;lbFecha.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="&gt;&gt;lbHora.Name" xml:space="preserve">
     <value>lbHora</value>
@@ -4818,36 +4764,6 @@
   </data>
   <data name="&gt;&gt;panel12.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="lbHora.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="lbHora.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 20.25pt, style=Bold</value>
-  </data>
-  <data name="lbHora.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="lbHora.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 62</value>
-  </data>
-  <data name="lbHora.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="lbHora.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="&gt;&gt;lbHora.Name" xml:space="preserve">
-    <value>lbHora</value>
-  </data>
-  <data name="&gt;&gt;lbHora.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lbHora.Parent" xml:space="preserve">
-    <value>panel12</value>
-  </data>
-  <data name="&gt;&gt;lbHora.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="pictureBox7.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
@@ -5060,6 +4976,30 @@
   </data>
   <data name="&gt;&gt;pictureBox7.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="panel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="panel3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>220, 687</value>
+  </data>
+  <data name="panel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>580, 62</value>
+  </data>
+  <data name="panel3.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;panel3.Name" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;panel3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel3.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panel3.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="panel10.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

@@ -12,15 +12,19 @@ namespace Tienda
         {
             InitializeComponent();
         }
+
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
+
         private void Validacion_Load(object sender, EventArgs e)
         {
             this.password.Focus();
         }
+
         private void validarPass_Click(object sender, EventArgs e)
         {
             Exit();
         }
+
         private void Exit()
         {
             try

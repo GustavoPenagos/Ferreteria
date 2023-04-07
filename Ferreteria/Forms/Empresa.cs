@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Windows.Forms;
 
 namespace Tienda.Forms
@@ -45,42 +46,124 @@ namespace Tienda.Forms
 
         private void button3_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistroCompras());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Registros.RegistroCompras());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+
+            }
+            
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistroCompras());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Registros.RegistroCompras());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistoAbonos());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Registros.RegistoAbonos());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Registros.RegistoAbonos());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Registros.RegistoAbonos());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Listas.ListaAbonos());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Listas.ListaAbonos());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void pictureBox5_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Listas.ListaAbonos());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Listas.ListaAbonos());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Listas.ListaFacturas());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Listas.ListaFacturas());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void pictureBox6_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Listas.ListaFacturas());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Listas.ListaFacturas());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
     }
 }

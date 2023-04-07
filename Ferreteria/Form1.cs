@@ -105,7 +105,17 @@ namespace Tienda
 
         private void pictureBox5_Click(object sender, EventArgs e)
         {
-            OpenFrom(new Forms.Control());
+            Password password = new Password("Control");
+            password.ShowDialog();
+            switch (password.DialogResult)
+            {
+                case DialogResult.OK:
+                    OpenFrom(new Forms.Control());
+                    break;
+                case DialogResult.Cancel:
+                    break;
+                default: break;
+            }
         }
 
         private void pictureBox7_Click(object sender, EventArgs e)

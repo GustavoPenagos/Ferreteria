@@ -332,6 +332,7 @@
             // 
             // panel10
             // 
+            this.panel10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(168)))), ((int)(((byte)(1)))));
             resources.ApplyResources(this.panel10, "panel10");
             this.panel10.Name = "panel10";
             // 

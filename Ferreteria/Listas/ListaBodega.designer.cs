@@ -73,6 +73,7 @@
             // 
             // panel2
             // 
+            this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(218)))), ((int)(((byte)(168)))), ((int)(((byte)(1)))));
             this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.nombreProducto);
             this.panel2.Controls.Add(this.selecBus);

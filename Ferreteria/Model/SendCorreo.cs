@@ -4,12 +4,8 @@ using System.Net.Security;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
-using System.IO;
 using System.Data.SqlClient;
-using System.Data;
 using System.Configuration;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 using Ferreteria.Model;
 
 namespace DistribucionesArly_s

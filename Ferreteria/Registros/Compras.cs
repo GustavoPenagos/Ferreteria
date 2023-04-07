@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Windows.Forms;
@@ -17,9 +16,7 @@ using iTextSharp.text.pdf;
 using System.Diagnostics;
 using System.Threading;
 using Ferreteria.Forms;
-using System.Runtime.InteropServices;
-using Org.BouncyCastle.Crypto.Engines;
-using System.Linq;
+
 
 namespace Tienda.Registros
 {

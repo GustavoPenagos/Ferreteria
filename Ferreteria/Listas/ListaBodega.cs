@@ -1,25 +1,17 @@
-﻿using Aspose.Pdf;
-using Ferreteria.Forms;
-using Microsoft.Office.Interop.Word;
+﻿using Ferreteria.Forms;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Color = System.Drawing.Color;
-using DataTable = System.Data.DataTable;
+using System.Data;
 
 namespace Tienda.Listas
 {
     public partial class ListaBodega : Form
     {
+        private DataTable dataTable;
         public ListaBodega()
         {
             InitializeComponent();
@@ -135,15 +127,13 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT *  FROM lista_bodega";
-                con.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                dataTable = DataTable();
+                                
                 dataGridView1.DataSource = dataTable;
                 con.Close();
                 DataGridViewColumn column = dataGridView1.Columns["Cantidad"];
                 dataGridView1.Sort(column, ListSortDirection.Ascending);
+
             }
             catch (Exception ex)
             {
@@ -151,6 +141,15 @@ namespace Tienda.Listas
                 MessageBox.Show(ex.Message, "");
             }
 
+        }
+
+        private DataTable DataTable()
+        {
+            string query1 = "SELECT *  FROM lista_bodega";
+            SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            return data;
         }
 
         private void selecBus_SelectedIndexChanged(object sender, EventArgs e)

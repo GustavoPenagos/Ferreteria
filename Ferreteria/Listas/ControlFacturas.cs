@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
 using DistribucionesArly_s;
-using System.Drawing.Imaging;
-using Font = System.Drawing.Font;
+
 
 namespace Tienda.Listas
 {

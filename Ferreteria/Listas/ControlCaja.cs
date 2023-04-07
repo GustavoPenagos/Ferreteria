@@ -1,19 +1,10 @@
 ﻿using Ferreteria.Forms;
-using Microsoft.Office.Interop.Word;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataTable = System.Data.DataTable;
 
 namespace Tienda.Listas
 {
@@ -29,9 +20,9 @@ namespace Tienda.Listas
         {
             Listar();
             Delete();
-            dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             Capital();
             DineroBase();
+            dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
         }
 
         private void button2_Click_1(object sender, EventArgs e)

@@ -40,7 +40,7 @@
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.cambio);
             this.panel1.Controls.Add(this.panel3);
@@ -63,6 +63,7 @@
             // 
             // cambio
             // 
+            this.cambio.BackColor = System.Drawing.Color.White;
             this.cambio.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.cambio.Location = new System.Drawing.Point(41, 84);
             this.cambio.Name = "cambio";
@@ -106,6 +107,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(301, 167);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

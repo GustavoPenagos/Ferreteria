@@ -61,7 +61,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryAbonos = "select * from Listado_Abono";
+                string queryAbonos = "select top(20) * from Listado_Abono";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(queryAbonos, con);
                 SqlDataReader dr = cmd.ExecuteReader();

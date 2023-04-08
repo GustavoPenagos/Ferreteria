@@ -73,6 +73,7 @@
             // 
             // panel2
             // 
+            this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.Controls.Add(this.buscarFactura);
             this.panel2.Controls.Add(this.bFCompra);
             this.panel2.Controls.Add(this.label2);
@@ -117,6 +118,7 @@
             // 
             // panel3
             // 
+            this.panel3.BackColor = System.Drawing.Color.White;
             this.panel3.Controls.Add(this.insertAbono);
             this.panel3.Controls.Add(this.totalFact);
             this.panel3.Controls.Add(this.abonoFact);
@@ -191,6 +193,7 @@
             // 
             // imgFactura
             // 
+            this.imgFactura.BackColor = System.Drawing.Color.White;
             this.imgFactura.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.imgFactura.Cursor = System.Windows.Forms.Cursors.No;
             this.imgFactura.Dock = System.Windows.Forms.DockStyle.Fill;

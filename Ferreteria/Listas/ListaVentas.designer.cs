@@ -75,6 +75,7 @@
             // 
             // panel2
             // 
+            this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.Controls.Add(this.tBoxBusca);
             this.panel2.Controls.Add(this.buttonBuscar);
             this.panel2.Controls.Add(this.dateCartera);
@@ -149,16 +150,16 @@
             this.panel3.Controls.Add(this.totalCartera);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 651);
+            this.panel3.Location = new System.Drawing.Point(0, 692);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1233, 100);
+            this.panel3.Size = new System.Drawing.Size(1233, 59);
             this.panel3.TabIndex = 2;
             // 
             // totalCartera
             // 
             this.totalCartera.Cursor = System.Windows.Forms.Cursors.No;
             this.totalCartera.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.totalCartera.Location = new System.Drawing.Point(547, 35);
+            this.totalCartera.Location = new System.Drawing.Point(546, 11);
             this.totalCartera.Name = "totalCartera";
             this.totalCartera.ReadOnly = true;
             this.totalCartera.Size = new System.Drawing.Size(194, 30);
@@ -169,7 +170,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(446, 40);
+            this.label3.Location = new System.Drawing.Point(445, 16);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 25);
             this.label3.TabIndex = 2;
@@ -181,7 +182,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 200);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1233, 451);
+            this.panel4.Size = new System.Drawing.Size(1233, 492);
             this.panel4.TabIndex = 3;
             // 
             // dataGridView1
@@ -189,6 +190,7 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
@@ -218,7 +220,7 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView1.Size = new System.Drawing.Size(1233, 451);
+            this.dataGridView1.Size = new System.Drawing.Size(1233, 492);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 

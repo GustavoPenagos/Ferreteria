@@ -74,6 +74,7 @@
             // 
             // ImgFact
             // 
+            this.ImgFact.BackColor = System.Drawing.Color.White;
             this.ImgFact.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ImgFact.Cursor = System.Windows.Forms.Cursors.No;
             this.ImgFact.Dock = System.Windows.Forms.DockStyle.Right;
@@ -85,6 +86,7 @@
             // 
             // panel2
             // 
+            this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.Controls.Add(this.cBoxEmp);
             this.panel2.Controls.Add(this.GuardarFact);
             this.panel2.Controls.Add(this.CargarImg);

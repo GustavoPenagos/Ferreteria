@@ -113,7 +113,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT *  FROM lista_usuario";
+                string query1 = "SELECT top(20) *  FROM lista_usuario";
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(query1, con);
                 DataTable dt = new DataTable();

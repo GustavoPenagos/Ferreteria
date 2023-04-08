@@ -39,7 +39,7 @@ namespace Tienda.Registros
                 var pass = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
                 var email = this.eMail.Text;
                 //
-                string query = "INSERT INTO [dbo].[User] VALUES (" + ID + ",'" + nombre + "','" +telefono +"','" + direccion + "'," + nit + "," + typeUser + "," + typeDoc + ",'" + pass + "','" + email + "', 0)";
+                string query = "INSERT INTO [dbo].[User] VALUES (" + ID + ",'" + nombre + "','" +telefono +"','" + direccion + "'," + nit + "," + typeUser + "," + typeDoc + ",'" + pass + "','" + email + "', 0, 0)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();
                 cmd.ExecuteNonQuery();

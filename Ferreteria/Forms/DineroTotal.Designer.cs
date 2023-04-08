@@ -76,9 +76,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
             this.label1.Location = new System.Drawing.Point(37, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(236, 26);
+            this.label1.Size = new System.Drawing.Size(210, 26);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Total dinero X producto";
+            this.label1.Text = "Valor aprox. Bodega";
             // 
             // panel2
             // 
@@ -93,6 +93,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(301, 156);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.dinero);

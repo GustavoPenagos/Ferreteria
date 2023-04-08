@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Data;
+using iTextSharp.text.xml.simpleparser.handler;
 
 namespace Tienda.Listas
 {
@@ -39,10 +40,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["Valor total"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.selecBus.Text = "ID";
-            
-            
-
-
         }
         private void verProducto_Click(object sender, EventArgs e)
         {
@@ -145,7 +142,7 @@ namespace Tienda.Listas
 
         private DataTable DataTable()
         {
-            string query1 = "SELECT *  FROM lista_bodega";
+            string query1 = "SELECT top(20)*  FROM lista_bodega";
             SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
             DataTable data = new DataTable();
             adapter.Fill(data);
@@ -257,29 +254,8 @@ namespace Tienda.Listas
         {
             try
             {
-                int cantidad = 0;
-                double precio = 0;
-                double resultM = 0;
-                double result = 0;
-                foreach(DataGridViewRow data in dataGridView1.Rows)
-                {
-                    cantidad = Convert.ToInt32(data.Cells["Cantidad"].Value.ToString());
-                    precio = double.Parse(data.Cells["Precio"].Value.ToString().Trim().Replace("$",string.Empty).Replace(",00",string.Empty).Replace(".",string.Empty), NumberStyles.Number);
-                    resultM = cantidad * precio;
-                    result += resultM;
-                }
-                Password password = new Password("");
-                password.ShowDialog();
-                switch (password.DialogResult)
-                {
-                    case DialogResult.OK:
-                        DineroTotal dinero = new DineroTotal(result.ToString("C").Replace(",00", string.Empty));
-                        dinero.ShowDialog();
-                        break;
-                    case DialogResult.Cancel:
-                        break;
-                    default: break;
-                }
+                
+                
                 
             }
             catch(Exception ex)
@@ -290,7 +266,7 @@ namespace Tienda.Listas
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SumaTotal();
+            
         }
 
     }

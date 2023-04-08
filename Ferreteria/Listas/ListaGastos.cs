@@ -93,7 +93,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT Id_Gasto AS ID, Desc_Gastos AS Descripcion, format(convert(decimal,Costo_Gasto),'C','es-CO') AS Valor_Gasto, Fecha_Gasto FROM dbo.Gastos";
+                string query1 = "SELECT top(20) Id_Gasto AS ID, Desc_Gastos AS Descripcion, format(convert(decimal,Costo_Gasto),'C','es-CO') AS Valor_Gasto, Fecha_Gasto FROM dbo.Gastos";
                 con.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
                 DataTable dataTable = new DataTable();

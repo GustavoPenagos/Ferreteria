@@ -35,15 +35,15 @@
             this.buscaID = new System.Windows.Forms.TextBox();
             this.selecBus = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
             this.btnCorreo = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
-            this.panel4.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -70,6 +70,7 @@
             // 
             // panel2
             // 
+            this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.Controls.Add(this.buscarFact);
             this.panel2.Controls.Add(this.buscaID);
             this.panel2.Controls.Add(this.selecBus);
@@ -127,6 +128,15 @@
             this.panel3.Size = new System.Drawing.Size(1046, 549);
             this.panel3.TabIndex = 2;
             // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.webBrowser1);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(1046, 449);
+            this.panel6.TabIndex = 4;
+            // 
             // webBrowser1
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -145,15 +155,6 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(1046, 100);
             this.panel4.TabIndex = 2;
-            // 
-            // panel6
-            // 
-            this.panel6.Controls.Add(this.webBrowser1);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel6.Location = new System.Drawing.Point(0, 0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1046, 449);
-            this.panel6.TabIndex = 4;
             // 
             // btnCorreo
             // 
@@ -184,9 +185,9 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

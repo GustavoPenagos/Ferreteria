@@ -13,8 +13,8 @@ namespace Tienda.Listas
         public ListaVentas()
         {
             InitializeComponent();
-            Delete();
             CostContol_Load();
+            Delete();
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
 
@@ -118,7 +118,7 @@ namespace Tienda.Listas
                 string fecha = dateCartera.Value.ToString("d/MM/yyyy");
                 if (this.tBoxBusca.Text.Equals("") && dateCartera.Visible == false)
                 {
-                    querySWhere = "select * from Lista_Ventas";
+                    querySWhere = "select top(20)* from Lista_Ventas";
                 }
                 else
                 {

@@ -118,7 +118,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "select * from Lista_Emp";
+                string query = "select top(20)* from Lista_Emp";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 SqlDataReader dr = cmd.ExecuteReader();

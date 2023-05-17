@@ -27,8 +27,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
             dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Precio Compra"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Utilidad (%)"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
@@ -87,10 +85,9 @@ namespace Tienda.Listas
             {
                 string query = "select * from lista_producto where " + a.ToString() + " like '" + this.buscarProd.Text + "%'";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
-                SqlDataReader dr = cmd.ExecuteReader();
+                SqlDataAdapter dr = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();
-                dt.Load(dr);
+                dr.Fill(dt);
                 dataGridView1.DataSource = dt;
                 con.Close();
                 if (dataGridView1.Rows.Count == 0)

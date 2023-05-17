@@ -351,6 +351,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Bodega.resx">
       <DependentUpon>Bodega.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CambiarAdmin.resx">
       <DependentUpon>CambiarAdmin.cs</DependentUpon>

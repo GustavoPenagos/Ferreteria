@@ -90,10 +90,10 @@ namespace Tienda.Listas
                 string query = " select * from lista_usuario where " + a.ToString() + " like '" + this.idBuscar.Text + "%'";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
-                SqlDataReader reader = cmd.ExecuteReader();
-                DataTable dt = new DataTable();
-                dt.Load(reader);
-                dataGridView1.DataSource = dt;
+                SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+                DataTable data = new DataTable();
+                adapter.Fill(data);
+                dataGridView1.DataSource = data;
 
                 if (dataGridView1.Rows.Count <= 0)
                 {

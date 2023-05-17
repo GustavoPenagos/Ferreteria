@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Data;
 using iTextSharp.text.xml.simpleparser.handler;
+using System.Data.Odbc;
 
 namespace Tienda.Listas
 {
@@ -33,11 +34,8 @@ namespace Tienda.Listas
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
             dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Precio"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Valor total"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.selecBus.Text = "ID";
         }
@@ -90,10 +88,10 @@ namespace Tienda.Listas
             {
                 string query = "SELECT *  FROM lista_bodega where " + a + " like '" + this.nombreProducto.Text + "%'";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
-                SqlDataReader dr = cmd.ExecuteReader();
+                //SqlCommand cmd = new SqlCommand(query, con);
+                SqlDataAdapter dr = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();
-                dt.Load(dr);
+                dr.Fill(dt);
                 dataGridView1.DataSource = dt;
                 if (dataGridView1.Rows.Count <= 0)
                 {

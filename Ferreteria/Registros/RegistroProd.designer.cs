@@ -181,6 +181,7 @@
             // 
             this.utilidad.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.utilidad.Location = new System.Drawing.Point(482, 425);
+            this.utilidad.MaxLength = 6;
             this.utilidad.Name = "utilidad";
             this.utilidad.Size = new System.Drawing.Size(329, 30);
             this.utilidad.TabIndex = 6;

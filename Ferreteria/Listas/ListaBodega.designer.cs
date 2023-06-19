@@ -113,11 +113,11 @@
             this.button1.AutoSize = true;
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.button1.Location = new System.Drawing.Point(754, 11);
+            this.button1.Location = new System.Drawing.Point(805, 11);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(137, 67);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Ordenar";
+            this.button1.Text = "Listar";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Tienda.Listas
@@ -79,11 +80,20 @@ namespace Tienda.Listas
             }
         }
 
-        public void ListaBusqueda(string a)
+        public void ListaBusqueda(string selectBusc)
         {
             try
             {
-                string query = "select * from lista_producto where " + a.ToString() + " like '" + this.buscarProd.Text + "%'";
+                string query = "";
+                switch (selectBusc)
+                {
+                    case "ID":
+                        query = "select * from lista_producto where " + selectBusc.ToString() + " = " + this.buscarProd.Text;
+                        break;
+                    default:
+                        query = "select * from lista_producto where " + selectBusc.ToString() + " like '%" + this.buscarProd.Text + "%'";
+                        break;
+                }
                 con.Open();
                 SqlDataAdapter dr = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();

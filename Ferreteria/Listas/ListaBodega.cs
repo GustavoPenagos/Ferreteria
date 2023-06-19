@@ -82,13 +82,21 @@ namespace Tienda.Listas
             }
         }
 
-        private void ListaBusqueda(string a)
+        private void ListaBusqueda(string selectBusc)
         {
             try
             {
-                string query = "SELECT *  FROM lista_bodega where " + a + " like '" + this.nombreProducto.Text + "%'";
+                string query = "";
+                switch (selectBusc)
+                {
+                    case "ID":
+                        query = "SELECT *  FROM lista_bodega where " + selectBusc + " = " + this.nombreProducto.Text;
+                        break;
+                    default:
+                        query = "SELECT *  FROM lista_bodega where " + selectBusc + " like '%" + this.nombreProducto.Text + "%'";
+                        break;
+                }                    
                 con.Open();
-                //SqlCommand cmd = new SqlCommand(query, con);
                 SqlDataAdapter dr = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();
                 dr.Fill(dt);
@@ -109,13 +117,7 @@ namespace Tienda.Listas
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Ordenar();
-        }
-
-        public void Ordenar()
-        {
-            DataGridViewColumn column = dataGridView1.Columns["Cantidad"];
-            dataGridView1.Sort(column, ListSortDirection.Ascending);
+            Listar();
         }
 
         private void Listar()

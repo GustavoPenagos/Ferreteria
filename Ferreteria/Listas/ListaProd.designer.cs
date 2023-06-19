@@ -52,7 +52,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1036, 100);
+            this.panel1.Size = new System.Drawing.Size(1069, 100);
             this.panel1.TabIndex = 0;
             // 
             // label1
@@ -62,7 +62,7 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1036, 100);
+            this.label1.Size = new System.Drawing.Size(1069, 100);
             this.label1.TabIndex = 1;
             this.label1.Text = "Listado de productos";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -76,7 +76,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 100);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1036, 100);
+            this.panel2.Size = new System.Drawing.Size(1069, 100);
             this.panel2.TabIndex = 1;
             // 
             // buscaProd
@@ -124,7 +124,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 200);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1036, 513);
+            this.panel3.Size = new System.Drawing.Size(1069, 513);
             this.panel3.TabIndex = 2;
             // 
             // dataGridView1
@@ -161,7 +161,7 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView1.Size = new System.Drawing.Size(1036, 513);
+            this.dataGridView1.Size = new System.Drawing.Size(1069, 513);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -169,7 +169,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1036, 713);
+            this.ClientSize = new System.Drawing.Size(1069, 713);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);

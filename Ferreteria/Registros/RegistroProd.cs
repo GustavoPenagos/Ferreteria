@@ -116,97 +116,95 @@ namespace Tienda.Registros
         {
             try
             {
-                if (!utilidad.Text.Equals(""))
+                string[] partPrecio;
+                decimal precioF = 0;
+                string sinCentavos = "";
+                double aprox = 0.00;
+                if (!this.utilidad.Text.Equals(""))
                 {
-                    string[] partPrecio;
-                    decimal precioF = 0;
                     double util = Convert.ToDouble(this.utilidad.Text);
                     double precProd = Convert.ToDouble(this.precioProd.Text);
                     double precVenta = Math.Round(((util / 100) + 1) * precProd);
                     string strPrecVenta = precVenta.ToString("C");
-                    double aprox = 0.00;
-                    string strPreVentSin = strPrecVenta.ToString().Replace("$ ", string.Empty).Replace(",00", string.Empty);
-                    string separar = "";
-                    double partPrecioF = 0.00;
-                    int k = 0;
-                    if (!this.utilidad.Text.Equals(""))
+                    if (strPrecVenta.Length > 2)
                     {
-                        if (strPreVentSin.Length <= 3)
-                        {
-                            separar = strPreVentSin.ToString().Insert(1, ",");
-                            partPrecio = separar.Split(',');
-                            //
-                            string sumPrec = ""; string sumP = "";
-                            //
-                            for (int i = 0; i < partPrecio.Length; i++)
-                            {
-                                sumPrec += partPrecio[i].ToString();
-                            }
-                            if (double.Parse(sumPrec) >= 100)
-                            {
-                                separar = sumPrec.Insert(1, "-");
-                                partPrecio = separar.Split('-');
-
-                                if (double.Parse(partPrecio[1]) <= 50 && double.Parse(partPrecio[1]) >= 1)
-                                {
-                                    partPrecio[1] = 50.ToString();
-                                    //precioF = decimal.Parse(partPrecio[0] + partPrecio[1], CultureInfo.GetCultureInfo("es-CO"));
-                                }
-                                if(double.Parse(partPrecio[1]) >= 51)
-                                {
-                                    double sumar = double.Parse(partPrecio[0]) + 1;
-                                    partPrecio[0] = sumar.ToString();
-                                    partPrecio[1] = "00";
-                                    //precioF = decimal.Parse(partPrecio[0], CultureInfo.GetCultureInfo("es-CO"));
-                                }
-                                
-                                precioF = decimal.Parse(partPrecio[0] + partPrecio[1], CultureInfo.GetCultureInfo("es-CO"));
-                            }
-                            if(double.Parse(sumPrec) <= 99)
-                            {
-                                precioF = decimal.Parse(100.ToString(), CultureInfo.GetCultureInfo("es-CO"));
-                            }
-                            
-                        }
-                        else
+                        if (strPrecVenta.Contains("."))
                         {
                             partPrecio = strPrecVenta.Trim().Replace("$", string.Empty).Split('.');
-                            string sinCentavos = partPrecio[1].Replace(",00", string.Empty).ToString();
+                            sinCentavos = partPrecio[1].Replace(",00", string.Empty).ToString();
                             double conDecimal = double.Parse(sinCentavos.Substring(0, 1) + "," + sinCentavos.Substring(1, 2));
                             aprox = (double)Math.Ceiling(conDecimal);
                             if (aprox >= 10)
                             {
                                 aprox = 0;
-                                partPrecioF = double.Parse(partPrecio[0]) + 1;
+                                double partPrecioF = double.Parse(partPrecio[0]) + 1;
                                 partPrecio[0] = partPrecioF.ToString();
-                                string sumP = "";
-                                for (int i = 0; i < partPrecio.Length; i++)
-                                {
-                                    sumP += partPrecio[i].ToString();
-                                }
-                                precioF = decimal.Parse(sumP, CultureInfo.GetCultureInfo("es-CO"));
+                                precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
                             }
                             else
                             {
-                                string sumP = "";
-                                for(int i=0; i<partPrecio.Length; i++) 
-                                { 
-                                    sumP += partPrecio[i].ToString();
-                                }
-                                precioF = decimal.Parse(sumP, CultureInfo.GetCultureInfo("es-CO"));
+                                precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
                             }
+                            this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
+                        }
+                        else
+                        {
+                            partPrecio = strPrecVenta.Trim().Replace("$", string.Empty).Split(',');
+                            if (partPrecio[0].Length <= 2)
+                            {
+                                aprox = (double)Math.Ceiling(Double.Parse(partPrecio[0]));
+                            }
+                            else
+                            {
+                                sinCentavos = partPrecio[0].Replace(",00", string.Empty).ToString();
+
+                                double conDecimal = double.Parse(sinCentavos.Insert(2, ","));
+                                aprox = (double)Math.Ceiling(conDecimal);
+                            }
+
+                            if (aprox >= 10)
+                            {
+                                aprox = 0;
+                                double partPrecioF = double.Parse(partPrecio[0]) + 1;
+                                partPrecio[0] = partPrecioF.ToString();
+                                precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                            }
+                            else
+                            {
+                                precioF = decimal.Parse(aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                            }
+                            this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
                         }
                     }
-                    this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
-                }
-                else
-                {
+                    //else if (strPrecVenta.Length <= 2)
+                    //{
+                    //    partPrecio = strPrecVenta.Trim().Replace("$", string.Empty).Split(',');
+                    //    sinCentavos = partPrecio[0].Replace(",00", string.Empty).ToString();
 
+                    //    double conDecimal = double.Parse(sinCentavos.Insert(2, ","));
+                    //    aprox = (double)Math.Ceiling(conDecimal);
+                    //    if (aprox >= 10)
+                    //    {
+                    //        aprox = 0;
+                    //        double partPrecioF = double.Parse(partPrecio[0]) + 1;
+                    //        partPrecio[0] = partPrecioF.ToString();
+                    //        precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    //    }
+                    //    else
+                    //    {
+                    //        precioF = decimal.Parse(aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                    //    }
+                    //    this.precioFinal.Text = precioF.ToString("C").Replace(",00", string.Empty);
+                    //}
+
+                    //partPrecio = strPrecVenta.Trim().Replace("$",string.Empty).Split('.');
                 }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("El campo de precios no puede estar vacio");
+                MessageBox.Show(ex.Message, "Caluculo de precio");
             }
         }
 

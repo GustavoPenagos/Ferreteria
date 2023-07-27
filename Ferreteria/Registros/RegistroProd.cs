@@ -164,10 +164,10 @@ namespace Tienda.Registros
 
                             if (aprox >= 10)
                             {
-                                aprox = 0;
+                                //aprox = 0;
                                 double partPrecioF = double.Parse(partPrecio[0]) + 1;
                                 partPrecio[0] = partPrecioF.ToString();
-                                precioF = decimal.Parse(partPrecio[0] + aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
+                                precioF = decimal.Parse( aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));
                             }
                             else
                             {

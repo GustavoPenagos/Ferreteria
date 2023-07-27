@@ -164,7 +164,7 @@ namespace Tienda.Registros
 
                             if (aprox >= 10)
                             {
-                                //aprox = 0;
+                                //Cambio de prueba temporal
                                 double partPrecioF = double.Parse(partPrecio[0]) + 1;
                                 partPrecio[0] = partPrecioF.ToString();
                                 precioF = decimal.Parse( aprox.ToString() + "00", CultureInfo.GetCultureInfo("es-CO"));

@@ -38,7 +38,7 @@ namespace Tienda.Registros
                 var unidad = this.unidProd.SelectedValue;
                 var marca = this.marcaProd.Text;
                 var utilidad = this.utilidad.Text;
-                var cantidad = this.txbCantidad.Text;
+                var cantidad = this.txbCantidad.Text.Equals("") ? "0" : this.txbCantidad.Text;
                 string query = "INSERT INTO Producto VALUES (" + ID + ",'" + producto + "'," + precProd + "," + unidad + ", '" + marca + "','" + utilidad + "','" + precVenta + "')";
                 SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();

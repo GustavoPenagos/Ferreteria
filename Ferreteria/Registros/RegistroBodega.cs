@@ -68,7 +68,7 @@ namespace Tienda.Registros
                 con.Open();
                 SqlCommand cmdConsul = new SqlCommand(queryConsult, con);
                 SqlDataReader dr = cmdConsul.ExecuteReader();
-                var cantidadProd = Convert.ToInt32(this.cantidadProd.Text);
+                var cantidadProd = this.cantidadProd.Text.Equals("") ? "0" : this.cantidadProd.Text;
                 int sum = 0;
                 if (dr.Read())
                 {
@@ -93,7 +93,7 @@ namespace Tienda.Registros
                         if (idProd == this.idProdRegis.Text)
                         {
                             var cantidad = Convert.ToDouble(data.Rows[i].ItemArray[2].ToString());
-                            var total = cantidadProd + cantidad;
+                            var total = Convert.ToInt32(cantidadProd) + cantidad;
                             string queryInsert = "update Bodega set cantidad = " + total + " where Id_Prod = " + this.idProdRegis.Text;
                             SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
                             cmdInsert.ExecuteNonQuery();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Listas;
+using System;
 using System.Windows.Forms;
 
 namespace Tienda.Forms
@@ -51,6 +52,16 @@ namespace Tienda.Forms
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             OpenFrom(new Listas.ControlCaja());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            OpenFrom(new BalanceUtilidad());
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            OpenFrom(new BalanceCompra());
         }
     }
 }

@@ -29,7 +29,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["Producto"].ReadOnly = true;
             dataGridView1.Columns["Marca"].ReadOnly = true;
             dataGridView1.Columns["Precio"].ReadOnly = true;
-            dataGridView1.Columns["Unidad"].ReadOnly = true;
             dataGridView1.Columns["Valor total"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
@@ -37,8 +36,8 @@ namespace Tienda.Listas
             dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Precio"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.selecBus.Text = "ID";
+            this.nombreProducto.Focus();
         }
         private void verProducto_Click(object sender, EventArgs e)
         {
@@ -249,25 +248,6 @@ namespace Tienda.Listas
             update.Text = "Actualizar";
             update.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(update);
-        }
-
-        public void SumaTotal()
-        {
-            try
-            {
-                
-                
-                
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message, "SumaTotal");
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            
         }
 
     }

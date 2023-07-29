@@ -21,6 +21,7 @@ namespace Tienda.Listas
         {
             ListaProducto();
             Delete();
+            this.buscaProd.Focus();
             dataGridView1.Columns["ID"].ReadOnly = true;
             dataGridView1.Columns["Unidad"].ReadOnly = true;
             dataGridView1.Columns["Precio Venta"].ReadOnly = true;
@@ -32,7 +33,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["Utilidad (%)"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-
             this.selectBus.Text = "ID";
         }
 

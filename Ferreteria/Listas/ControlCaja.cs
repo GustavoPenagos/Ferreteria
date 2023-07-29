@@ -27,6 +27,14 @@ namespace Tienda.Listas
 
         private void button2_Click_1(object sender, EventArgs e)
         {
+            this.panel8.Visible = true;
+            this.panel4.Visible = true;
+            this.panel5.Visible = true;
+            this.button3.Visible = true;
+            this.button4.Visible = true;
+            this.button5.Visible = true;
+            this.pictureBox8.Visible = true;
+            //
             this.ListaCapital.Visible = true;
             this.button2.Visible = false;
             this.button1.Visible = true;
@@ -61,6 +69,14 @@ namespace Tienda.Listas
 
         private void ListaCapital_Click(object sender, EventArgs e)
         {
+            this.panel8.Visible = false;
+            this.panel4.Visible = false;
+            this.panel5.Visible = false;
+            this.button3.Visible = false;
+            this.button4.Visible = false;
+            this.button5.Visible = false;
+            this.pictureBox8.Visible = false;
+            //
             this.label2.Visible = false;
             this.label3.Visible = false;
             this.label4.Visible = false;
@@ -464,6 +480,50 @@ namespace Tienda.Listas
                 dinero.ShowDialog();
             }
             catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Suma de bodega");
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double suma = 0;
+                string querySuma = "select [Utilidad] from Lista_utilidad";
+                SqlDataAdapter adapter = new SqlDataAdapter(querySuma, con);
+                DataTable data = new DataTable();
+                adapter.Fill(data);
+                for (int i = 0; i < data.Rows.Count; i++)
+                {
+                    suma += double.Parse(data.Rows[i].ItemArray[0].ToString().Trim().Replace("$", string.Empty).Replace(",00", string.Empty));
+                }
+                DineroTotal dinero = new DineroTotal(suma.ToString("C").Replace(",00", string.Empty));
+                dinero.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Suma de bodega");
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double suma = 0;
+                string querySuma = "select [Total] from Lista_BCompra";
+                SqlDataAdapter adapter = new SqlDataAdapter(querySuma, con);
+                DataTable data = new DataTable();
+                adapter.Fill(data);
+                for (int i = 0; i < data.Rows.Count; i++)
+                {
+                    suma += double.Parse(data.Rows[i].ItemArray[0].ToString().Trim().Replace("$", string.Empty).Replace(",00", string.Empty));
+                }
+                DineroTotal dinero = new DineroTotal(suma.ToString("C").Replace(",00", string.Empty));
+                dinero.ShowDialog();
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Suma de bodega");
             }

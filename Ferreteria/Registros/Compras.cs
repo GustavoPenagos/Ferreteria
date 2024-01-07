@@ -791,7 +791,6 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("Distribuciones Arly's");
                         Ticket1.TextoCentro("Regimen comuún");
                         Ticket1.TextoCentro("NIT: 40079945-0");
-                        Ticket1.TextoCentro("Nombre empleado");
                         Ticket1.TextoCentro("Calle 19 sur # 45B - 34");
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");

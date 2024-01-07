@@ -54,11 +54,10 @@
     <ApplicationIcon>Imagen1.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>64FE25E536DE3C5E11321A450B52B1D45E320B21</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>0E0A344D4AC3522122AA98E487878E71725D0466</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>Ferreteria_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -486,6 +485,7 @@
       <DependentUpon>Validacion.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Content\Archivos\Cotizacion.xlsx" />
+    <None Include="Ferreteria_1_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

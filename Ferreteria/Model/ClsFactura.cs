@@ -124,7 +124,7 @@ namespace DistribucionesArly_s
             }
 
             // se le pasan los Aticulos  con sus detalles
-            public void AgregaArticulo(string Articulo, double precio, int cant, double subtotal)
+            public void AgregaArticulo(string Articulo, double precio, double cant, double subtotal)
             {
                 int can = cant.ToString().Length;
                 int pre = precio.ToString().Length;
@@ -140,7 +140,7 @@ namespace DistribucionesArly_s
                     {
                         //cort = max - 16;
                         //parte1 = Articulo.Remove(16, cort);          // corta a 16 la descripcion del articulo
-                        nroEspacios = (3 - cant);
+                        nroEspacios = (3 - (Convert.ToInt32(cant.ToString().Replace("0,5","0"))));
                         espacios = "";
                         for (int i = 0; i < nroEspacios; i++)
                         {

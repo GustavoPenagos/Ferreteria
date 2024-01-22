@@ -16,7 +16,11 @@ using iTextSharp.text.pdf;
 using System.Diagnostics;
 using System.Threading;
 using Ferreteria.Forms;
-
+using Ferreteria.Model;
+using Aspose.Pdf.Operators;
+ using Org.BouncyCastle.Utilities.Collections;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace Tienda.Registros
 {
@@ -73,13 +77,13 @@ namespace Tienda.Registros
                     NumeroCotizacion();
                     Enable();
                     dataGridView2.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-                    dataGridView2.Columns["ID"].Visible = false;
-                    dataGridView2.Columns["# Venta"].Visible = false;
-                    dataGridView2.Columns["# Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-                    dataGridView2.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-                    dataGridView2.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-                    dataGridView2.Columns["Precio Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-                    dataGridView2.Columns["Tipo Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    //dataGridView2.Columns["ID"].Visible = false;
+                    //dataGridView2.Columns["# Venta"].Visible = false;
+                    //dataGridView2.Columns["# Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    //dataGridView2.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+                    //dataGridView2.Columns["Producto"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    //dataGridView2.Columns["Precio Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+                    //dataGridView2.Columns["Tipo Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
                     
                 }
                 else
@@ -110,7 +114,6 @@ namespace Tienda.Registros
         {
             try
             {
-                //
                 string queryCompare = ""; long ID = 0;
                 if (this.rBId.Checked == true)
                 {
@@ -122,11 +125,14 @@ namespace Tienda.Registros
                     {
                         MessageBox.Show("Campo ID esta vacio"); return;
                     }
-                    ID = Convert.ToInt64(this.idProdC.Text);
                     queryCompare = "Select * from bodega where Id_Prod = " + this.idProdC.Text;
                 }
                 if (this.rBNombre.Checked == true)
                 {
+                    if (this.canProd.Text.Equals(""))
+                    {
+                        MessageBox.Show("Campo cantidad esta vacio"); return;
+                    }
                     string query = "select ID from lista_bodega where ID like '" + this.cBNombre.SelectedValue + "'";
                     con.Open();
                     SqlDataAdapter ad = new SqlDataAdapter(query, con);
@@ -136,17 +142,16 @@ namespace Tienda.Registros
                     con.Close();
                     queryCompare = "Select * from bodega where Id_Prod = " + ID;
                 }
-                //
                 con.Open();
                 SqlCommand cmd = new SqlCommand(queryCompare, con);
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
-                var existe = Convert.ToInt64(dt.Rows[0].ItemArray[2].ToString());
+                var existe = Convert.ToDouble(dt.Rows[0].ItemArray[2].ToString());
                 con.Close();
-                var cantidad = Convert.ToInt64(this.canProd.Text);
+                var cantidad = Convert.ToDouble(this.canProd.Text);
                 var result = existe - cantidad;
-                //var id = Convert.ToInt64(this.idProdC.Text);
+
                 if (existe <= 0 && result == 0)
                 {
                     MessageBox.Show("El numero maximo de articulos en bodega es: " + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -173,7 +178,7 @@ namespace Tienda.Registros
 
         }
 
-        private void CantidadData(long existe, long cantidad, long id, long result)
+        private void CantidadData(double existe, double cantidad, long id, double result)
         {
             try
             {
@@ -189,13 +194,12 @@ namespace Tienda.Registros
                         for (int i = 0; i < dataGridView2.Rows.Count; i++)
                         {
                             var k = i + 1;
-                            var ids = Convert.ToInt64(dataGridView2.Rows[i].Cells[2].Value);
+                            var ids = Convert.ToInt64(dataGridView2.Rows[i].Cells[1].Value);
                             if (ids == id)
                             {
                                 int lastRow = count - 1;
-                                var cellCant = Convert.ToInt64(dataGridView2.Rows[i].Cells[5].Value);
-                                var cellID = Convert.ToInt64(dataGridView2.Rows[i].Cells[2].Value);//error
-                                //var idText = Convert.ToInt64(this.idProdC.Text);
+                                var cellCant = Convert.ToInt64(dataGridView2.Rows[i].Cells[4].Value);
+                                var cellID = Convert.ToInt64(dataGridView2.Rows[i].Cells[1].Value);
 
                                 if (cellID == id && cellCant <= existe)
                                 {
@@ -242,24 +246,25 @@ namespace Tienda.Registros
                 var numero = Convert.ToInt32(dt.Rows[0].ItemArray[2].ToString());
                 var idp = Convert.ToInt64(dt.Rows[0].ItemArray[1].ToString());
                 con.Close();
-
+                double result = 0;
                 for (int i = 0; i < dataGridView2.Rows.Count; i++)
                 {
-                    if (Convert.ToInt64(dataGridView2.Rows[i].Cells[2].Value) == idp)
+                    if (Convert.ToInt64(dataGridView2.Rows[i].Cells[1].Value) == idp)
                     {
-                        var cant = Convert.ToInt32(dataGridView2.Rows[i].Cells[5].Value);
-                        int result = Convert.ToInt32(this.canProd.Text) + cant;
-                        if (result <= numero)
-                        {
-                            ListaProd();
-                            return;
-                        }
-                        else if (result > numero)
-                        {
-                            MessageBox.Show("El maximo de articulos disponibles es: " + numero + " Unidades", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
+                        double cant = Convert.ToDouble(dataGridView2.Rows[i].Cells[4].Value);
+                        result = result == 0 ? Convert.ToDouble(this.canProd.Text) + cant + result : cant + result;
                     }
+                    
+                }
+                if (result <= numero)
+                {
+                    ListaProd();
+                    return;
+                }
+                else if (result > numero)
+                {
+                    MessageBox.Show("El maximo de articulos disponibles es: " + numero + " Unidades", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
             }
             catch (Exception ex)
@@ -299,15 +304,28 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                string query = "select sum(convert(decimal, Precio_Prod)) as total from Compras where [Num_Venta] like '" + v + "'";
+                string query = "select JsonCompra from Compras where Venta = " + v ;
                 con.Open();
                 //SqlCommand cmd = new SqlCommand(query, con);
                 DataTable dt = new DataTable();
                 SqlDataAdapter ad = new SqlDataAdapter(query, con);
                 ad.Fill(dt);
                 con.Close();
-                var itemArray = dt.Rows[0].ItemArray[0].ToString();
-                if (itemArray.Equals(""))
+                //07-01-2024
+                List<AgregarCompras> itemArray = new List<AgregarCompras>();
+                foreach (DataRow item in dt.Rows)
+                {
+                    itemArray.Add(JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString()));
+                }
+
+                //
+                double total = 0 ;
+                foreach(AgregarCompras item in itemArray)
+                {
+                    total += Convert.ToDouble(item.Precio_Total);
+                }
+                
+                if (dt.Rows.Count == 0)
                 {
                     return;
                 }
@@ -319,9 +337,9 @@ namespace Tienda.Registros
                     }
                     else
                     {
-                        var st = double.Parse(itemArray.ToString());
+                        var st = double.Parse(total.ToString());
                         var tv = (0.19 * st) + st;
-                        this.totalVenta.Text = st.ToString("C").Replace(",00",string.Empty);
+                        this.totalVenta.Text = st.ToString("C").Replace(".00", string.Empty);
                     }
                 }
             }
@@ -356,14 +374,27 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                string query = "select * from Lista_Compras where [# Venta] like '" + v + "'";
+                // 07-01-2024
+                string query = "select [JsonCompra] from Compras where Venta = " + v ;
 
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
-                dataGridView2.DataSource = dt;
+                List<AgregarCompras> agregarCompras = new List<AgregarCompras>();
+                foreach (DataRow item in dt.Rows)
+                {
+                    agregarCompras.Add(JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString()));
+                }
+                if(dt.Rows.Count == 0)
+                {
+                    dataGridView2.DataSource = dt;
+                }
+                else
+                {
+                    dataGridView2.DataSource = agregarCompras;
+                }
                 con.Close();
                 this.canProd.Text = "1";
                 if (dataGridView2.Rows.Count == 0) { totalVenta.Clear(); }
@@ -416,6 +447,10 @@ namespace Tienda.Registros
                 var nombre = dt.Rows[0].ItemArray[1].ToString();
                 var precio = dt.Rows[0].ItemArray[6].ToString();
                 var unidades = dt.Rows[0].ItemArray[3].ToString();
+                var cantidad = Convert.ToDouble(this.canProd.Text);
+                //07-012-024
+                var precioTotal = Convert.ToDouble(cantidad) * Convert.ToDouble(precio);
+                //
                 con.Close();
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
                 var value3 = this.ventaBut3.Checked; var value4 = this.ventaBut4.Checked;
@@ -437,17 +472,61 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                var cantidad = Convert.ToInt64(this.canProd.Text);
-                con.Open();
-                for (int i = 0; i < cantidad; i++)
+                
+                //07-012-024
+                
+                string query2 = "";
+                string jsonCompras = "";
+                foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
-                    string query2 = "INSERT INTO [dbo].[Compras] " +
-                    "VALUES (" + Convert.ToInt64(id_prod) + ",'" + nombre +
-                    "','" + precio + "'," + Convert.ToInt64(unidades) + ", '" + v + "')";
-                    SqlCommand cmd = new SqlCommand(query2, con);
-                    cmd.ExecuteNonQuery();
+                    if (Convert.ToInt64(row.Cells["ID"].Value.ToString())== (ID))
+                    {
+                        cantidad = cantidad + Convert.ToDouble(row.Cells["Cantidad"].Value.ToString());
+                        precioTotal = Convert.ToDouble(cantidad) * Convert.ToDouble(precio);
+                        AgregarCompras compras = new AgregarCompras
+                        {
+                            Id = id_prod,
+                            Producto = nombre,
+                            Precio_Unidad = precio,
+                            Cantidad = cantidad,
+                            Tipo_Unidad = unidades,
+                            Precio_Total = precioTotal.ToString()
+                        };
+                        jsonCompras = JsonConvert.SerializeObject(compras);
+                        query2 = "UPDATE [Compras] SET [JsonCompra] = '" + jsonCompras + "' WHERE [IdProducto] = " + ID + "";
+                    }
+                    
                 }
+                
+                if (!query2.Contains("UPDATE"))
+                {
+                    AgregarCompras compras = new AgregarCompras
+                    {
+                        Id = id_prod,
+                        Producto = nombre,
+                        Precio_Unidad = precio,
+                        Cantidad = cantidad,
+                        Tipo_Unidad = unidades,
+                        Precio_Total = precioTotal.ToString()
+                    };
+                    jsonCompras = JsonConvert.SerializeObject(compras);
+                    query2 = "INSERT INTO [dbo].[Compras] VALUES (" + ID + ",'" + jsonCompras + "', '" + v + "')";
+                }
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query2, con);
+                cmd.ExecuteNonQuery();
                 con.Close();
+                //
+                //con.Open();
+                //for (int i = 0; i < cantidad; i++)
+                //{
+                //    string query2 = "INSERT INTO [dbo].[Compras] " +
+                //    "VALUES (" + Convert.ToInt64(id_prod) + ",'" + nombre +
+                //    "','" + precio + "'," + Convert.ToInt64(unidades) + ", '" + v + "')";
+                //    SqlCommand cmd = new SqlCommand(query2, con);
+                //    cmd.ExecuteNonQuery();
+                //}
+                //con.Close();
 
                 ListaCompra();
                 this.idProdC.Text = "";
@@ -471,11 +550,7 @@ namespace Tienda.Registros
                     return;
                 }
                 var cantidad = Convert.ToInt64(this.canProd.Text);
-                if (this.idProdC.Text.Equals(""))
-                {
-                    MessageBox.Show("Campo ID esta vacio");
-                    return;
-                }
+                
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
                 var value3 = this.ventaBut3.Checked; var value4 = this.ventaBut4.Checked;
                 //
@@ -501,18 +576,18 @@ namespace Tienda.Registros
                 string query = ""; long ID = 0;
                 if (!isNumber)
                 {
-                    string queryC = "select ID from lista_bodega where Producto like '%" + this.idProdC.Text + "%'";
+                    string queryC = "select ID from lista_bodega where Producto like '%" + this.cBNombre.Text + "%'";
                     con.Open();
                     SqlDataAdapter ad = new SqlDataAdapter(queryC, con);
                     DataTable dtt = new DataTable();
                     ad.Fill(dtt);
                     ID = Convert.ToInt64(dtt.Rows[0].ItemArray[0].ToString());
                     con.Close();
-                    query = "delete top (" + cantidad + ") from Compras where Id_Prod = " + ID + " and Num_Venta = " + v;
+                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + ID + " and Venta = " + v;
                 }
                 else
                 {
-                    query = "delete top (" + cantidad + ") from Compras where Id_Prod = " + this.idProdC.Text + " and Num_Venta = " + v;
+                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + this.idProdC.Text + " and Venta = " + v;
                 }
 
 
@@ -564,7 +639,7 @@ namespace Tienda.Registros
                     var id = dataGridView2.Rows[i].Cells["ID"].Value.ToString();
                     var cantidad = dataGridView2.Rows[i].Cells["Cantidad"].Value.ToString();
                     //
-                    query = "delete top (" + cantidad + ") from Compras where Id_Prod = " + id + "and Num_Venta = " + v;
+                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + id + "and Venta = " + v;
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.ExecuteNonQuery();
                 }
@@ -678,33 +753,35 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                string queryCompra = "select * from Lista_Compras where [# Venta] like  '" + v + "'";
+                string queryCompra = "select * from Compras where Venta = '" + v + "'";
                 SqlDataAdapter adap = new SqlDataAdapter(queryCompra, con);
                 DataTable dTable = new DataTable();
                 adap.Fill(dTable);
                 con.Open();
-
-                for (int i = 0; i < dTable.Rows.Count; i++)
+                double totalCant = 0;
+                foreach(DataRow item in dTable.Rows)
                 {
-
-                    var idPro = dTable.Rows[i].ItemArray[1].ToString();
-                    //
+                    //Quantity for sale and id
+                    var Compra = JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString());
+                    var idPro = Compra.Id;
+                    var canitdad = Convert.ToDouble(Compra.Cantidad);
+                    //Quantity in warehouse
                     string queryBodega = "select * from Bodega where Id_Prod = " + idPro;
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(queryBodega, con);
                     DataTable data = new DataTable();
                     dataAdapter.Fill(data);
-                    //
-                    var cantCompra = Convert.ToDouble(dTable.Rows[i].ItemArray[4].ToString());
                     var cantBodega = Convert.ToDouble(data.Rows[0].ItemArray[2].ToString());
-                    var totalCan = cantBodega - cantCompra;
-                    //
-                    string queryDelete = "update Bodega set cantidad = " + totalCan + " where Id_Prod = " + idPro;
+                    //Calculate total
+                    totalCant = cantBodega - canitdad;
+                    //Update database
+                    string queryDelete = "update Bodega set cantidad = " + totalCant + " where Id_Prod = " + idPro;
                     SqlCommand cmdDelete = new SqlCommand(queryDelete, con);
                     cmdDelete.ExecuteNonQuery();
-                    //
-                    string queryDeleteCompras = "delete from Compras where [Num_Venta] like '" + v + "' and Id_Prod =" + idPro;
+                    //delete from compras
+                    string queryDeleteCompras = "delete from Compras where Venta = '" + v + "' and IdProducto =" + idPro;
                     SqlCommand cmdDeleteCompras = new SqlCommand(queryDeleteCompras, con);
                     cmdDeleteCompras.ExecuteNonQuery();
+
                 }
                 con.Close();
                 dataGridView2.DataSource = null;
@@ -898,12 +975,13 @@ namespace Tienda.Registros
                         ClsFactura.CreaTicket.LineasGuion();
                         ClsFactura.CreaTicket.EncabezadoVenta();
                         ClsFactura.CreaTicket.LineasGuion();
+
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
-                            var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var articuloT = r.Cells[2].Value.ToString();
+                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
+                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
+                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //--------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1028,10 +1106,10 @@ namespace Tienda.Registros
 
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
-                            var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var articuloT = r.Cells[2].Value.ToString();
+                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
+                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
+                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1141,10 +1219,10 @@ namespace Tienda.Registros
                         FacturaSD.CreaTicket.LineasGuion();
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
-                            var articuloT = r.Cells[3].Value.ToString();
-                            var precioT = double.Parse(r.Cells[4].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = int.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[7].Value.ToString(), NumberStyles.Currency);
+                            var articuloT = r.Cells[2].Value.ToString();
+                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
+                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
+                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket3.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1246,7 +1324,7 @@ namespace Tienda.Registros
                     default: break;
                 }
 
-                query = "delete from Compras where Id_Prod = " + ID + " and Num_Venta = " + v;
+                query = "delete from Compras where IdProducto = " + ID + " and Venta = " + v;
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.ExecuteNonQuery();
@@ -1338,7 +1416,11 @@ namespace Tienda.Registros
         {
             try
             {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                if (Char.IsPunctuation(e.KeyChar) && e.KeyChar == '.') 
+                {
+                    e.Handled = false;
+                }
+                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
                 {
                     e.Handled = true;
                 }
@@ -1788,9 +1870,9 @@ namespace Tienda.Registros
                     cotizacion.Codigo = r.Cells["ID"].Value.ToString();
                     cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
                     cotizacion.Cant = r.Cells["Cantidad"].Value.ToString();
-                    cotizacion.Unidad = r.Cells["Tipo Unidad"].Value.ToString();
-                    cotizacion.VUnidad = r.Cells["precio unidad"].Value.ToString();
-                    cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
+                    cotizacion.Unidad = r.Cells["Tipo_Unidad"].Value.ToString();
+                    cotizacion.VUnidad = r.Cells["precio_unidad"].Value.ToString();
+                    cotizacion.SubTotal = r.Cells["Precio_total"].Value.ToString();
 
 
                     listCot.Add(cotizacion);

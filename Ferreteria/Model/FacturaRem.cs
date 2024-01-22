@@ -122,7 +122,7 @@ namespace DistribucionesArly_s
             }
 
             // se le pasan los Aticulos  con sus detalles
-            public void AgregaArticulo(string Articulo, double precio, int cant, double subtotal)
+            public void AgregaArticulo(string Articulo, double precio, double cant, double subtotal)
             {
                 var can = cant.ToString().Length;
                 var pre = precio.ToString().Length;

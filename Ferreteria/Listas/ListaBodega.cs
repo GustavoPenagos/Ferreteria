@@ -23,6 +23,7 @@ namespace Tienda.Listas
 
         private void ListaBodega_Load(object sender, EventArgs e)
         {
+
             Listar();
             Delete();
             dataGridView1.Columns["ID"].ReadOnly= true;

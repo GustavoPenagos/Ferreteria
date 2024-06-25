@@ -1,7 +1,11 @@
 ﻿using Ferreteria.Forms;
+using iTextSharp.text;
+using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -19,22 +23,26 @@ namespace Tienda.Listas
         {
             ListarUsuarios();
             Delete();
-            dataGridView1.Columns["Tipo documento"].ReadOnly = true;
-            dataGridView1.Columns["Identificacion"].ReadOnly = true;
-            dataGridView1.Columns["Tipo de usuario"].ReadOnly = true;
-            dataGridView1.Columns["Nombre de empresa"].ReadOnly = true;
+            dataGridView1.Columns["Documento"].ReadOnly = true;
+            dataGridView1.Columns["Tipo de documento"].ReadOnly = true;
+            dataGridView1.Columns["Nombre usuario"].ReadOnly = false;
+            dataGridView1.Columns["Tipo usuario"].ReadOnly = true;
+            dataGridView1.Columns["Telefono"].ReadOnly = false;
+            dataGridView1.Columns["Direccion"].ReadOnly = false;
+            dataGridView1.Columns["Correo"].ReadOnly = false;
+            dataGridView1.Columns["Empresa"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
-            dataGridView1.Columns["Tipo documento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Identificacion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Tipo de usuario"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Nombre de empresa"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Telefono"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Direccion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Correo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            this.selecBus.Text = "Nombre";
+            //dataGridView1.Columns["Documento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Tipo de documento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Nombre usuario"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Tipo usuario"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Telefono"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Direccion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Correo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Empresa"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            this.selecBus.Text = "Documento";
         }
 
         private void BuscarId_Click(object sender, EventArgs e)
@@ -57,23 +65,20 @@ namespace Tienda.Listas
                 {
                     switch (selectBusc)
                     {
-                        case "Identificacion":
-                            selectBusc = "Identificacion";
-                            BuscarUsuario(selectBusc.ToString());
+                        case "Documento":
+                            selectBusc = "Documento";
+                            BuscarUsuario(selectBusc);
                             break;
                         case "Nombre":
                             selectBusc = "Nombre";
-                            BuscarUsuario(selectBusc.ToString());
-                            break;
-                        case "Empresa":
-                            selectBusc = "Nombre de empresa";
-                            BuscarUsuario(selectBusc.ToString());
+                            BuscarUsuario(selectBusc);
                             break;
                         case "Telefono":
                             selectBusc = "Telefono";
-                            BuscarUsuario(selectBusc.ToString());
+                            BuscarUsuario(selectBusc);
                             break;
-                        default: MessageBox.Show("No ha elegido un opcion valida"); break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -83,17 +88,41 @@ namespace Tienda.Listas
             }
         }
 
-        private void BuscarUsuario(string a)
+        private void BuscarUsuario(string selectBusc)
         {
             try
             {
-                string query = " select * from lista_usuario where " + a.ToString() + " like '" + this.idBuscar.Text + "%'";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
-                SqlDataAdapter adapter = new SqlDataAdapter(query, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                dataGridView1.DataSource = data;
+                SqlCommand cmd = new SqlCommand("ObtenerUsuarios ", con);
+                switch (selectBusc)
+                {
+                    case "Documento":
+                        cmd.Parameters.AddWithValue("@Id", this.idBuscar.Text);
+                        break;
+                    case "Nombre":
+                        cmd.Parameters.AddWithValue("@Nombre", this.idBuscar.Text);
+                        break;
+                    case "Telefono":
+                        cmd.Parameters.AddWithValue("@Telefono", this.idBuscar.Text);
+                        break;
+                    default:
+                        break;
+                }
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                System.Data.DataTable dataTable = new System.Data.DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(dataTable);
+                dataGridView1.DataSource = dataTable;
+                con.Close();
+
+                //string query = " select * from Usuario where " + a.ToString() + " like '" + this.idBuscar.Text + "%'";
+                //con.Open();
+                //SqlCommand cmd = new SqlCommand(query, con);
+                //SqlDataAdapter adapter = new SqlDataAdapter(query, con);
+                //DataTable data = new DataTable();
+                //adapter.Fill(data);
+                //dataGridView1.DataSource = data;
 
                 if (dataGridView1.Rows.Count <= 0)
                 {
@@ -113,12 +142,14 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT top(20) *  FROM lista_usuario";
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(query1, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                dataGridView1.DataSource = dt;
+                SqlCommand cmd = new SqlCommand("ObtenerUsuarios ", con); //spGetAccesosDirectoses el Stored procedure
+                cmd.CommandType = CommandType.StoredProcedure;
+                //SqlDataReader dr = cmd.ExecuteReader();
+                System.Data.DataTable dataTable = new System.Data.DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                adapter.Fill(dataTable);
+                dataGridView1.DataSource = dataTable;
                 con.Close();
             }
             catch (Exception ex)
@@ -179,10 +210,11 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
-                            string queryDelete = "delete from [User] where Id_User = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Documento"].Value.ToString();
                             con.Open();
-                            SqlCommand cmd = new SqlCommand(queryDelete, con);
+                            SqlCommand cmd = new SqlCommand("EliminarUsuario", con);
+                            cmd.Parameters.AddWithValue("@Id", ID);
+                            cmd.CommandType = CommandType.StoredProcedure;
                             cmd.ExecuteNonQuery();
                             con.Close();
                             ListarUsuarios();
@@ -208,23 +240,30 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            string Name = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
-                            string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
-                            string Direction = dataGridView1.CurrentRow.Cells["Direccion"].Value.ToString();
-                            string mail = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Identificacion"].Value.ToString();
-                            string queryUpdate = "update [User] set [Name] ='" + Name + "', Phone='" + Phone + "'" +
-                                ", Direction='" + Direction + "', mail='" + mail + "' " +
-                                "where Id_User = " + ID;
+
+                            string Nombre = dataGridView1.CurrentRow.Cells["Nombre usuario"].Value.ToString();
+                            string Telefono = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
+                            string Direccion = dataGridView1.CurrentRow.Cells["Direccion"].Value.ToString();
+                            string Correo = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
+
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Documento"].Value.ToString();
+                            
                             con.Open();
-                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            SqlCommand cmd = new SqlCommand("ActualizarUsuario", con);
+                            cmd.Parameters.AddWithValue("@Id", ID);
+                            cmd.Parameters.AddWithValue("@Nombre", Nombre);
+                            cmd.Parameters.AddWithValue("@Telefono", Telefono);
+                            cmd.Parameters.AddWithValue("@Direccion", Direccion);
+                            cmd.Parameters.AddWithValue("@Correo", Correo);
+                            cmd.CommandType = CommandType.StoredProcedure;
                             cmd.ExecuteNonQuery();
                             con.Close();
                             ListarUsuarios();
                             break;
                         case DialogResult.Cancel:
                             break;
-                        default: break;
+                        default: 
+                            break;
                     }
                 }
             }

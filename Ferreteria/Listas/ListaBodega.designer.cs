@@ -101,7 +101,7 @@
             this.selecBus.Items.AddRange(new object[] {
             "Nombre",
             "Marca",
-            "ID"});
+            "Codigo"});
             this.selecBus.Location = new System.Drawing.Point(117, 25);
             this.selecBus.Name = "selecBus";
             this.selecBus.Size = new System.Drawing.Size(156, 33);

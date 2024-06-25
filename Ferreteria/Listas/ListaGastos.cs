@@ -26,14 +26,20 @@ namespace Tienda.Listas
             try
             {
                 Validar();
-                string query = "select format(sum(convert(decimal,Valor_Gasto)), 'C', 'es-co') AS Valor_Gasto from Lista_Gastos";
+                double totalGastos = 0;
                 con.Open();
-                //SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerGastos", con);
+                cmd.Parameters.AddWithValue("@Fecha", DateTime.Parse(dateGasto.Value.ToString("dd/MM/yyyy")));
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
-                ad.Fill(dt);
+                dt.Load(dr);
                 con.Close();
-                this.textBoxTG.Text = dt.Rows[0].ItemArray[0].ToString();
+                for(int i=0; i < dt.Rows.Count; i++)
+                {
+                    totalGastos = totalGastos + Convert.ToDouble(dt.Rows[i].ItemArray[1].ToString());
+                }
+                this.textBoxTG.Text = totalGastos.ToString();
             }
             catch (Exception ex)
             {
@@ -67,11 +73,11 @@ namespace Tienda.Listas
         {
             try
             {
-                var date = dateGasto.Value.ToString("d/MM/yyyy");
-
-                string query = "SELECT * FROM Lista_Gastos where [Fecha_Gasto] like '%" + date + "%'";
+                var date = dateGasto.Value.ToString("dd/MM/yyyy");
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerGastos", con);
+                cmd.Parameters.AddWithValue("@Fecha", DateTime.Parse(dateGasto.Value.ToString("dd/MM/yyyy")));
+                cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
@@ -93,13 +99,22 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT top(20) Id_Gasto AS ID, Desc_Gastos AS Descripcion, format(convert(decimal,Costo_Gasto),'C','es-CO') AS Valor_Gasto, Fecha_Gasto FROM dbo.Gastos";
                 con.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
+                double totalGastos = 0;
+                SqlCommand cmd = new SqlCommand("ObtenerGastos", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
                 adapter.Fill(dataTable);
-                dataGridView1.DataSource = dataTable;
                 con.Close();
+                dataGridView1.DataSource = dataTable;
+
+                for (int i = 0; i < dataTable.Rows.Count; i++)
+                {
+                    totalGastos = totalGastos + Convert.ToDouble(dataTable.Rows[i].ItemArray[1].ToString());
+                }
+                this.textBoxTG.Text = totalGastos.ToString();
             }
             catch (Exception ex)
             {
@@ -120,8 +135,8 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                            string queryDelete = "delete from Gastos where Id_Gasto = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Id"].Value.ToString();
+                            string queryDelete = "delete from Gasto where Id = " + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();

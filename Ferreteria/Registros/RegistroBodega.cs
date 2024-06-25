@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ferreteria.Forms;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,13 +17,13 @@ namespace Tienda.Registros
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void RegistroBodega_Load(object sender, EventArgs e)
         {
-            string tipoDoc = "select * from Producto";
+            string query = "select * from Producto";
             con.Open();
-            SqlDataAdapter adapterD = new SqlDataAdapter(tipoDoc, con);
+            SqlDataAdapter adapterD = new SqlDataAdapter(query, con);
             DataTable dataD = new DataTable();
             adapterD.Fill(dataD);
-            this.cBNombre.DisplayMember = "Nombre_Prod";
-            this.cBNombre.ValueMember = "Id_Prod";
+            this.cBNombre.DisplayMember = "Nombre";
+            this.cBNombre.ValueMember = "Id";
             this.cBNombre.DataSource = dataD;
             con.Close();
 
@@ -43,7 +44,8 @@ namespace Tienda.Registros
             try
             {
                 InsertarBodega();
-                ConteoProd();
+                //ConteoProd();
+                Clear();
             }
             catch (Exception ex)
             {
@@ -55,69 +57,93 @@ namespace Tienda.Registros
         {
             try
             {
-                string queryConsult = ""; 
-                if (this.rBId.Checked == true)
-                {
-                    queryConsult = "select Id_Prod from Producto where Id_Prod = " + this.idProdRegis.Text;
-                }
-                if (this.rBNombre.Checked == true)
-                {
-                    queryConsult = "select Id_Prod from Producto where Id_Prod = " + this.cBNombre.SelectedValue;
-                }
-                //
+                string id = this.idProdRegis.Text.Equals("") ? this.cBNombre.SelectedValue.ToString() : this.idProdRegis.Text;
+                //ConsultaBodega
+                string queryBodega = "select * from Bodega where Id_Producto = " + id;
                 con.Open();
-                SqlCommand cmdConsul = new SqlCommand(queryConsult, con);
-                SqlDataReader dr = cmdConsul.ExecuteReader();
-                var cantidadProd = this.cantidadProd.Text.Equals("") ? "0" : this.cantidadProd.Text;
-                int sum = 0;
-                if (dr.Read())
+                //
+                SqlDataAdapter adapter = new SqlDataAdapter(queryBodega, con);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                if(dataTable.Rows.Count == 0)
                 {
-                    con.Close();
-                    //
-                    SqlDataAdapter adapter = new SqlDataAdapter(queryConsult, con);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    this.idProdRegis.Text = dataTable.Rows[0].ItemArray[0].ToString();
-                    //
-                    string queryVal = "Select * from Bodega";
-                    con.Open();
-                    SqlDataAdapter ad = new SqlDataAdapter(queryVal, con);
-                    DataTable data = new DataTable();
-                    ad.Fill(data);
-                    //
-
-                    for (int i = 0; i < data.Rows.Count; i++)
-                    {
-                        var idProd = data.Rows[i].ItemArray[1].ToString();
-
-                        if (idProd == this.idProdRegis.Text)
-                        {
-                            var cantidad = Convert.ToDouble(data.Rows[i].ItemArray[2].ToString());
-                            var total = Convert.ToInt32(cantidadProd) + cantidad;
-                            string queryInsert = "update Bodega set cantidad = " + total + " where Id_Prod = " + this.idProdRegis.Text;
-                            SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
-                            cmdInsert.ExecuteNonQuery();
-                            con.Close();
-                            //MessageBox.Show("Se ha ingresado el producto correctamente");
-                            
-                            return;
-                        }
-                        sum = 1 + sum;
-                    }
-                    if (sum == data.Rows.Count)
-                    {
-                        string queryInsert = "insert into Bodega values (" + this.idProdRegis.Text + ", '" + cantidadProd + "')";
-                        //con.Open();
-                        SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
-                        cmdInsert.ExecuteNonQuery();
-                        con.Close();
-                    }
+                    MessageBox.Show("El producto no esta regiistrado: " + id );
+                    return;
                 }
-                else
-                {
-                    con.Close();
-                    MessageBox.Show("No existe este ID (" + this.idProdRegis.Text + ")" , "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                int cantidad = Convert.ToInt32(dataTable.Rows[0].ItemArray[1]);
+                //Adicionar cantidad nueva
+                cantidad = cantidad + Convert.ToInt32(this.cantidadProd.Text);
+                string queryAdicion = "update Bodega set Cantidad = " + cantidad + " where Id_Producto = " + id;
+                SqlCommand cmdInsert = new SqlCommand(queryAdicion, con);
+                cmdInsert.ExecuteNonQuery();
+                con.Close();
+
+                #region Antiguo
+                //string queryConsult = "";
+                //switch (this.rBId.Checked){
+                //    case true:
+                //        queryConsult = "select Id from Producto where Id = " + this.idProdRegis.Text;
+                //        break;
+                //    case false:
+                //        queryConsult = "select Id from Producto where Id = " + this.cBNombre.SelectedValue;
+                //        break;
+                //}
+
+                //
+                //con.Open();
+                //SqlCommand cmdConsul = new SqlCommand(queryConsult, con);
+                //SqlDataReader dr = cmdConsul.ExecuteReader();
+                //var cantidadProd = this.cantidadProd.Text.Equals("") ? "0" : this.cantidadProd.Text;
+                //int sum = 0;
+                //if (dr.Read())
+                //{
+                //    con.Close();
+                //    //
+                //    SqlDataAdapter adapter = new SqlDataAdapter(queryConsult, con);
+                //    DataTable dataTable = new DataTable();
+                //    adapter.Fill(dataTable);
+                //    this.idProdRegis.Text = dataTable.Rows[0].ItemArray[0].ToString();
+                //    //
+                //    string queryVal = "Select * from Bodega";
+                //    con.Open();
+                //    SqlDataAdapter ad = new SqlDataAdapter(queryVal, con);
+                //    DataTable data = new DataTable();
+                //    ad.Fill(data);
+                //    //
+
+                //    for (int i = 0; i < data.Rows.Count; i++)
+                //    {
+                //        var idProd = data.Rows[i].ItemArray[1].ToString();
+
+                //        if (idProd == this.idProdRegis.Text)
+                //        {
+                //            var cantidad = Convert.ToDouble(data.Rows[i].ItemArray[2].ToString());
+                //            var total = Convert.ToInt32(cantidadProd) + cantidad;
+                //            string queryInsert = "update Bodega set cantidad = " + total + " where Id_Prod = " + this.idProdRegis.Text;
+                //            SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
+                //            cmdInsert.ExecuteNonQuery();
+                //            con.Close();
+                //            //MessageBox.Show("Se ha ingresado el producto correctamente");
+
+                //            return;
+                //        }
+                //        sum = 1 + sum;
+                //    }
+                //    if (sum == data.Rows.Count)
+                //    {
+                //        string queryInsert = "insert into Bodega values (" + this.idProdRegis.Text + ", '" + cantidadProd + "')";
+                //        //con.Open();
+                //        SqlCommand cmdInsert = new SqlCommand(queryInsert, con);
+                //        cmdInsert.ExecuteNonQuery();
+                //        con.Close();
+                //    }
+                //}
+                //else
+                //{
+                //    con.Close();
+                //    MessageBox.Show("No existe este ID (" + this.idProdRegis.Text + ")" , "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //}
+                #endregion
             }
             catch (Exception)
             {
@@ -150,6 +176,7 @@ namespace Tienda.Registros
         {
             this.idProdRegis.Clear();
             this.cantidadProd.Clear();
+            this.cantProdBod.Clear();
         }
 
         private void idProdRegis_KeyPress(object sender, KeyPressEventArgs e)
@@ -210,6 +237,37 @@ namespace Tienda.Registros
                 this.cBNombre.Focus();
                 this.idProdRegis.Visible = false;
                 this.cBNombre.Visible = true;
+            }
+        }
+
+        private void cantidadProd_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                string id = this.idProdRegis.Text.Equals("") ? this.cBNombre.SelectedValue.ToString() : this.idProdRegis.Text;
+                string queryCantidad = "select Cantidad from Bodega where Id_Producto = " + id;
+                con.Open();
+                SqlDataAdapter adapter = new SqlDataAdapter(queryCantidad, con);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+                if (!cantidadProd.Text.Equals(""))
+                {
+                    cantProdBod.Text = (Convert.ToInt32(cantidadProd.Text) + Convert.ToInt32(dataTable.Rows[0].ItemArray[0].ToString())).ToString();
+                }
+                else
+                {
+                    cantProdBod.Text = "";
+                }
+                
+                con.Close();
+            }catch (Exception ex)
+            {
+                
+            }
+            finally
+            {
+                con.Close();
             }
         }
     }

@@ -106,6 +106,7 @@
             this.cantidadProd.Size = new System.Drawing.Size(289, 30);
             this.cantidadProd.TabIndex = 2;
             this.cantidadProd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.cantidadProd.TextChanged += new System.EventHandler(this.cantidadProd_TextChanged);
             this.cantidadProd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProdRegis_KeyPress);
             // 
             // button1

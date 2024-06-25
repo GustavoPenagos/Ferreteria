@@ -1,5 +1,6 @@
 ﻿using Ferreteria.Forms;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,18 +23,22 @@ namespace Tienda.Listas
             ListaProducto();
             Delete();
             this.buscaProd.Focus();
-            dataGridView1.Columns["ID"].ReadOnly = true;
+            dataGridView1.Columns["Codigo"].ReadOnly = true;
+            dataGridView1.Columns["Nombre"].ReadOnly = false;
+            dataGridView1.Columns["Marca"].ReadOnly = false;
             dataGridView1.Columns["Unidad"].ReadOnly = true;
-            dataGridView1.Columns["Precio Venta"].ReadOnly = true;
+            dataGridView1.Columns["Precio Unidad"].ReadOnly = false;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
-            dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Precio Compra"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Utilidad (%)"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            this.selectBus.Text = "ID";
+            
+            //dataGridView1.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Precio Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            this.selectBus.Text = "Codigo";
         }
 
         private void buscaProd_Click(object sender, EventArgs e)
@@ -56,17 +61,17 @@ namespace Tienda.Listas
                 {
                     switch (selectBusc)
                     {
-                        case "ID":
-                            selectBusc = "ID";
-                            ListaBusqueda(selectBusc.ToString());
+                        case "Codigo":
+                            selectBusc = "Id";
+                            ListaBusqueda(selectBusc);
                             break;
                         case "Nombre":
-                            selectBusc = "Producto";
-                            ListaBusqueda(selectBusc.ToString());
+                            selectBusc = "Nombre";
+                            ListaBusqueda(selectBusc);
                             break;
                         case "Marca":
                             selectBusc = "Marca";
-                            ListaBusqueda(selectBusc.ToString());
+                            ListaBusqueda(selectBusc);
                             break;
                         default: MessageBox.Show("No ha elegido un opcion valida"); break;
                     }
@@ -87,11 +92,17 @@ namespace Tienda.Listas
                 string query = "";
                 switch (selectBusc)
                 {
-                    case "ID":
-                        query = "select * from lista_producto where " + selectBusc.ToString() + " = " + this.buscarProd.Text;
+                    case "Id":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = " + this.buscarProd.Text;
+                        break;
+                    case "Nombre":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.buscarProd.Text + "'";
+                        break;
+                    case "Marca":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.buscarProd.Text + "'";
                         break;
                     default:
-                        query = "select * from lista_producto where " + selectBusc.ToString() + " like '%" + this.buscarProd.Text + "%'";
+                        query = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad";
                         break;
                 }
                 con.Open();
@@ -117,7 +128,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "SELECT top(20)*  FROM lista_producto";
+                string query1 = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad";
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(query1, con);
                 DataTable dt = new DataTable();
@@ -156,7 +167,7 @@ namespace Tienda.Listas
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //DELETE
+            //Delete
             try
             {
                 if (e.ColumnIndex == 0)
@@ -166,8 +177,8 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                            string queryDelete = "delete from Producto  where Id_Prod  = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Codigo"].Value.ToString();
+                            string queryDelete = "delete from Producto  where Id = " + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();
@@ -185,7 +196,7 @@ namespace Tienda.Listas
                 con.Close();
                 MessageBox.Show("datagridviw - delete " + ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            //UPDATE
+            //Update
             try
             {
                 if (e.ColumnIndex == 1)
@@ -195,16 +206,16 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            string Nombre_Prod = dataGridView1.CurrentRow.Cells["Producto"].Value.ToString();
-                            string Marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
-                            string p1 = dataGridView1.CurrentRow.Cells["Precio Compra"].Value.ToString();
-                            double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
-                            string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
-                            double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                            string queryUpdate = "UPDATE Producto SET Nombre_Prod = '" + Nombre_Prod + "'" +
-                                ", Precio_Prod = '" + Precio_Prod + "', Marca = '" + Marca + "', Utilidad = '" + Utilidad + "' " +
-                                ", Prec_Venta = '" + Prec_Venta + "' where Id_Prod  = " + ID;
+                            string nombreProd = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
+                            string marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
+                            string precio = dataGridView1.CurrentRow.Cells["Precio Unidad"].Value.ToString();
+                            string unidad = dataGridView1.CurrentRow.Cells["Unidad"].Value.ToString();
+                            //double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
+                            //string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
+                            //double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Codigo"].Value.ToString();
+                            //Query SQL
+                            string queryUpdate = "Update Producto set Nombre = '" + nombreProd + "'" + ", Marca = '" + marca + "', Precio = " + precio + " where Id = " + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryUpdate, con);
                             cmd.ExecuteNonQuery();
@@ -226,7 +237,7 @@ namespace Tienda.Listas
 
         private void Delete()
         {
-            
+                        
             DataGridViewButtonColumn eliminar = new DataGridViewButtonColumn();
             eliminar.HeaderText = "Eliminar";
             eliminar.Name = "Eliminar";
@@ -246,5 +257,7 @@ namespace Tienda.Listas
         {
 
         }
+
+       
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -26,17 +27,14 @@ namespace Tienda.Registros
         {
             try
             {
-                string date = DateTime.Now.ToShortDateString().ToString();
-                var descripcion = this.descriGasto.Text;
-                var dinero = this.dineroGasto.Text;
-                string query = "INSERT INTO [dbo].[Gastos] VALUES ('" + descripcion + "'," + dinero + ",'" + date + "')";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("InsertarGastos", con);
+                cmd.Parameters.AddWithValue("@Dinero", this.dineroGasto.Text);
+                cmd.Parameters.AddWithValue("@Descripcion", this.descriGasto.Text);
+                cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
-                //
-                string queryFacRem = "INSERT INTO CARTERA VALUES (3,'" + dinero + "','" + date + "','0','0', '0')";
-                SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
-                cmdFact.ExecuteReader();
+                con.Close();
                 Clear();
                 this.dineroGasto.Focus();
             }

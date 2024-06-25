@@ -233,6 +233,7 @@
             this.txbCantidad.Size = new System.Drawing.Size(329, 30);
             this.txbCantidad.TabIndex = 7;
             this.txbCantidad.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txbCantidad.TextChanged += new System.EventHandler(this.txbCantidad_TextChanged);
             this.txbCantidad.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.idProd_KeyPress);
             // 
             // label8

@@ -26,18 +26,21 @@ namespace Tienda.Listas
 
             Listar();
             Delete();
-            dataGridView1.Columns["ID"].ReadOnly= true;
-            dataGridView1.Columns["Producto"].ReadOnly = true;
+            dataGridView1.Columns["Codigo"].ReadOnly= true;
+            dataGridView1.Columns["Nombre"].ReadOnly = true;
             dataGridView1.Columns["Marca"].ReadOnly = true;
+            dataGridView1.Columns["Cantidad"].ReadOnly = false;
+            dataGridView1.Columns["Unidad"].ReadOnly = true;
             dataGridView1.Columns["Precio"].ReadOnly = true;
-            dataGridView1.Columns["Valor total"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
-            dataGridView1.Columns["ID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Precio"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            //dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Cantidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.selecBus.Text = "ID";
+            dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.selecBus.Text = "Codigo";
             this.nombreProducto.Focus();
         }
         private void verProducto_Click(object sender, EventArgs e)
@@ -60,19 +63,20 @@ namespace Tienda.Listas
                 {
                     switch (selectBusc)
                     {
-                        case "ID":
-                            selectBusc = "ID";
-                            ListaBusqueda(selectBusc.ToString());
+                        case "Codigo":
+                            selectBusc = "Id";
+                            ListaBusqueda(selectBusc);
                             break;
                         case "Nombre":
-                            selectBusc = "Producto";
+                            selectBusc = "Nombre";
                             ListaBusqueda(selectBusc.ToString());
                             break;
                         case "Marca":
                             selectBusc = "Marca";
                             ListaBusqueda(selectBusc.ToString());
                             break;
-                        default: MessageBox.Show("No ha elegido un opcion valida"); break;
+                        default: MessageBox.Show("No ha elegido un opcion valida"); 
+                            break;
                     }
                 }
             }
@@ -90,11 +94,17 @@ namespace Tienda.Listas
                 string query = "";
                 switch (selectBusc)
                 {
-                    case "ID":
-                        query = "SELECT *  FROM lista_bodega where " + selectBusc + " = " + this.nombreProducto.Text;
+                    case "Id":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = " + this.nombreProducto.Text;
+                        break;
+                    case "Nombre":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.nombreProducto.Text + "'";
+                        break;
+                    case "Marca":
+                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.nombreProducto.Text + "'";
                         break;
                     default:
-                        query = "SELECT *  FROM lista_bodega where " + selectBusc + " like '%" + this.nombreProducto.Text + "%'";
+                        query = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad";
                         break;
                 }                    
                 con.Open();
@@ -104,7 +114,7 @@ namespace Tienda.Listas
                 dataGridView1.DataSource = dt;
                 if (dataGridView1.Rows.Count <= 0)
                 {
-                    MessageBox.Show("No existe un producto con este codigo de barras (" + this.nombreProducto.Text + ")");
+                    MessageBox.Show("No existe un producto con este codigo: (" + this.nombreProducto.Text + ")");
                 }
                 con.Close();
             }
@@ -143,7 +153,7 @@ namespace Tienda.Listas
 
         private DataTable DataTable()
         {
-            string query1 = "SELECT top(20)*  FROM lista_bodega";
+            string query1 = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad";
             SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
             DataTable data = new DataTable();
             adapter.Fill(data);
@@ -157,7 +167,7 @@ namespace Tienda.Listas
 
         private void nombreProducto_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (this.selecBus.Text.Equals("ID"))
+            if (this.selecBus.Text.Equals("Codigo"))
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
                 {
@@ -172,7 +182,7 @@ namespace Tienda.Listas
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //delete
+            //Delete
             try
             {
                 if (e.ColumnIndex == 0)
@@ -182,8 +192,8 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                            string queryDelete = "delete from Bodega where Id_Prod  = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Codigo"].Value.ToString();
+                            string queryDelete = "delete from Bodega where Id_Producto  = " + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();
@@ -201,7 +211,7 @@ namespace Tienda.Listas
                 con.Close();
                 MessageBox.Show("Contraseña incorrecta" , "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            //update
+            //Update
             try
             {
                 if (e.ColumnIndex == 1)
@@ -212,8 +222,8 @@ namespace Tienda.Listas
                     {
                         case DialogResult.OK:
                             var cantidad = dataGridView1.CurrentRow.Cells["Cantidad"].Value.ToString();
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString();
-                            string queryUpdate = "update Bodega set cantidad = '" + cantidad + "' where Id_Prod =" + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Codigo"].Value.ToString();
+                            string queryUpdate = "update Bodega set cantidad = " + cantidad + " where Id_Producto =" + ID;
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryUpdate, con);
                             cmd.ExecuteNonQuery();
@@ -235,14 +245,14 @@ namespace Tienda.Listas
 
         private void Delete()
         {
-            //
+            //Delete
             DataGridViewButtonColumn button = new DataGridViewButtonColumn();
             button.HeaderText = "Eliminar";
             button.Name = "Eliminar";
             button.Text = "Eliminar";
             button.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(button);
-            //
+            //Update
             DataGridViewButtonColumn update = new DataGridViewButtonColumn();
             update.HeaderText = "Actualizar";
             update.Name = "Actualizar";

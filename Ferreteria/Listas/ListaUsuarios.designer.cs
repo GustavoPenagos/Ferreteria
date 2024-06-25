@@ -108,9 +108,8 @@
             this.selecBus.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selecBus.FormattingEnabled = true;
             this.selecBus.Items.AddRange(new object[] {
-            "Identificacion",
+            "Documento",
             "Nombre",
-            "Empresa",
             "Telefono"});
             this.selecBus.Location = new System.Drawing.Point(114, 24);
             this.selecBus.Name = "selecBus";

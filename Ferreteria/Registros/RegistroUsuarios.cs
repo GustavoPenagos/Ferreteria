@@ -29,17 +29,17 @@ namespace Tienda.Registros
         {
             try
             {
-                var ID = this.numeroDocumento.Text;
+                var Documento = this.numeroDocumento.Text;
+                var Tipo_Documento = this.tipo_Documento.SelectedValue;
                 var nombre = this.nombreUsuario.Text;
+                var tipoUsuario = this.tipoUsuario.SelectedValue;
                 var telefono = this.telefonoUsuario.Text;
                 var direccion = this.direcUsuario.Text;
-                var nit = this.nitEmpresa.SelectedValue;
-                var typeUser = this.tipoUsuario.SelectedValue;
-                var typeDoc = this.tipo_Documento.SelectedValue;
-                var pass = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
-                var email = this.eMail.Text;
-                //
-                string query = "INSERT INTO [dbo].[User] VALUES (" + ID + ",'" + nombre + "','" +telefono +"','" + direccion + "'," + nit + "," + typeUser + "," + typeDoc + ",'" + pass + "','" + email + "', 0, 0)";
+                var correo = this.eMail.Text;
+                var nitEmpresa = this.nitEmpresa.SelectedValue;
+                var contrasena = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
+                
+                string query = "Insert into Usuario VALUES (" + Documento + "," + Tipo_Documento + ",'" + nombre + "'," + tipoUsuario + ",'" + telefono + "','" + direccion + "','" + correo + "','" + nitEmpresa + "','" + contrasena + "', 1, 0)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -88,34 +88,34 @@ namespace Tienda.Registros
         {
             try
             {
-                //
-                string tipoDoc = "select * from Tipo_Documento";
+                //Document type
+                string tipoDoc = "select Id, Descripcion from Tipo_Documento";
                 con.Open();
                 SqlDataAdapter adapterD = new SqlDataAdapter(tipoDoc, con);
                 DataTable dataD = new DataTable();
                 adapterD.Fill(dataD);
-                this.tipo_Documento.DisplayMember = "documento";
-                this.tipo_Documento.ValueMember = "id";
+                this.tipo_Documento.DisplayMember = "Descripcion";
+                this.tipo_Documento.ValueMember = "Id";
                 this.tipo_Documento.DataSource = dataD;
                 con.Close();
-                //
-                string empresa = "select [Nit_Company], [Name_Company] from Company";
+                //List Company
+                string empresa = "select Nit, Nombre from Empresa";
                 con.Open();
                 SqlDataAdapter adapterE = new SqlDataAdapter(empresa, con);
                 DataTable dataE = new DataTable();
                 adapterE.Fill(dataE);
-                this.nitEmpresa.DisplayMember = "Name_Company";
-                this.nitEmpresa.ValueMember = "Nit_Company";
+                this.nitEmpresa.DisplayMember = "Nombre";
+                this.nitEmpresa.ValueMember = "Nit";
                 this.nitEmpresa.DataSource = dataE;
                 con.Close();
-                //
-                string tUsuario = "select * from Tipo_Usuario";
+                //User Type
+                string tUsuario = "select Id, Descripcion from Tipo_Usuario";
                 con.Open();
                 SqlDataAdapter adapterU = new SqlDataAdapter(tUsuario, con);
                 DataTable dataU = new DataTable();
                 adapterU.Fill(dataU);
-                this.tipoUsuario.DisplayMember = "Tipo_Usuario";
-                this.tipoUsuario.ValueMember = "Id_Type_User";
+                this.tipoUsuario.DisplayMember = "Descripcion";
+                this.tipoUsuario.ValueMember = "Id";
                 this.tipoUsuario.DataSource = dataU;
                 con.Close();
 

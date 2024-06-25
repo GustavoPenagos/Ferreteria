@@ -8,7 +8,7 @@ namespace Tienda.Registros
         public Usuario()
         {
             InitializeComponent();
-            OpenFrom(new Listas.ListaUsuarios());
+            OpenFrom(new Registros.RegistroUsuarios(""));
         }
         private void OpenFrom(object fromhijo)
         {

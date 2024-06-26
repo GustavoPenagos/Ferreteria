@@ -30,7 +30,7 @@ namespace Tienda.Registros
             try
             {
                 var Documento = this.numeroDocumento.Text;
-                var Tipo_Documento = this.tipo_Documento.SelectedValue;
+                var TipoDocumento = this.tipo_Documento.SelectedValue;
                 var nombre = this.nombreUsuario.Text;
                 var tipoUsuario = this.tipoUsuario.SelectedValue;
                 var telefono = this.telefonoUsuario.Text;
@@ -38,10 +38,18 @@ namespace Tienda.Registros
                 var correo = this.eMail.Text;
                 var nitEmpresa = this.nitEmpresa.SelectedValue;
                 var contrasena = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
-                
-                string query = "Insert into Usuario VALUES (" + Documento + "," + Tipo_Documento + ",'" + nombre + "'," + tipoUsuario + ",'" + telefono + "','" + direccion + "','" + correo + "','" + nitEmpresa + "','" + contrasena + "', 1, 0)";
-                SqlCommand cmd = new SqlCommand(query, con);
+
                 con.Open();
+                SqlCommand cmd = new SqlCommand("InsertarUsuario", con);
+                cmd.Parameters.AddWithValue("@Documento", Documento);
+                cmd.Parameters.AddWithValue("@Tipo_Documento", TipoDocumento);
+                cmd.Parameters.AddWithValue("@Nombre", nombre);
+                cmd.Parameters.AddWithValue("@Tipo_Usuario", tipoUsuario);
+                cmd.Parameters.AddWithValue("@Telefono", telefono);
+                cmd.Parameters.AddWithValue("@Correo", correo);
+                cmd.Parameters.AddWithValue("@Nit_Empresa", nitEmpresa);
+                cmd.Parameters.AddWithValue("@Contrasena", contrasena);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
                 con.Close();
                 Clear();

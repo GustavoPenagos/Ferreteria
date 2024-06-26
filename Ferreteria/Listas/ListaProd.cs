@@ -30,14 +30,6 @@ namespace Tienda.Listas
             dataGridView1.Columns["Precio Unidad"].ReadOnly = false;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-
-            
-            //dataGridView1.Columns["Codigo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            //dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            //dataGridView1.Columns["Marca"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            //dataGridView1.Columns["Precio Venta"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            //dataGridView1.Columns["Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            //dataGridView1.Columns["Precio Unidad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.selectBus.Text = "Codigo";
         }
 
@@ -73,7 +65,9 @@ namespace Tienda.Listas
                             selectBusc = "Marca";
                             ListaBusqueda(selectBusc);
                             break;
-                        default: MessageBox.Show("No ha elegido un opcion valida"); break;
+                        default: 
+                            MessageBox.Show("No ha elegido un opcion valida"); 
+                            break;
                     }
                 }
 
@@ -89,31 +83,21 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "";
-                switch (selectBusc)
-                {
-                    case "Id":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = " + this.buscarProd.Text;
-                        break;
-                    case "Nombre":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.buscarProd.Text + "'";
-                        break;
-                    case "Marca":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.buscarProd.Text + "'";
-                        break;
-                    default:
-                        query = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad";
-                        break;
-                }
                 con.Open();
-                SqlDataAdapter dr = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerProducto", con);
+                cmd.Parameters.AddWithValue("@"+ selectBusc, this.buscarProd.Text);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
-                dr.Fill(dt);
-                dataGridView1.DataSource = dt;
+                da.Fill(dt);
                 con.Close();
                 if (dataGridView1.Rows.Count == 0)
                 {
-                    MessageBox.Show("No existe un producto con este nombre (" + this.buscaProd.Text + ")");
+                    MessageBox.Show("No existe un producto con este nombre (" + this.buscarProd.Text + ")");
+                }
+                else
+                {
+                    dataGridView1.DataSource = dt;
                 }
             }
             catch (Exception ex)
@@ -128,9 +112,10 @@ namespace Tienda.Listas
         {
             try
             {
-                string query1 = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, u.Unidad, p.Precio [Precio Unidad] from Producto p inner join Unidades u on u.Id = p.Id_Unidad";
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(query1, con);
+                SqlCommand cmd = new SqlCommand("ObtenerProducto", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 dataGridView1.DataSource = dt;
@@ -209,15 +194,17 @@ namespace Tienda.Listas
                             string nombreProd = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
                             string marca = dataGridView1.CurrentRow.Cells["Marca"].Value.ToString();
                             string precio = dataGridView1.CurrentRow.Cells["Precio Unidad"].Value.ToString();
-                            string unidad = dataGridView1.CurrentRow.Cells["Unidad"].Value.ToString();
-                            //double Precio_Prod = double.Parse(p1, NumberStyles.Currency);
-                            //string Utilidad = dataGridView1.CurrentRow.Cells["Utilidad (%)"].Value.ToString();
-                            //double Prec_Venta = Math.Round(((double.Parse(Utilidad) / 100) + 1) * Precio_Prod);
+                            //string unidad = dataGridView1.CurrentRow.Cells["Unidad"].Value.ToString();
+                            
                             var ID = dataGridView1.Rows[e.RowIndex].Cells["Codigo"].Value.ToString();
                             //Query SQL
-                            string queryUpdate = "Update Producto set Nombre = '" + nombreProd + "'" + ", Marca = '" + marca + "', Precio = " + precio + " where Id = " + ID;
                             con.Open();
-                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            SqlCommand cmd = new SqlCommand("ActualizarProducto", con);
+                            cmd.Parameters.AddWithValue("@Id", ID);
+                            cmd.Parameters.AddWithValue("@Nombre", nombreProd);
+                            cmd.Parameters.AddWithValue("@Marca", marca);
+                            cmd.Parameters.AddWithValue("@Precio", precio);
+                            cmd.CommandType = CommandType.StoredProcedure;
                             cmd.ExecuteNonQuery();
                             con.Close();
                             ListaProducto();

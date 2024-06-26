@@ -91,24 +91,11 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "";
-                switch (selectBusc)
-                {
-                    case "Id":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = " + this.nombreProducto.Text;
-                        break;
-                    case "Nombre":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.nombreProducto.Text + "'";
-                        break;
-                    case "Marca":
-                        query = "select p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad where p." + selectBusc + " = '" + this.nombreProducto.Text + "'";
-                        break;
-                    default:
-                        query = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad";
-                        break;
-                }                    
                 con.Open();
-                SqlDataAdapter dr = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerBodega", con);
+                cmd.Parameters.AddWithValue("@"+selectBusc, this.nombreProducto.Text);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter dr = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 dr.Fill(dt);
                 dataGridView1.DataSource = dt;
@@ -153,8 +140,10 @@ namespace Tienda.Listas
 
         private DataTable DataTable()
         {
-            string query1 = "select top 20 p.Id [Codigo], p.Nombre, p.Marca, b.Cantidad, u.Unidad, p.Precio_Final [Precio] from Producto p inner join Bodega b on b.Id_Producto = p.Id inner join Unidades u on u.Id = p.Id_Unidad";
-            SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
+            con.Open();
+            SqlCommand cmd = new SqlCommand("ObtenerBodega", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
             DataTable data = new DataTable();
             adapter.Fill(data);
             return data;

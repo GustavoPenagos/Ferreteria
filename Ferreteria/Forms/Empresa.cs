@@ -9,7 +9,7 @@ namespace Tienda.Forms
         public Empresa()
         {
             InitializeComponent();
-            OpenFrom(new Listas.ListaFacturas());
+            OpenFrom(new Listas.ListaEmpresa());
         }
         private void OpenFrom(object fromhijo)
         {

@@ -91,7 +91,7 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "select top(20)* from Lista_Cartera";
+                string query = "select top(20)* from Cartera";
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
                 DataTable dt = new DataTable();

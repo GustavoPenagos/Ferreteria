@@ -110,11 +110,11 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(339, 167);
+            this.label1.Location = new System.Drawing.Point(292, 169);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 25);
+            this.label1.Size = new System.Drawing.Size(164, 25);
             this.label1.TabIndex = 15;
-            this.label1.Text = "Id Producto:";
+            this.label1.Text = "Codigo Producto:";
             // 
             // panel1
             // 

@@ -13,14 +13,14 @@ namespace Tienda.Listas
         public ListaVentas()
         {
             InitializeComponent();
-            CostContol_Load();
-            Delete();
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
 
         private void ListaVentas_Load(object sender, EventArgs e)
         {
-            this.selectCartera.Text = "Factura Nit";
+            TiposFactura();
+            CostContol_Load();
+            Delete();
         }
 
         private void CostContol_Load()
@@ -28,13 +28,16 @@ namespace Tienda.Listas
             try
             {
                 con.Open();
-                string query = "select * from Lista_Ventas";
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerFacturas", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
+                dt.Load(dr);
                 dataGridView1.DataSource = dt;
+                con.Close();
+
                 double suma = 0;
-                var count = dataGridView1.Rows.Count - 1;
+                var count = dataGridView1.Rows.Count ;
                 if (count != 0)
                 {
                     for (int i = 0; i < count; i++)
@@ -42,9 +45,8 @@ namespace Tienda.Listas
                         var Cart = double.Parse(dt.Rows[i].ItemArray[2].ToString(), NumberStyles.Currency);
                         suma = suma + Cart;
                     }
-                    this.totalCartera.Text = suma.ToString("C").Replace(",00", string.Empty);
+                    this.totalCartera.Text = suma.ToString();
                 }
-                con.Close();
             }
             catch (Exception ex)
             {
@@ -163,8 +165,9 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var factura = dataGridView1.Rows[e.RowIndex].Cells["Factura"].Value.ToString();
-                            string queryDelete = "delete from Cartera where Factura = " + factura;
+                            string factura = dataGridView1.Rows[e.RowIndex].Cells["# Factura"].Value.ToString();
+
+                            string queryDelete = "delete from Cartera where Factura = " + factura + " and Id_Cartera = " + TiposFacturas(dataGridView1.Rows[e.RowIndex].Cells["Factura"].Value.ToString());
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();
@@ -186,14 +189,36 @@ namespace Tienda.Listas
 
         private void Delete()
         {
-            //
             DataGridViewButtonColumn button = new DataGridViewButtonColumn();
             button.HeaderText = "Eliminar";
             button.Name = "Eliminar";
             button.Text = "Eliminar";
             button.UseColumnTextForButtonValue = true;
             dataGridView1.Columns.Add(button);
-            //
+        }
+
+        private void TiposFactura()
+        {
+            string departamento = "select * from Tipos_Cartera";
+            con.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(departamento, con);
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            this.selectCartera.DisplayMember = "Descripticon";
+            this.selectCartera.ValueMember = "Id_Cartera";
+            con.Close();
+            this.selectCartera.DataSource = data;
+        }
+        private int TiposFacturas(string nombreF)
+        {
+            string departamento = "select Id_Cartera from Tipos_Cartera where Descripticon = '" + nombreF + "'";
+            con.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(departamento, con);
+            DataTable data = new DataTable();
+            adapter.Fill(data);
+            con.Close();
+            return Convert.ToInt32(data.Rows[0].ItemArray[0].ToString());
+
         }
 
     }

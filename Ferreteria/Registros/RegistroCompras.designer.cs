@@ -56,7 +56,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(982, 100);
+            this.panel1.Size = new System.Drawing.Size(1360, 100);
             this.panel1.TabIndex = 18;
             // 
             // label1
@@ -67,7 +67,7 @@
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
             this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label1.Size = new System.Drawing.Size(982, 100);
+            this.label1.Size = new System.Drawing.Size(1360, 100);
             this.label1.TabIndex = 1;
             this.label1.Text = "Cartera empresas";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -78,9 +78,9 @@
             this.ImgFact.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ImgFact.Cursor = System.Windows.Forms.Cursors.No;
             this.ImgFact.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ImgFact.Location = new System.Drawing.Point(604, 100);
+            this.ImgFact.Location = new System.Drawing.Point(600, 100);
             this.ImgFact.Name = "ImgFact";
-            this.ImgFact.Size = new System.Drawing.Size(378, 568);
+            this.ImgFact.Size = new System.Drawing.Size(760, 729);
             this.ImgFact.TabIndex = 26;
             this.ImgFact.TabStop = false;
             // 
@@ -102,7 +102,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 100);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(604, 568);
+            this.panel2.Size = new System.Drawing.Size(600, 729);
             this.panel2.TabIndex = 27;
             // 
             // cBoxEmp
@@ -234,7 +234,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(982, 668);
+            this.ClientSize = new System.Drawing.Size(1360, 829);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.ImgFact);
             this.Controls.Add(this.panel1);

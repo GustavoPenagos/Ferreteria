@@ -10,6 +10,7 @@ namespace Tienda.Listas
 {
     public partial class ControlCaja : Form
     {
+        double sum = 0.0;
         public ControlCaja()
         {
             InitializeComponent();
@@ -18,7 +19,7 @@ namespace Tienda.Listas
 
         private void ControlCaja_Load(object sender, EventArgs e)
         {
-            Listar();
+            //Listar();
             Delete();
             Capital();
             DineroBase();
@@ -114,16 +115,14 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "select c.Id as 'ID' ,tc.Tipo_Cartera as 'Tipo de registro'" +
-                    ",FORMAT(CONVERT(decimal, c.Valor_Cartera), 'C', 'es-CO') as 'Valor ingreso' " +
-                    ", c.Fecha as 'Fecha de ingreso'" +
-                    "from Cartera as c " +
-                    "inner join Tipo_Cartera as tc on (tc.Id_Cartera = c.Id_Cartera)" +
-                    "where c.Id_Cartera = 6";
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 5);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
+                dt.Load(dr);
+                con.Close();
                 dataGridView1.DataSource = dt;
                 con.Close();
             }
@@ -148,8 +147,6 @@ namespace Tienda.Listas
                         Total();
                         Capital();
                         break;
-                    case DialogResult.Cancel:
-                        break;
                     default: break;
                 }       
             }
@@ -164,13 +161,8 @@ namespace Tienda.Listas
         {
             try
             {
-                double capital = double.Parse(this.tBCapital.Text, NumberStyles.Currency);
-                var ventas = double.Parse(this.tBVenta.Text, NumberStyles.Currency);
-                var gastos = double.Parse(this.tBGasto.Text, NumberStyles.Currency);
-                var abonos = double.Parse(this.tBAbono.Text, NumberStyles.Currency);
-
-                var total = (capital + ventas) - (gastos + abonos);
-                this.tBTotal.Text = total.ToString("C").Replace(",00", string.Empty);
+                var total = (double.Parse(this.tBCapital.Text) + double.Parse(this.tBVenta.Text)) - (double.Parse(this.tBGasto.Text) + double.Parse(this.tBAbono.Text));
+                this.tBTotal.Text = total.ToString();
 
             }
             catch (Exception ex)
@@ -183,13 +175,21 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "select sum(convert(decimal, Valor_Cartera)) from Cartera where Id_Cartera = 6";
+                sum = 0.0;
                 con.Open();
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(query, con);
-                DataTable dataTable = new DataTable();
-                dataAdapter.Fill(dataTable);
-                this.tBCapital.Text = Convert.ToDouble(dataTable.Rows[0].ItemArray[0]).ToString("C").Replace(",00", string.Empty);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 5);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
                 con.Close();
+                foreach(DataRow item in dt.Rows)
+                {
+                    sum += Convert.ToDouble(item[2].ToString()); 
+                }
+
+                this.tBCapital.Text = sum.ToString();
                 Ventas();
             }
             catch (Exception ex)
@@ -203,14 +203,24 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryVenta = "select sum(convert(decimal, Valor_Cartera)) from Cartera where Id_Cartera = 1  or Id_Cartera = 2 or Id_Cartera = 5";
-                con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryVenta, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                var s = dt.Rows[0].ItemArray[0].ToString().Equals("") ? 0.00 : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.tBVenta.Text = s.ToString("C").Replace(",00", string.Empty);
-                con.Close();
+                sum = 0.0;
+                for (int i = 2; i < 5 ; i++)
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                    cmd.Parameters.AddWithValue("@id_Cartera", i);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    DataTable dt = new DataTable();
+                    dt.Load(dr);
+                    con.Close();
+                    foreach(DataRow item in dt.Rows)
+                    {
+                        sum += Convert.ToDouble(item[2].ToString());
+                    }
+                }
+                this.tBVenta.Text = sum.ToString();
+
                 Gasto();
 
             }
@@ -225,21 +235,21 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryVenta = "select sum(convert(decimal, Valor_Cartera)) from Cartera  where Id_Cartera = 3";
+                sum = 0.0;
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryVenta, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 7);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                if (dt.Rows[0].ItemArray[0].ToString().Equals(""))
-                {
-                    this.tBGasto.Text = 0.ToString("C").Replace(",00", string.Empty);
-                }
-                else
-                {
-                    var s = double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                    this.tBGasto.Text = s.ToString("C").Replace(",00", string.Empty);
-                }
+                dt.Load(dr);
                 con.Close();
+
+                foreach (DataRow item in dt.Rows)
+                {
+                    sum += Convert.ToDouble(item[2].ToString());
+                }
+                this.tBGasto.Text = sum.ToString();
                 Facturas();
 
             }
@@ -254,21 +264,23 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryVenta = "select sum(convert(decimal, Valor_Cartera)) from Cartera  where Id_Cartera = 4";
+                sum = 0.0;
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryVenta, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 6);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                if (dt.Rows[0].ItemArray[0].ToString().Equals(""))
-                {
-                    this.tBTotalF.Text = 0.ToString("C").Replace(",00", string.Empty);
-                }
-                else
-                {
-                    var s = double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                    this.tBTotalF.Text = s.ToString("C").Replace(",00", string.Empty);
-                }
+                dt.Load(dr);
                 con.Close();
+
+                foreach (DataRow item in dt.Rows)
+                {
+                    sum += Convert.ToDouble(item[2].ToString());
+                }
+
+                this.tBTotalF.Text = sum.ToString();
+                
                 Abono();
 
             }
@@ -283,14 +295,22 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryVenta = "select sum(CONVERT(decimal, Abono)) from Abono";
+                sum = 0.0;
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryVenta, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 8);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                
-                var s = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.tBAbono.Text = s.ToString("C").Replace(",00", string.Empty);
+                dt.Load(dr);
+                con.Close();
+
+                foreach (DataRow item in dt.Rows)
+                {
+                    sum += Convert.ToDouble(item[2].ToString());
+                }
+
+                this.tBAbono.Text = sum.ToString();
                 con.Close();
                 Total();
             }
@@ -305,15 +325,18 @@ namespace Tienda.Listas
         {
             try
             {
-                var date = DateTime.Now.ToShortDateString();
-                string query = "select Dinero_Base from DineroBase where Fecha like '"+date+"'";
                 con.Open();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerDienroBase", con);
+                cmd.Parameters.AddWithValue("@Fecha", DateTime.Now.ToString("yyyy-MM-dd"));
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                ad.Fill(dt);
-                var dinero = dt.Rows.Count == 0 ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.dineroBase.Text = dinero.ToString("C").Replace(",00", string.Empty);
+                dt.Load(dr);
                 con.Close();
+
+                double dinero = dt.Rows.Count == 0 ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
+                this.dineroBase.Text = dinero.ToString();
+
                 DineroVentas();
             }
             catch(Exception ex)
@@ -326,16 +349,28 @@ namespace Tienda.Listas
         {
             try
             {
-                var date = DateTime.Now.ToShortDateString();
-                string query = "SELECT SUM(CONVERT(decimal, c.Valor_Cartera)) AS [Valor de venta] " +
-                    "FROM dbo.Cartera AS c " +
-                    "WHERE  (c.Fecha like '" + date + "') and (c.Id_Cartera = 1) or (c.Id_Cartera = 2) and (c.Id_Cartera = 5)";
-                con.Open();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
+                sum = 0.0;
                 DataTable dt = new DataTable();
-                ad.Fill(dt);
-                var venta = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.ventasHoy.Text = venta.ToString("C").Replace(",00", string.Empty);
+                for (int i = 1; i < 5; i++)
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                    cmd.Parameters.AddWithValue("@id_Cartera", i);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    dt.Load(dr);
+                    con.Close();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        if (item[3].ToString().Equals(DateTime.Now.ToString("yyyy-MM-dd")))
+                        {
+                            sum += Convert.ToDouble(item[2].ToString());
+                        }
+                        
+                    }
+                }
+
+                this.ventasHoy.Text = sum.ToString();
                 con.Close();
                 GastosHoy();
             }
@@ -350,14 +385,23 @@ namespace Tienda.Listas
         {
             try
             {
-                var date = DateTime.Now.ToShortDateString();
-                string query = "select sum(convert(decimal, Valor_Cartera)) from Cartera  where Fecha like '" + date + "' and  Id_Cartera = 3";
                 con.Open();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 7);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                ad.Fill(dt);
-                var gasto = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.gastosHoy.Text = gasto.ToString("C").Replace(",00", string.Empty);
+                dt.Load(dr);
+                con.Close();
+                foreach (DataRow item in dt.Rows)
+                {
+                    if (item[3].ToString().Equals(DateTime.Now.Date.ToString()))
+                    {
+                        sum += Convert.ToDouble(item[2].ToString());
+                    }
+                }
+
+                this.gastosHoy.Text = sum.ToString();
                 con.Close();
                 AbonosHoy();
             }
@@ -372,14 +416,31 @@ namespace Tienda.Listas
         {
             try
             {
-                string date = DateTime.Now.ToShortDateString();
-                string query = "select sum(CONVERT(decimal, Abono)) from Abono where Fecha like '" + date + "'";
+                sum = 0.0;
                 con.Open();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerAbonos", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                ad.Fill(dt);
-                var abono = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.abonosHoy.Text = abono.ToString("C").Replace(",00", string.Empty);
+                dt.Load(dr);
+                con.Close();
+                foreach (DataRow item in dt.Rows)
+                {
+                    if (item[4].ToString().Equals(DateTime.Now.Date.ToString()))
+                    {
+                        sum += Convert.ToDouble(item[3].ToString());
+                    }
+                }
+
+
+                //string date = DateTime.Now.ToShortDateString();
+                //string query = "select sum(CONVERT(decimal, Abono)) from Abono where Fecha like '" + date + "'";
+                //con.Open();
+                //SqlDataAdapter ad = new SqlDataAdapter(query, con);
+                //DataTable dt = new DataTable();
+                //ad.Fill(dt);
+                //var abono = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
+                this.abonosHoy.Text = sum.ToString();
                 con.Close();
                 TotalHoy();
             }
@@ -393,12 +454,8 @@ namespace Tienda.Listas
         {
             try
             {
-                double dBase = double.Parse(this.dineroBase.Text, NumberStyles.Currency);
-                double vBase = double.Parse(this.ventasHoy.Text, NumberStyles.Currency);
-                double gBase = double.Parse(this.gastosHoy.Text, NumberStyles.Currency);
-                double aBase = double.Parse(this.abonosHoy.Text, NumberStyles.Currency);
-                double sumar = (dBase + vBase) - (gBase + aBase);
-                this.totalHoy.Text = sumar.ToString("C").Replace(",00",string.Empty);
+                double sumar = (double.Parse(this.dineroBase.Text) + double.Parse(this.ventasHoy.Text)) - (double.Parse(this.gastosHoy.Text) + double.Parse(this.abonosHoy.Text));
+                this.totalHoy.Text = sumar.ToString();
 
             }catch(Exception ex)
             {
@@ -467,20 +524,26 @@ namespace Tienda.Listas
         {
             try
             {
-                double suma = 0;                
-                string querySuma = "select [Valor total] from lista_bodega";
-                SqlDataAdapter adapter = new SqlDataAdapter(querySuma, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                for (int i = 0; i < data.Rows.Count; i++)
+                sum = 0.0;
+                con.Open();
+                SqlCommand cmd = new SqlCommand("PrecioXBodega", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                con.Close();
+                
+                foreach(DataRow item in dt.Rows)
                 {
-                    suma +=double.Parse(data.Rows[i].ItemArray[0].ToString().Trim().Replace("$", string.Empty).Replace(",00", string.Empty));
+                    sum += Convert.ToDouble(item[0].ToString());
                 }
-                DineroTotal dinero = new DineroTotal(suma.ToString("C").Replace(",00", string.Empty));
+                
+                DineroTotal dinero = new DineroTotal(sum.ToString());
                 dinero.ShowDialog();
             }
             catch(Exception ex)
             {
+                con.Close();
                 MessageBox.Show(ex.Message, "Suma de bodega");
             }
         }
@@ -489,20 +552,25 @@ namespace Tienda.Listas
         {
             try
             {
-                double suma = 0;
-                string querySuma = "select [Utilidad] from Lista_utilidad";
-                SqlDataAdapter adapter = new SqlDataAdapter(querySuma, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                for (int i = 0; i < data.Rows.Count; i++)
+                sum = 0.0;
+                con.Open();
+                SqlCommand cmd = new SqlCommand("ObtenerUtilidadXProducto", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                con.Close();
+                foreach(DataRow item in dt.Rows)
                 {
-                    suma += double.Parse(data.Rows[i].ItemArray[0].ToString().Trim().Replace("$", string.Empty).Replace(",00", string.Empty));
+                    sum += Convert.ToDouble(item[0].ToString());
                 }
-                DineroTotal dinero = new DineroTotal(suma.ToString("C").Replace(",00", string.Empty));
+
+                DineroTotal dinero = new DineroTotal(sum.ToString());
                 dinero.ShowDialog();
             }
             catch (Exception ex)
             {
+                con.Close();
                 MessageBox.Show(ex.Message, "Suma de bodega");
             }
         }
@@ -511,20 +579,26 @@ namespace Tienda.Listas
         {
             try
             {
-                double suma = 0;
-                string querySuma = "select [Total] from Lista_BCompra";
-                SqlDataAdapter adapter = new SqlDataAdapter(querySuma, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                for (int i = 0; i < data.Rows.Count; i++)
+                sum = 0.0;
+                con.Open();
+                SqlCommand cmd = new SqlCommand("ObtenerCantidadXPrecio", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                con.Close();
+
+                foreach(DataRow item in dt.Rows)
                 {
-                    suma += double.Parse(data.Rows[i].ItemArray[0].ToString().Trim().Replace("$", string.Empty).Replace(",00", string.Empty));
+                    sum += Convert.ToDouble(item[0].ToString());
                 }
-                DineroTotal dinero = new DineroTotal(suma.ToString("C").Replace(",00", string.Empty));
+
+                DineroTotal dinero = new DineroTotal(sum.ToString());
                 dinero.ShowDialog();
             }
             catch (Exception ex)
             {
+                con.Close();
                 MessageBox.Show(ex.Message, "Suma de bodega");
             }
         }

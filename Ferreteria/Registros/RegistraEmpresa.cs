@@ -11,12 +11,12 @@ namespace Tienda.Registros
         public RegistraEmpresa(string nit)
         {
             InitializeComponent();
-            Tipos();
             this.NiEmp.Text = nit;
         }
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
         private void RegistraEmpresa_Load(object sender, EventArgs e)
         {
+            Tipos();
             this.NiEmp.Focus();
         }
 
@@ -29,9 +29,17 @@ namespace Tienda.Registros
         {
             try
             {
-                string query = "INSERT INTO [Company] VALUES (" + this.NiEmp.Text + ",'" + this.nomEmp.Text + "','" + this.proEmp.Text + "','" + this.dirEmp.Text + "','" + this.telEmp.Text + "'," + this.selectDepart.SelectedValue + "," + this.selectCiudad.SelectedValue + ", '" + this.mail.Text + "')";
-                SqlCommand cmd = new SqlCommand(query, con);
                 con.Open();
+                SqlCommand cmd = new SqlCommand("InsertarEmpresa", con);
+                cmd.Parameters.AddWithValue("@Nit", this.NiEmp.Text);
+                cmd.Parameters.AddWithValue("@Nombre", this.nomEmp.Text);
+                cmd.Parameters.AddWithValue("@Producto", this.proEmp.Text);
+                cmd.Parameters.AddWithValue("@Telefono", this.telEmp.Text);
+                cmd.Parameters.AddWithValue("@Direccion", this.dirEmp.Text);
+                cmd.Parameters.AddWithValue("@IdDepartamento", this.selectDepart.SelectedValue);
+                cmd.Parameters.AddWithValue("@IdCiudad", this.selectCiudad.SelectedValue);
+                cmd.Parameters.AddWithValue("@Correo", this.mail.Text);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
                 con.Close();
                 Clear();
@@ -46,23 +54,20 @@ namespace Tienda.Registros
 
         private void NiEmp_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
+           
         }
 
         private void Tipos()
         {
             try
             {
-                string departamento = "select * from Department";
+                string departamento = "select * from Departamento";
                 con.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter(departamento, con);
                 DataTable data = new DataTable();
                 adapter.Fill(data);
-                this.selectDepart.DisplayMember = "Department";
-                this.selectDepart.ValueMember = "Id_Department";
+                this.selectDepart.DisplayMember = "Departamento";
+                this.selectDepart.ValueMember = "Id";
                 con.Close();
                 this.selectDepart.DataSource = data;
                 
@@ -78,20 +83,18 @@ namespace Tienda.Registros
         {
             try
             {
-                string query = "SELECT  Municipality, Id_Municipality " +
-                    "FROM Municipality " +
-                    "inner join Department on(Municipality.Id_Department = Department.Id_Department) " +
-                    "where Municipality.Id_Department =" + this.selectDepart.SelectedValue;
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCiudadXDepartamento", con);
+                cmd.Parameters.AddWithValue("@IdDepartamento", this.selectDepart.SelectedValue);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 DataRow dr = dt.NewRow();
 
-                this.selectCiudad.ValueMember = "Id_Municipality";
-                this.selectCiudad.DisplayMember = "Municipality";
+                this.selectCiudad.ValueMember = "Id";
+                this.selectCiudad.DisplayMember = "Ciudad";
                 this.selectCiudad.DataSource = dt;
                 con.Close();
             }
@@ -109,6 +112,7 @@ namespace Tienda.Registros
             this.proEmp.Clear();
             this.dirEmp.Clear();
             this.telEmp.Clear();
+            this.mail.Clear();
         }
 
         private void selectCiudad_KeyPress(object sender, KeyPressEventArgs e)

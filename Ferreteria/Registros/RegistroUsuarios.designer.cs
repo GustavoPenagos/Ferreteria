@@ -189,7 +189,7 @@
             this.contrUser.Location = new System.Drawing.Point(512, 565);
             this.contrUser.Name = "contrUser";
             this.contrUser.Size = new System.Drawing.Size(300, 30);
-            this.contrUser.TabIndex = 5;
+            this.contrUser.TabIndex = 9;
             this.contrUser.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // telefonoUsuario
@@ -198,7 +198,7 @@
             this.telefonoUsuario.Location = new System.Drawing.Point(512, 363);
             this.telefonoUsuario.Name = "telefonoUsuario";
             this.telefonoUsuario.Size = new System.Drawing.Size(300, 30);
-            this.telefonoUsuario.TabIndex = 7;
+            this.telefonoUsuario.TabIndex = 5;
             this.telefonoUsuario.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.telefonoUsuario.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numeroDocumento_KeyPress);
             // 
@@ -208,7 +208,7 @@
             this.direcUsuario.Location = new System.Drawing.Point(512, 413);
             this.direcUsuario.Name = "direcUsuario";
             this.direcUsuario.Size = new System.Drawing.Size(300, 30);
-            this.direcUsuario.TabIndex = 8;
+            this.direcUsuario.TabIndex = 6;
             this.direcUsuario.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // eMail
@@ -217,7 +217,7 @@
             this.eMail.Location = new System.Drawing.Point(512, 463);
             this.eMail.Name = "eMail";
             this.eMail.Size = new System.Drawing.Size(300, 30);
-            this.eMail.TabIndex = 9;
+            this.eMail.TabIndex = 7;
             this.eMail.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.eMail.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.eMail_KeyPress);
             // 
@@ -253,7 +253,7 @@
             this.nitEmpresa.Location = new System.Drawing.Point(512, 514);
             this.nitEmpresa.Name = "nitEmpresa";
             this.nitEmpresa.Size = new System.Drawing.Size(300, 33);
-            this.nitEmpresa.TabIndex = 6;
+            this.nitEmpresa.TabIndex = 8;
             // 
             // button1
             // 

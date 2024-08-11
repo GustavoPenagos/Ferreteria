@@ -1,4 +1,5 @@
-﻿using Ferreteria.Forms;
+﻿using Aspose.Pdf;
+using Ferreteria.Forms;
 using System;
 using System.Configuration;
 using System.Data;
@@ -61,26 +62,22 @@ namespace Tienda.Listas
         {
             try
             {
-                string queryAbonos = "select top(20) * from Listado_Abono";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(queryAbonos, con);
+                SqlCommand cmd = new SqlCommand("ObtenerAbonos", con);
+                cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
-                dataGridView1.DataSource = dt;
                 con.Close();
-                string send = "empty";
-                if (this.numFactura.Text.Equals(""))
+                if (dt.Rows.Count == 0)
                 {
-                    this.label3.Visible = false;
-                    this.label4.Visible = false;
-                    this.total.Visible = false;
-                    this.sPendiente.Visible = false;
+                    MessageBox.Show("Los abonos esta vacio!", "", MessageBoxButtons.OK);
+                    return;
                 }
-                else
-                {
-                    MostrarTotal(send);
-                }
+                dataGridView1.DataSource = dt;
+             
+                MostrarTotal("empty");
+             
 
             }
             catch (Exception ex)
@@ -99,7 +96,7 @@ namespace Tienda.Listas
                 this.total.Visible = true;
                 this.sPendiente.Visible = true;
                 //TOTAL ABONOS
-                var queryAbonos = send.Equals("empty") ? "select format(sum(convert(decimal, abono)), 'C', 'es-CO') from Abono" : "select format(sum(convert(decimal, abono)), 'C', 'es-CO') from Abono " + send;
+                var queryAbonos = "select sum(convert(decimal, abono)) from Abono" ;
                 con.Open();
                 SqlCommand cmd = new SqlCommand(queryAbonos, con);
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -108,15 +105,27 @@ namespace Tienda.Listas
                 var totales = dt.Rows[0].ItemArray[0].ToString();
                 this.total.Text = totales;
                 //SALDO PENDIENTE
-                var queryPendiente = "select  top (1) convert(decimal, Valor_Total) from Abono " + send;
-                SqlCommand cmdP = new SqlCommand(queryPendiente, con);
-                SqlDataReader drP = cmdP.ExecuteReader();
-                DataTable dtP = new DataTable();
-                dtP.Load(drP);
-                var pendiente = dtP.Rows[0].ItemArray[0].ToString();
-                var total = double.Parse(totales, NumberStyles.Currency);
-                var result = Convert.ToDouble(pendiente) - Convert.ToDouble(total);
-                this.sPendiente.Text = result.ToString("C").Replace(",00", string.Empty);
+                string queryDistinct = "select distinct Id_Factura from Abono";
+                SqlCommand cmdD = new SqlCommand(queryDistinct, con);
+                SqlDataReader drD = cmdD.ExecuteReader();
+                DataTable dtD = new DataTable();
+                dtD.Load(drD);
+                
+                string queryPendiente = "";
+                double pendiente = 0.0;
+                foreach (DataRow item in dtD.Rows)
+                {
+                    string numeroFacturas = item[0].ToString();
+                    queryPendiente = "select  top (1) convert(decimal, Valor_Total) from Abono where Id_Factura = " + numeroFacturas;
+                    SqlCommand cmdP = new SqlCommand(queryPendiente, con);
+                    SqlDataReader drP = cmdP.ExecuteReader();
+                    DataTable dtP = new DataTable();
+                    dtP.Load(drP);
+                    pendiente = pendiente + Convert.ToDouble(dtP.Rows[0].ItemArray[0].ToString());
+                }
+                
+                var result = pendiente - Convert.ToDouble(totales);
+                this.sPendiente.Text = result.ToString();
                 con.Close();
 
 

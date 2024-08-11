@@ -29,26 +29,28 @@ namespace Tienda.Registros
         {
             try
             {
-                var Documento = this.numeroDocumento.Text;
-                var TipoDocumento = this.tipo_Documento.SelectedValue;
-                var nombre = this.nombreUsuario.Text;
-                var tipoUsuario = this.tipoUsuario.SelectedValue;
-                var telefono = this.telefonoUsuario.Text;
-                var direccion = this.direcUsuario.Text;
-                var correo = this.eMail.Text;
-                var nitEmpresa = this.nitEmpresa.SelectedValue;
-                var contrasena = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
+                //var Documento = this.numeroDocumento.Text;
+                //var TipoDocumento = this.tipo_Documento.SelectedValue;
+                //var nombre = this.nombreUsuario.Text;
+                //var tipoUsuario = this.tipoUsuario.SelectedValue;
+                //var telefono = this.telefonoUsuario.Text;
+                //var direccion = this.direcUsuario.Text;
+                //var correo = this.eMail.Text;
+                //var nitEmpresa = this.nitEmpresa.SelectedValue;
+                //var contrasena = this.contrUser.Enabled == false ? "" : this.contrUser.Text;
 
                 con.Open();
                 SqlCommand cmd = new SqlCommand("InsertarUsuario", con);
-                cmd.Parameters.AddWithValue("@Documento", Documento);
-                cmd.Parameters.AddWithValue("@Tipo_Documento", TipoDocumento);
-                cmd.Parameters.AddWithValue("@Nombre", nombre);
-                cmd.Parameters.AddWithValue("@Tipo_Usuario", tipoUsuario);
-                cmd.Parameters.AddWithValue("@Telefono", telefono);
-                cmd.Parameters.AddWithValue("@Correo", correo);
-                cmd.Parameters.AddWithValue("@Nit_Empresa", nitEmpresa);
-                cmd.Parameters.AddWithValue("@Contrasena", contrasena);
+                cmd.Parameters.AddWithValue("@Documento", this.numeroDocumento.Text);
+                cmd.Parameters.AddWithValue("@Tipo_Documento", this.tipo_Documento.SelectedValue);
+                cmd.Parameters.AddWithValue("@Nombre", this.nombreUsuario.Text);
+                cmd.Parameters.AddWithValue("@Tipo_Usuario", this.tipoUsuario.SelectedValue);
+                cmd.Parameters.AddWithValue("@Telefono", this.telefonoUsuario.Text);
+                cmd.Parameters.AddWithValue("@Direccion", this.direcUsuario.Text);
+                cmd.Parameters.AddWithValue("@Correo", this.eMail.Text);
+                cmd.Parameters.AddWithValue("@Nit_Empresa", this.nitEmpresa.SelectedValue);
+                cmd.Parameters.AddWithValue("@Contrasena", this.contrUser.Enabled == false ? "" : this.contrUser.Text);
+
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
                 con.Close();

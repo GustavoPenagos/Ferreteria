@@ -110,7 +110,7 @@
             this.empComBox.Items.AddRange(new object[] {
             "Nit",
             "Nombre",
-            "Productos",
+            "Producto",
             "Ciudad"});
             this.empComBox.Location = new System.Drawing.Point(185, 27);
             this.empComBox.Name = "empComBox";

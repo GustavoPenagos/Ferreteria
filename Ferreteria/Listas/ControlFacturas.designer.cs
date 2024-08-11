@@ -65,7 +65,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1046, 100);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Control del facturas";
+            this.label1.Text = "Control de facturas";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel2

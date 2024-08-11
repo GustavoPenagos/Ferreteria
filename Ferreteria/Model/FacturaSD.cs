@@ -384,7 +384,7 @@ namespace Tienda.Model
                     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
                     byte[] bytes = Encoding.ASCII.GetBytes(szString);
                     var base64EncodedBytes = System.Convert.ToBase64String(bytes).ToString();
-                    string query = "INSERT INTO FacturaRem VALUES('" + base64EncodedBytes + "')";
+                    string query = "INSERT INTO Factura_Remision VALUES('" + base64EncodedBytes + "')";
                     con.Open();
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.ExecuteNonQuery();

@@ -46,41 +46,49 @@ namespace Ferreteria.Forms
             {
                 string capital = this.dinero.Text;
                 var sum = 0.00;
-                var num = 0.00;
-                var date = DateTime.Now.ToShortDateString();
-                string queryCapital = "INSERT INTO Cartera values (6, '" + capital.Trim() + "', '" + date + "', '0', '0','0')";
+                //
                 con.Open();
-                SqlCommand cmdCap = new SqlCommand(queryCapital, con);
-                cmdCap.ExecuteNonQuery();
+                SqlCommand cmdC = new SqlCommand("InsertarCartera", con);
+                cmdC.Parameters.AddWithValue("@Id_Cartera", 5);
+                cmdC.Parameters.AddWithValue("@Valor_Cartera", capital.Trim());
+                cmdC.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                cmdC.Parameters.AddWithValue("@Factura", 0);
+                cmdC.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                cmdC.Parameters.AddWithValue("@Documento", 0);
+                cmdC.CommandType = CommandType.StoredProcedure;
+                cmdC.ExecuteReader();
                 con.Close();
                 //
-                string query = "INSERT INTO DineroBase VALUES('" + capital + "','" + date + "')";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.ExecuteNonQuery();
+                SqlCommand cmdD = new SqlCommand("InsertarDineroBase", con);
+                cmdD.Parameters.AddWithValue("@Dinero", capital.ToString());
+                cmdD.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                cmdD.CommandType = CommandType.StoredProcedure;
+                cmdD.ExecuteReader();
                 con.Close();
                 //
-                string queryConsult = "SELECT * FROM Cartera where Id_Cartera = 6";
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryConsult, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 5);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                var count = dt.Rows.Count;
+                dt.Load(dr);
+                con.Close();
 
-                if (count > 0)
+                if (dt.Rows.Count > 0)
                 {
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i < dt.Rows.Count; i++)
                     {
-                        num = double.Parse(dt.Rows[i].ItemArray[2].ToString());
-                        sum = sum + num;
+                        sum = sum + double.Parse(dt.Rows[i].ItemArray[2].ToString());
                     }
                 }
-                con.Close();
                 DialogResult = DialogResult.OK;
             }
-            catch
+            catch (Exception ex)
             {
-
+                con.Close();
+                MessageBox.Show(ex.Message, "IngresarCapital/Ingresar");
             }
         }
 
@@ -96,7 +104,7 @@ namespace Ferreteria.Forms
                 {
                     long moneda = Convert.ToInt64(dinero.Text);
 
-                    dineroMoneda.Text = moneda.ToString("C").Replace(",00", string.Empty);
+                    dineroMoneda.Text = moneda.ToString();
                 }
 
             }

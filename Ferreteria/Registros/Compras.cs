@@ -21,6 +21,7 @@ using Aspose.Pdf.Operators;
  using Org.BouncyCastle.Utilities.Collections;
 using Newtonsoft.Json;
 using System.Data;
+using Org.BouncyCastle.Crypto.Macs;
 
 namespace Tienda.Registros
 {
@@ -39,7 +40,7 @@ namespace Tienda.Registros
             {
                 Disable();
 
-                string queryE = "select [Name] from [User] where estado = 1";
+                string queryE = "select Nombre from Usuario where estado = 1";
                 SqlDataAdapter adapterE = new SqlDataAdapter(queryE, con);
                 DataTable dataE = new DataTable();
                 adapterE.Fill(dataE);
@@ -53,20 +54,18 @@ namespace Tienda.Registros
                     this.vendedor.Text = dataE.Rows[0].ItemArray[0].ToString();
                 }
                 IngresarDinero();
-                string date = DateTime.Now.ToShortDateString();
-                string queryConsulta = "SELECT Dinero_Base FROM DineroBase WHERE Fecha LIKE '" + date + "'";
+                string queryConsulta = "SELECT Dinero FROM DineroBase WHERE Fecha_Registro LIKE '" + DateTime.Now.ToString("yyyy-MM-dd") + "'";
                 SqlDataAdapter ad = new SqlDataAdapter(queryConsulta, con);
                 DataTable dt = new DataTable();
                 ad.Fill(dt);
-                int cantidad = dt.Rows.Count;
-                if (cantidad != 0)
+                if (dt.Rows.Count != 0)
                 {
-                    string queryP = "Select * from Producto order by Id_Prod desc";
+                    string queryP = "select * from Producto order by Nombre asc";
                     SqlDataAdapter adapterD = new SqlDataAdapter(queryP, con);
                     DataTable dataD = new DataTable();
                     adapterD.Fill(dataD);
-                    this.cBNombre.DisplayMember = "Nombre_Prod";
-                    this.cBNombre.ValueMember = "Id_Prod";
+                    this.cBNombre.DisplayMember = "Nombre";
+                    this.cBNombre.ValueMember = "Id";
                     this.cBNombre.DataSource = dataD;
                     Delete();
                     
@@ -114,18 +113,17 @@ namespace Tienda.Registros
         {
             try
             {
-                string queryCompare = ""; long ID = 0;
+                long ID = 0;
+                if (this.canProd.Text.Equals(""))
+                {
+                    MessageBox.Show("Campo cantidad esta vacio"); 
+                    return;
+                }
+                SqlCommand cmdBodega = new SqlCommand("ObtenerBodega", con);
                 if (this.rBId.Checked == true)
                 {
-                    if (this.canProd.Text.Equals(""))
-                    {
-                        MessageBox.Show("Campo cantidad esta vacio"); return;
-                    }
-                    if (this.idProdC.Text.Equals(""))
-                    {
-                        MessageBox.Show("Campo ID esta vacio"); return;
-                    }
-                    queryCompare = "Select * from bodega where Id_Prod = " + this.idProdC.Text;
+                    cmdBodega.Parameters.AddWithValue("@Id", this.idProdC.Text);
+                    ID = Convert.ToInt64(this.idProdC.Text);
                 }
                 if (this.rBNombre.Checked == true)
                 {
@@ -133,41 +131,39 @@ namespace Tienda.Registros
                     {
                         MessageBox.Show("Campo cantidad esta vacio"); return;
                     }
-                    string query = "select ID from lista_bodega where ID like '" + this.cBNombre.SelectedValue + "'";
-                    con.Open();
-                    SqlDataAdapter ad = new SqlDataAdapter(query, con);
-                    DataTable dtt = new DataTable();
-                    ad.Fill(dtt);
-                    ID = Convert.ToInt64(dtt.Rows[0].ItemArray[0].ToString());
-                    con.Close();
-                    queryCompare = "Select * from bodega where Id_Prod = " + ID;
+                    
+                    cmdBodega.Parameters.AddWithValue("@Id", this.cBNombre.SelectedValue);
+                    ID = Convert.ToInt64(this.cBNombre.SelectedValue);
+
                 }
-                con.Open();
-                SqlCommand cmd = new SqlCommand(queryCompare, con);
-                SqlDataReader dr = cmd.ExecuteReader();
+                cmdBodega.CommandType = CommandType.StoredProcedure;
                 DataTable dt = new DataTable();
+                con.Open();
+                SqlDataReader dr = cmdBodega.ExecuteReader();
                 dt.Load(dr);
-                var existe = Convert.ToDouble(dt.Rows[0].ItemArray[2].ToString());
                 con.Close();
+                var existe = Convert.ToDouble(dt.Rows[0].ItemArray[3].ToString());
                 var cantidad = Convert.ToDouble(this.canProd.Text);
                 var result = existe - cantidad;
 
-                if (existe <= 0 && result == 0)
+                if (result < 0)
                 {
-                    MessageBox.Show("El numero maximo de articulos en bodega es: " + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El maximo de articulos :" + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 else
                 {
-                    if (result >= 0)
-                    {
-                        CantidadData(existe, cantidad, ID, result);
-                    }
-                    else
-                    {
-                        MessageBox.Show("El numero maximo de articulos en bodega es: " + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+                    CantidadData(existe, cantidad, ID, result);
+
+                    //if (result >= 0)
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show("El numero maximo de articulos en bodega es: " + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //    return;
+                    //}
                 }
             }
             catch (Exception ex)
@@ -198,7 +194,7 @@ namespace Tienda.Registros
                             if (ids == id)
                             {
                                 int lastRow = count - 1;
-                                var cellCant = Convert.ToInt64(dataGridView2.Rows[i].Cells[4].Value);
+                                var cellCant = Convert.ToInt64(dataGridView2.Rows[i].Cells[5].Value);
                                 var cellID = Convert.ToInt64(dataGridView2.Rows[i].Cells[1].Value);
 
                                 if (cellID == id && cellCant <= existe)
@@ -238,32 +234,35 @@ namespace Tienda.Registros
             try
             {
                 //ultimo fila (index), cantidad de la fila, id de la fila, id en la caja de texto
-                string queryCompare = "Select * from bodega where Id_Prod = " + idText;
                 con.Open();
-                SqlDataAdapter ad = new SqlDataAdapter(queryCompare, con);
+                SqlCommand cmdd = new SqlCommand("ObtenerBodega", con);
+                cmdd.Parameters.AddWithValue("@Id", idText);
+                cmdd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmdd.ExecuteReader();
                 DataTable dt = new DataTable();
-                ad.Fill(dt);
-                var numero = Convert.ToInt32(dt.Rows[0].ItemArray[2].ToString());
-                var idp = Convert.ToInt64(dt.Rows[0].ItemArray[1].ToString());
+                dt.Load(dr);
+                
+                var cantidad = Convert.ToInt32(dt.Rows[0].ItemArray[3].ToString());
+                var idp = Convert.ToInt64(dt.Rows[0].ItemArray[0].ToString());
                 con.Close();
                 double result = 0;
                 for (int i = 0; i < dataGridView2.Rows.Count; i++)
                 {
                     if (Convert.ToInt64(dataGridView2.Rows[i].Cells[1].Value) == idp)
                     {
-                        double cant = Convert.ToDouble(dataGridView2.Rows[i].Cells[4].Value);
+                        double cant = Convert.ToDouble(dataGridView2.Rows[i].Cells[5].Value);
                         result = result == 0 ? Convert.ToDouble(this.canProd.Text) + cant + result : cant + result;
                     }
                     
                 }
-                if (result <= numero)
+                if (result <= cantidad)
                 {
                     ListaProd();
                     return;
                 }
-                else if (result > numero)
+                else if (result > cantidad)
                 {
-                    MessageBox.Show("El maximo de articulos disponibles es: " + numero + " Unidades", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El maximo de articulos disponibles es: " + cantidad + " Unidades", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
             }
@@ -286,7 +285,7 @@ namespace Tienda.Registros
                 }
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
                 var value3 = this.ventaBut3.Checked; var value4 = this.ventaBut4.Checked;
-                //
+                
                 string v = "";
                 switch (true)
                 {
@@ -304,44 +303,38 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                string query = "select JsonCompra from Compras where Venta = " + v ;
-                con.Open();
-                //SqlCommand cmd = new SqlCommand(query, con);
-                DataTable dt = new DataTable();
-                SqlDataAdapter ad = new SqlDataAdapter(query, con);
-                ad.Fill(dt);
-                con.Close();
-                //07-01-2024
-                List<AgregarCompras> itemArray = new List<AgregarCompras>();
-                foreach (DataRow item in dt.Rows)
-                {
-                    itemArray.Add(JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString()));
-                }
 
-                //
-                double total = 0 ;
-                foreach(AgregarCompras item in itemArray)
+                con.Open();
+                SqlCommand cmd = new SqlCommand("ObtenerCompras", con);
+                cmd.Parameters.AddWithValue("@Id_Compra", v);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                con.Close();
+                if(dt.Rows.Count > 0)
                 {
-                    total += Convert.ToDouble(item.Precio_Total);
-                }
-                
-                if (dt.Rows.Count == 0)
-                {
-                    return;
+                    dataGridView2.DataSource = dt;
                 }
                 else
                 {
-                    if (dataGridView2 == null)
-                    {
-                        this.totalVenta.Text = "";
-                    }
-                    else
-                    {
-                        var st = double.Parse(total.ToString());
-                        var tv = (0.19 * st) + st;
-                        this.totalVenta.Text = st.ToString("C").Replace(".00", string.Empty);
-                    }
+                    return;
+                } 
+                double total = 0 ;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    total += Convert.ToDouble(dt.Rows[i].ItemArray[5].ToString());
                 }
+                if (dataGridView2 == null)
+                {
+                    this.totalVenta.Text = "";
+                }
+                else
+                {
+                    //var tv = (0.19 * st) + st;
+                    this.totalVenta.Text = total.ToString();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -352,6 +345,7 @@ namespace Tienda.Registros
 
         private void ListaCompra()
         {
+            this.canProd.Text = "1";
             try
             {
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
@@ -374,31 +368,31 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                // 07-01-2024
-                string query = "select [JsonCompra] from Compras where Venta = " + v ;
 
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerCompras", con);
+                cmd.Parameters.AddWithValue("@Id_Compra", v);
+                cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
-                List<AgregarCompras> agregarCompras = new List<AgregarCompras>();
-                foreach (DataRow item in dt.Rows)
-                {
-                    agregarCompras.Add(JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString()));
-                }
-                if(dt.Rows.Count == 0)
+                con.Close();
+                if (dt.Rows.Count > 0)
                 {
                     dataGridView2.DataSource = dt;
+                    double totalVenta = 0;
+                    for (int i = 0; i < dataGridView2.Rows.Count; i++)
+                    {
+                        totalVenta += double.Parse(dataGridView2.Rows[i].Cells["Precio total"].Value.ToString());
+                    }
+                    this.totalVenta.Text = totalVenta.ToString();
                 }
                 else
                 {
-                    dataGridView2.DataSource = agregarCompras;
+                    dataGridView2.DataSource = null;
+                    this.totalVenta.Clear();
                 }
-                con.Close();
-                this.canProd.Text = "1";
-                if (dataGridView2.Rows.Count == 0) { totalVenta.Clear(); }
-                DatosCompra();
+                
             }
             catch (Exception ex)
             {
@@ -412,44 +406,36 @@ namespace Tienda.Registros
         {
             try
             {
-                //
-                string queryProducto = ""; long ID = 0;
+                long ID = 0;
+                SqlCommand cmd = new SqlCommand("ObtenerBodega", con);
                 if (this.rBId.Checked == true)
                 {
-                    if (this.canProd.Text.Equals(""))
+                    if (this.canProd.Text.Equals("") || this.idProdC.Text.Equals(""))
                     {
-                        MessageBox.Show("Campo cantidad esta vacio"); return;
-                    }
-                    if (this.idProdC.Text.Equals(""))
-                    {
-                        MessageBox.Show("Campo ID esta vacio"); return;
+                        MessageBox.Show("Campos vacios");
+                        return;
                     }
                     ID = Convert.ToInt64(this.idProdC.Text);
-                    queryProducto = "Select * from producto where Id_Prod = " + ID;
+                    cmd.Parameters.AddWithValue("@Id", this.idProdC.Text);
                 }
                 if (this.rBNombre.Checked == true)
                 {
-                    string query = "select ID from lista_bodega where ID like '" + this.cBNombre.SelectedValue + "'";
-                    con.Open();
-                    SqlDataAdapter ad = new SqlDataAdapter(query, con);
-                    DataTable dtt = new DataTable();
-                    ad.Fill(dtt);
-                    ID = Convert.ToInt64(dtt.Rows[0].ItemArray[0].ToString());
-                    con.Close();
-                    queryProducto = "Select * from producto where Id_Prod = " + ID;
+                    ID = Convert.ToInt64(this.cBNombre.SelectedValue);
+                    cmd.Parameters.AddWithValue("@Id", this.cBNombre.SelectedValue);
                 }
                 //
                 con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryProducto, con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
+                dt.Load(dr);
                 var id_prod = dt.Rows[0].ItemArray[0].ToString();
                 var nombre = dt.Rows[0].ItemArray[1].ToString();
-                var precio = dt.Rows[0].ItemArray[6].ToString();
-                var unidades = dt.Rows[0].ItemArray[3].ToString();
+                var precio = dt.Rows[0].ItemArray[5].ToString();
+                var unidades = dt.Rows[0].ItemArray[4].ToString();
                 var cantidad = Convert.ToDouble(this.canProd.Text);
                 //07-012-024
-                var precioTotal = Convert.ToDouble(cantidad) * Convert.ToDouble(precio);
+                var precioTotal = cantidad * Convert.ToDouble(precio);
                 //
                 con.Close();
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
@@ -472,61 +458,34 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                
-                //07-012-024
-                
-                string query2 = "";
-                string jsonCompras = "";
-                foreach (DataGridViewRow row in dataGridView2.Rows)
-                {
-                    if (Convert.ToInt64(row.Cells["ID"].Value.ToString())== (ID))
-                    {
-                        cantidad = cantidad + Convert.ToDouble(row.Cells["Cantidad"].Value.ToString());
-                        precioTotal = Convert.ToDouble(cantidad) * Convert.ToDouble(precio);
-                        AgregarCompras compras = new AgregarCompras
-                        {
-                            Id = id_prod,
-                            Producto = nombre,
-                            Precio_Unidad = precio,
-                            Cantidad = cantidad,
-                            Tipo_Unidad = unidades,
-                            Precio_Total = precioTotal.ToString()
-                        };
-                        jsonCompras = JsonConvert.SerializeObject(compras);
-                        query2 = "UPDATE [Compras] SET [JsonCompra] = '" + jsonCompras + "' WHERE [IdProducto] = " + ID + "";
-                    }
-                    
-                }
-                
-                if (!query2.Contains("UPDATE"))
-                {
-                    AgregarCompras compras = new AgregarCompras
-                    {
-                        Id = id_prod,
-                        Producto = nombre,
-                        Precio_Unidad = precio,
-                        Cantidad = cantidad,
-                        Tipo_Unidad = unidades,
-                        Precio_Total = precioTotal.ToString()
-                    };
-                    jsonCompras = JsonConvert.SerializeObject(compras);
-                    query2 = "INSERT INTO [dbo].[Compras] VALUES (" + ID + ",'" + jsonCompras + "', '" + v + "')";
-                }
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query2, con);
-                cmd.ExecuteNonQuery();
+                string QueryValida = "select * from compras where Id_Producto = " + id_prod + " and Id_Venta = " + v;
+                SqlDataAdapter adV = new SqlDataAdapter(QueryValida, con);
+                DataTable dtV = new DataTable();
+                adV.Fill(dtV);
+                
+                if (dtV.Rows.Count > 0)
+                {
+                    SqlCommand cmdA = new SqlCommand("ActualizarCompras", con);
+                    cmdA.Parameters.AddWithValue("@Id", id_prod);
+                    cmdA.Parameters.AddWithValue("@Id_Ventas", v);
+                    cmdA.Parameters.AddWithValue("@Cantidad", this.canProd.Text);
+                    cmdA.CommandType = CommandType.StoredProcedure;
+                    cmdA.ExecuteNonQuery();
+                }
+                else
+                {
+                    SqlCommand cmdC = new SqlCommand("InsertarCompras", con);
+                    cmdC.Parameters.AddWithValue("@Id", id_prod);
+                    cmdC.Parameters.AddWithValue("@Nombre", nombre);
+                    cmdC.Parameters.AddWithValue("@Precio", precio);
+                    cmdC.Parameters.AddWithValue("@Cantidad", cantidad);
+                    cmdC.Parameters.AddWithValue("@Unidad_Producto", unidades);
+                    cmdC.Parameters.AddWithValue("@Id_Venta", v);
+                    cmdC.CommandType = CommandType.StoredProcedure;
+                    cmdC.ExecuteNonQuery();
+                }                
                 con.Close();
-                //
-                //con.Open();
-                //for (int i = 0; i < cantidad; i++)
-                //{
-                //    string query2 = "INSERT INTO [dbo].[Compras] " +
-                //    "VALUES (" + Convert.ToInt64(id_prod) + ",'" + nombre +
-                //    "','" + precio + "'," + Convert.ToInt64(unidades) + ", '" + v + "')";
-                //    SqlCommand cmd = new SqlCommand(query2, con);
-                //    cmd.ExecuteNonQuery();
-                //}
-                //con.Close();
 
                 ListaCompra();
                 this.idProdC.Text = "";
@@ -573,27 +532,20 @@ namespace Tienda.Registros
                 }
                 long numericValue;
                 bool isNumber = long.TryParse(this.idProdC.Text, out numericValue);
-                string query = ""; long ID = 0;
+                con.Open();
+                SqlCommand cmdB = new SqlCommand("EliminarCompras", con);
                 if (!isNumber)
                 {
-                    string queryC = "select ID from lista_bodega where Producto like '%" + this.cBNombre.Text + "%'";
-                    con.Open();
-                    SqlDataAdapter ad = new SqlDataAdapter(queryC, con);
-                    DataTable dtt = new DataTable();
-                    ad.Fill(dtt);
-                    ID = Convert.ToInt64(dtt.Rows[0].ItemArray[0].ToString());
-                    con.Close();
-                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + ID + " and Venta = " + v;
+                    cmdB.Parameters.AddWithValue("@Id", this.cBNombre.SelectedValue);
                 }
                 else
                 {
-                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + this.idProdC.Text + " and Venta = " + v;
+                    cmdB.Parameters.AddWithValue("@Id", this.idProdC.Text);
                 }
+                cmdB.Parameters.AddWithValue("@Id_Venta", Convert.ToInt16(v));
+                cmdB.CommandType = CommandType.StoredProcedure;
+                cmdB.ExecuteNonQuery();
 
-
-                con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.ExecuteNonQuery();
                 con.Close();
                 this.idProdC.Text = "";
                 this.canProd.Text = "1";
@@ -634,15 +586,13 @@ namespace Tienda.Registros
                     default: break;
                 }
                 con.Open();
-                for (int i = 0; i < dataGridView2.Rows.Count; i++)
-                {
-                    var id = dataGridView2.Rows[i].Cells["ID"].Value.ToString();
-                    var cantidad = dataGridView2.Rows[i].Cells["Cantidad"].Value.ToString();
-                    //
-                    query = "delete top (" + cantidad + ") from Compras where IdProducto = " + id + "and Venta = " + v;
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.ExecuteNonQuery();
-                }
+                
+                SqlCommand cmd = new SqlCommand("EliminarCompras", con);
+                cmd.Parameters.AddWithValue("@Id_Venta", v);
+                cmd.Parameters.AddWithValue("@Id", 0);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                Clear();
                 con.Close();
                 ListaCompra();
             }
@@ -726,12 +676,16 @@ namespace Tienda.Registros
                 }
                 else
                 {
-                    string fecha = DateTime.Now.ToShortDateString().ToString();
-                    int totalVenta = int.Parse(this.totalVenta.Text, NumberStyles.Currency);
                     con.Open();
-                    string queryFacRem = "INSERT INTO CARTERA VALUES (5,'" + totalVenta + "','" + fecha + "','0','0','0')";
-                    SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
-                    cmdFact.ExecuteReader();
+                    SqlCommand cmdC = new SqlCommand("InsertarCartera", con);
+                    cmdC.Parameters.AddWithValue("@Id_Cartera", 1);
+                    cmdC.Parameters.AddWithValue("@Valor_Cartera", this.totalVenta.Text);
+                    cmdC.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                    cmdC.Parameters.AddWithValue("@Factura", 0);
+                    cmdC.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                    cmdC.Parameters.AddWithValue("@Documento", 0);
+                    cmdC.CommandType = CommandType.StoredProcedure;
+                    cmdC.ExecuteReader();
                     con.Close();
                 }
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
@@ -753,33 +707,40 @@ namespace Tienda.Registros
                         break;
                     default: break;
                 }
-                string queryCompra = "select * from Compras where Venta = '" + v + "'";
-                SqlDataAdapter adap = new SqlDataAdapter(queryCompra, con);
-                DataTable dTable = new DataTable();
-                adap.Fill(dTable);
+                
                 con.Open();
+                SqlCommand cmd = new SqlCommand("ObtenerCompras", con);
+                cmd.Parameters.AddWithValue("@Id_Compra", v);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                
                 double totalCant = 0;
-                foreach(DataRow item in dTable.Rows)
+                foreach(DataRow item in dt.Rows)
                 {
                     //Quantity for sale and id
-                    var Compra = JsonConvert.DeserializeObject<AgregarCompras>(item["JsonCompra"].ToString());
-                    var idPro = Compra.Id;
-                    var canitdad = Convert.ToDouble(Compra.Cantidad);
+                    var idPro = item["Codigo"].ToString();
+                    var canitdad = Convert.ToInt16(item["Cantidad"].ToString());
                     //Quantity in warehouse
-                    string queryBodega = "select * from Bodega where Id_Prod = " + idPro;
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(queryBodega, con);
-                    DataTable data = new DataTable();
-                    dataAdapter.Fill(data);
-                    var cantBodega = Convert.ToDouble(data.Rows[0].ItemArray[2].ToString());
+                    SqlCommand cmdB = new SqlCommand("ObtenerBodega", con);
+                    cmdB.Parameters.AddWithValue("@Id", idPro);
+                    cmdB.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader dReaderB = cmdB.ExecuteReader();
+                    DataTable dataB = new DataTable();
+                    dataB.Load(dReaderB);
+                    var cantBodega = Convert.ToDouble(dataB.Rows[0].ItemArray[3].ToString());
                     //Calculate total
                     totalCant = cantBodega - canitdad;
                     //Update database
-                    string queryDelete = "update Bodega set cantidad = " + totalCant + " where Id_Prod = " + idPro;
+                    string queryDelete = "update Bodega set cantidad = " + totalCant + " where Id_Producto = " + idPro;
                     SqlCommand cmdDelete = new SqlCommand(queryDelete, con);
                     cmdDelete.ExecuteNonQuery();
                     //delete from compras
-                    string queryDeleteCompras = "delete from Compras where Venta = '" + v + "' and IdProducto =" + idPro;
-                    SqlCommand cmdDeleteCompras = new SqlCommand(queryDeleteCompras, con);
+                    SqlCommand cmdDeleteCompras = new SqlCommand("EliminarCompras", con);
+                    cmdDeleteCompras.Parameters.AddWithValue("@Id", idPro);
+                    cmdDeleteCompras.Parameters.AddWithValue("@Id_Venta", v);
+                    cmdDeleteCompras.CommandType = CommandType.StoredProcedure;
                     cmdDeleteCompras.ExecuteNonQuery();
 
                 }
@@ -801,23 +762,20 @@ namespace Tienda.Registros
         {
             try
             {
-                double cancela = this.cancelaCon.Text.Equals("") ? Convert.ToDouble(this.cancelaCon.Text = "0") : double.Parse(this.cancelaCon.Text, NumberStyles.Currency);
+                double cancela = this.cancelaCon.Text.Equals("") ? 0 : double.Parse(this.cancelaCon.Text);
                 var cambio = 0.00;
-                if (this.cancelaCon.Text.Equals("0"))
+
+                if (cancela == 0)
                 {
-                    this.cancelaCon.Text = this.totalVenta.Text;
-                    cancela = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
-                    this.cambioDe.Text = "0";
-                    cambio = double.Parse(this.cambioDe.Text);
+                    cambio = cancela;
+                    this.cambioDe.Text = cambio.ToString();
                 }
-                else if (!this.cancelaCon.Text.Equals(""))
+                else
                 {
+                    var value = double.Parse(this.totalVenta.Text);
 
-                    var value = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
-
-                    cambio = cancela - value;
-                    this.cambioDe.Text = cambio.ToString("C").Replace(",00", string.Empty);
-                    cambio.ToString("C").Replace(",00", string.Empty);
+                    cambio = (cancela - value);
+                    
 
                 }
                 AlertCambio(cambio);
@@ -918,23 +876,27 @@ namespace Tienda.Registros
                                 break;
 
                             case DialogResult.OK:
-                                string queryCC = "select * from [User] where Id_User = " + ID;
-                                SqlDataAdapter adC = new SqlDataAdapter(queryCC, con);
-                                DataTable tdC = new DataTable();
-                                adC.Fill(tdC);
-                                if (tdC.Rows.Count != 0)
+                                con.Open();
+                                SqlCommand cmdU = new SqlCommand("ObtenerUsuarios", con);
+                                cmdU.Parameters.AddWithValue("@Id", ID);
+                                cmdU.CommandType = CommandType.StoredProcedure;
+                                SqlDataReader drU = cmdU.ExecuteReader();
+                                DataTable dtU = new DataTable();
+                                dtU.Load(drU);
+                                con.Close();
+                                if (dtU.Rows.Count != 0)
                                 {
-                                    for (i = 0; i < tdC.Rows.Count; i++)
+                                    for (i = 0; i < dtU.Rows.Count; i++)
                                     {
-                                        cc = tdC.Rows[i].ItemArray[0].ToString();
+                                        cc = dtU.Rows[i].ItemArray[0].ToString();
                                         if (cc == ID)
                                         {
-                                            ID = tdC.Rows[i].ItemArray[0].ToString();
-                                            nombre = tdC.Rows[i].ItemArray[1].ToString();
-                                            direc = tdC.Rows[i].ItemArray[3].ToString();
-                                            tel = tdC.Rows[i].ItemArray[2].ToString();
-                                            correo = tdC.Rows[i].ItemArray[8].ToString();
-                                            eP = !ID.Equals("") ? "Documento" : "";
+                                            ID = dtU.Rows[i].ItemArray[0].ToString();
+                                            nombre = dtU.Rows[i].ItemArray[2].ToString();
+                                            direc = dtU.Rows[i].ItemArray[5].ToString();
+                                            tel = dtU.Rows[i].ItemArray[4].ToString();
+                                            correo = dtU.Rows[i].ItemArray[6].ToString();
+                                            eP = dtU.Rows[i].ItemArray[1].ToString();
                                             break;
                                         }
                                     }
@@ -944,15 +906,19 @@ namespace Tienda.Registros
                                     MessageBox.Show("No existe este cliente");
                                     RegistroUsuarios registro = new RegistroUsuarios(ID);
                                     registro.ShowDialog();
-                                    string queryC = "select Id_User, [Name], Direction,Phone,mail from [User] where Id_User = " + ID;
-                                    SqlDataAdapter aC = new SqlDataAdapter(queryC, con);
+                                    con.Open();
+                                    SqlCommand cmdC = new SqlCommand("ObtenerUsuarios", con);
+                                    cmdC.Parameters.AddWithValue("@Id", ID);
+                                    SqlDataReader drC = cmdC.ExecuteReader();
                                     DataTable tC = new DataTable();
-                                    aC.Fill(tC);
-                                    ID  = tC.Rows[0].ItemArray[0].ToString();
-                                    nombre = tC.Rows[0].ItemArray[1].ToString();
-                                    direc = tC.Rows[0].ItemArray[2].ToString();
-                                    tel = tC.Rows[0].ItemArray[3].ToString();
-                                    correo = tC.Rows[0].ItemArray[4].ToString();
+                                    tC.Load(drC);
+                                    con.Close();
+                                    ID = tC.Rows[i].ItemArray[0].ToString();
+                                    nombre = tC.Rows[i].ItemArray[2].ToString();
+                                    direc = tC.Rows[i].ItemArray[5].ToString();
+                                    tel = tC.Rows[i].ItemArray[4].ToString();
+                                    correo = tC.Rows[i].ItemArray[6].ToString();
+                                    eP = tC.Rows[i].ItemArray[1].ToString();
                                 }
                                 break;
                             default: break;
@@ -964,7 +930,7 @@ namespace Tienda.Registros
                         Ticket1.TextoIzquierda("Tel: " + tel);
 
                         Ticket1.TextoCentro("Factura de Venta"); 
-                        string queryIdFac = "select MAX(Id_Factura) + 1 from Factura ";
+                        string queryIdFac = "select MAX(Id)+1 from Factura ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
@@ -979,21 +945,25 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[2].Value.ToString();
-                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
-                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
+                            var precioT = double.Parse(r.Cells[3].Value.ToString());
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
+                            var totalT = double.Parse(r.Cells[6].Value.ToString());
 
                             //--------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
                         }
-                        var totalComp = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
+                        var totalComp = double.Parse(this.totalVenta.Text);
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
-                        //DateTimeNow.Short.ToString
-                        string fecha = DateTime.Now.ToShortDateString().ToString();
                         con.Open();
-                        string queryFacRem = "INSERT INTO CARTERA VALUES (1,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '" + nit + "')";
-                        SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
-                        cmdFact.ExecuteReader();
+                        SqlCommand cmdFact = new SqlCommand("InsertarCartera", con);
+                        cmdFact.Parameters.AddWithValue("@Id_Cartera", 2);
+                        cmdFact.Parameters.AddWithValue("@Valor_Cartera", totalComp);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Factura", facturaN);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Documento", nit);
+                        cmdFact.CommandType = CommandType.StoredProcedure;
+                        cmdFact.ExecuteNonQuery();
                         con.Close();
                         ClsFactura.CreaTicket.LineasGuion();
                         //Ticket1.AgregaTotales("Sub-Total", totalComp); 
@@ -1025,6 +995,7 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("------------------------------------------");
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora);
+
                         string tipoPago = "";
                         if(efec == true)
                         {
@@ -1090,11 +1061,11 @@ namespace Tienda.Registros
                         Ticket1.TextoCentro("Tel. 3162882803");
                         Ticket1.TextoCentro("Villavicencio, Meta");
                         Ticket1.TextoCentro("-------------------------------------------------------");
-                        string queryIdFac = "select MAX(Id_Factura) + 1 from FacturaRem ";
+                        string queryIdFac = "select MAX(Id) + 1 from Factura_Remision ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
-                        var idFactura = dt.Rows[0].ItemArray[0].ToString();
+                        var idFactura = dt.Rows[0].ItemArray[0].ToString() == "" ? "1" : dt.Rows[0].ItemArray[0].ToString();
                         var facturaN = idFactura.Equals("") ? 0 + 1 : Convert.ToInt64(idFactura);
                         Ticket1.TextoIzquierda("No Fac:" + facturaN.ToString());
                         Ticket1.TextoIzquierda("Fecha:" + DateTime.Now.ToShortDateString() + " Hora:" + DateTime.Now.ToShortTimeString());
@@ -1108,7 +1079,7 @@ namespace Tienda.Registros
                         {
                             var articuloT = r.Cells[2].Value.ToString();
                             var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
                             var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
@@ -1119,9 +1090,15 @@ namespace Tienda.Registros
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
                         string fecha = DateTime.Now.ToShortDateString().ToString();
                         con.Open();
-                        string queryFacRem = "INSERT INTO CARTERA VALUES (2,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '0')";
-                        SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
-                        cmdFact.ExecuteReader();
+                        SqlCommand cmdFact = new SqlCommand("InsertarCartera", con);
+                        cmdFact.Parameters.AddWithValue("@Id_Cartera", 3);
+                        cmdFact.Parameters.AddWithValue("@Valor_Cartera", totalComp);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Factura", facturaN);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Documento", "");
+                        cmdFact.CommandType = CommandType.StoredProcedure;
+                        cmdFact.ExecuteNonQuery();
                         con.Close();
                         FacturaRem.CreaTicket.LineasGuion();
                         //Ticket1.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
@@ -1153,7 +1130,7 @@ namespace Tienda.Registros
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora);
 
-                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "FacturaRem", 0);
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 0);
                     }
                     catch (Exception ex)
                     {
@@ -1206,7 +1183,7 @@ namespace Tienda.Registros
                         Ticket3.TextoCentro("Tel. 3162882803");
                         Ticket3.TextoCentro("Villavicencio, Meta");
                         Ticket3.TextoCentro("------------------------------------------");
-                        string queryIdFac = "select MAX(Id_Factura) + 1 from FacturaRem ";
+                        string queryIdFac = "select MAX(Id) + 1 from Factura_Remision ";
                         SqlDataAdapter da = new SqlDataAdapter(queryIdFac, con);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
@@ -1220,9 +1197,9 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[2].Value.ToString();
-                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = double.Parse(r.Cells[4].Value.ToString());
-                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
+                            var precioT = double.Parse(r.Cells[3].Value.ToString());
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
+                            var totalT = double.Parse(r.Cells[6].Value.ToString());
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket3.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1232,9 +1209,15 @@ namespace Tienda.Registros
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
                         string fecha = DateTime.Now.ToShortDateString().ToString();
                         con.Open();
-                        string queryFacRem = "INSERT INTO CARTERA VALUES (2,'" + totalComp + "','" + fecha + "','" + facturaN + "', '0', '0')";
-                        SqlCommand cmdFact = new SqlCommand(queryFacRem, con);
-                        cmdFact.ExecuteReader();
+                        SqlCommand cmdFact = new SqlCommand("InsertarCartera", con);
+                        cmdFact.Parameters.AddWithValue("@Id_Cartera", 4);
+                        cmdFact.Parameters.AddWithValue("@Valor_Cartera", totalComp);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Factura", facturaN);
+                        cmdFact.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                        cmdFact.Parameters.AddWithValue("@Documento", "40079945-0");
+                        cmdFact.CommandType = CommandType.StoredProcedure;
+                        cmdFact.ExecuteNonQuery();
                         con.Close();
                         FacturaSD.CreaTicket.LineasGuion();
                         //Ticket3.AgregaTotales("Sub-Total", totalComp); // imprime linea con Subtotal
@@ -1262,7 +1245,7 @@ namespace Tienda.Registros
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket3.ImprimirTiket(impresora);
 
-                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "FacturaRem", 1);
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 1);
                     }
                     catch (Exception ex)
                     {
@@ -1300,8 +1283,8 @@ namespace Tienda.Registros
             try
             {
                 int index = str.Equals("") ? Convert.ToInt32(dataGridView2.CurrentCell.RowIndex.ToString()) : row;
-                long ID = Convert.ToInt64(dataGridView2.Rows[index].Cells["ID"].Value);
-                var cantidad = dataGridView2.Rows[index].Cells["cantidad"].Value.ToString();
+                long ID = Convert.ToInt64(dataGridView2.Rows[index].Cells["Codigo"].Value);
+                var cantidad = dataGridView2.Rows[index].Cells["Cantidad"].Value.ToString();
                 string query = ""; string v = "";
 
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
@@ -1324,7 +1307,7 @@ namespace Tienda.Registros
                     default: break;
                 }
 
-                query = "delete from Compras where IdProducto = " + ID + " and Venta = " + v;
+                query = "delete from Compras where Id_Producto = " + ID + " and Id_Venta = " + v + " and Cantidad = " + cantidad;
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.ExecuteNonQuery();
@@ -1470,9 +1453,8 @@ namespace Tienda.Registros
         {
             try
             {
-                string date = DateTime.Now.ToShortDateString();
                 DialogResult accion;
-                string queryConsulta = "SELECT Dinero_Base FROM DineroBase WHERE Fecha LIKE '" + date + "'";
+                string queryConsulta = "SELECT Dinero FROM DineroBase WHERE Fecha_Registro LIKE '" + DateTime.Now.ToString("yyyy-MM-dd") + "'";
                 SqlDataAdapter ad = new SqlDataAdapter(queryConsulta, con);
                 DataTable dt = new DataTable();
                 ad.Fill(dt);
@@ -1571,22 +1553,29 @@ namespace Tienda.Registros
                 foreach (DataGridViewRow r in dataGridView2.Rows)
                 {
 
-                    cotizacion.Codigo = r.Cells["ID"].Value.ToString();
+                    cotizacion.Codigo = r.Cells["Codigo"].Value.ToString();
                     cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
-                    cotizacion.Cant = r.Cells["Cantidad"].Value.ToString();
-                    cotizacion.Unidad = r.Cells["Tipo Unidad"].Value.ToString();
-                    cotizacion.VUnidad = r.Cells["precio unidad"].Value.ToString();
+                    cotizacion.Cant = r.Cells["Precio unidad"].Value.ToString();
+                    cotizacion.Unidad = r.Cells["Medida"].Value.ToString();
+                    cotizacion.VUnidad = r.Cells["Cantidad"].Value.ToString();
                     cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
-                    
+
+                    //cotizacion.Codigo = r.Cells["ID"].Value.ToString();
+                    //cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
+                    //cotizacion.Cant = r.Cells["Cantidad"].Value.ToString();
+                    //cotizacion.Unidad = r.Cells["Tipo Unidad"].Value.ToString();
+                    //cotizacion.VUnidad = r.Cells["precio unidad"].Value.ToString();
+                    //cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
+
 
                     listCot.Add(cotizacion);
                 }
                 //
-                string queryCont = "SELECT Id_Factura FROM Cotizacion order by Id_Factura desc";
+                string queryCont = "SELECT Id FROM Cotizacion order by Id desc";
                 SqlDataAdapter adapter = new SqlDataAdapter(queryCont, con);
                 DataTable data = new DataTable();
                 adapter.Fill(data);
-                var Fac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
+                var Fac = data.Rows.Count == 0 ? 0 : Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
                 var nFac = Fac + 1;
                 //
                 string dateda = DateTime.Now.ToShortDateString();
@@ -1822,15 +1811,27 @@ namespace Tienda.Registros
         {
             try
             {
-                string queryCont = "select Id_Factura from Cotizacion order by Id_Factura desc";
+                
+                string queryCont = "select Id from Cotizacion order by Id desc";
+                con.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter(queryCont, con);
                 DataTable data = new DataTable();
                 adapter.Fill(data);
-                var nf = data.Rows[0].ItemArray[0].ToString();
-                this.textBox1.Text = nf;
+                con.Close();
+                if(data.Rows.Count > 0)
+                {
+                    var numeroCotizacion = data.Rows[0].ItemArray[0].ToString();
+                    this.textBox1.Text = numeroCotizacion;
+                }
+                else
+                {
+                    return;
+                }
+                
             }
             catch (Exception ex)
             {
+                con.Close();
                 MessageBox.Show(ex.Message, "Numero de cotizacion");
             }
         }
@@ -1867,23 +1868,23 @@ namespace Tienda.Registros
                 {
                     Cotizacion cotizacion = new Cotizacion();
 
-                    cotizacion.Codigo = r.Cells["ID"].Value.ToString();
+                    cotizacion.Codigo = r.Cells["Codigo"].Value.ToString();
                     cotizacion.Nombre = r.Cells["Producto"].Value.ToString();
                     cotizacion.Cant = r.Cells["Cantidad"].Value.ToString();
-                    cotizacion.Unidad = r.Cells["Tipo_Unidad"].Value.ToString();
-                    cotizacion.VUnidad = r.Cells["precio_unidad"].Value.ToString();
-                    cotizacion.SubTotal = r.Cells["Precio_total"].Value.ToString();
+                    cotizacion.Unidad = r.Cells["Medida"].Value.ToString();
+                    cotizacion.VUnidad = r.Cells["Precio unidad"].Value.ToString();
+                    cotizacion.SubTotal = r.Cells["Precio total"].Value.ToString();
 
 
                     listCot.Add(cotizacion);
                 }
                 //
-                string queryCont = "SELECT Id_Factura FROM " + ftra + " order by Id_Factura desc";
+                string queryCont = "SELECT Id FROM " + ftra + " order by Id desc";
                 SqlDataAdapter adapter = new SqlDataAdapter(queryCont, con);
                 DataTable data = new DataTable();
                 adapter.Fill(data);
-                var Fac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
-                var nFac = Fac + 1;
+                var nFac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
+                //var nFac = Fac + 1;
                 //
                 string dateda = DateTime.Now.ToString("dd/MMM/yyyy").Replace(".",string.Empty);
                 Application excel = new Application();
@@ -2106,6 +2107,19 @@ namespace Tienda.Registros
             {
                 MessageBox.Show(ex.Message, "ExportToPDF");
             }
+        }
+
+        public void Clear()
+        {
+            this.totalVenta.Clear();
+            this.cancelaCon.Clear();
+            this.cambioDe.Clear();
+            this.textBox1.Clear();
+        }
+
+        private void rBFactNit_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

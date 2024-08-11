@@ -31,7 +31,8 @@ namespace Tienda.Listas
             dataGridView1.Columns["Marca"].ReadOnly = true;
             dataGridView1.Columns["Cantidad"].ReadOnly = false;
             dataGridView1.Columns["Unidad"].ReadOnly = true;
-            dataGridView1.Columns["Precio"].ReadOnly = true;
+            dataGridView1.Columns["Precio venta"].ReadOnly = true;
+            dataGridView1.Columns["Precio final"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 

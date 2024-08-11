@@ -306,6 +306,7 @@
     <Compile Include="Model\FacturaRem.cs" />
     <Compile Include="Model\FacturaSD.cs" />
     <Compile Include="Model\SendCorreo.cs" />
+    <Compile Include="Model\TipoCartera.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registros\Compras.cs">

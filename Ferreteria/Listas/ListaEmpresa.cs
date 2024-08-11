@@ -1,4 +1,5 @@
 ﻿using Ferreteria.Forms;
+using Org.BouncyCastle.Asn1.Esf;
 using System;
 using System.Configuration;
 using System.Data;
@@ -19,22 +20,25 @@ namespace Tienda.Listas
         {
             ListEmpresa();
             Delete();
-            dataGridView1.Columns["NIT"].ReadOnly = true;
+            dataGridView1.Columns["Nit"].ReadOnly = true;
             dataGridView1.Columns["Actualizar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
             dataGridView1.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
 
             dataGridView1.Columns["NIT"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Nombre"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Información"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            dataGridView1.Columns["Dirección"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Productos"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             dataGridView1.Columns["Telefono"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Direccion"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Correo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
+            dataGridView1.Columns["Departamento"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns["Ciudad"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
-            this.empComBox.Text = "Nombre";
+            
+            this.empComBox.Text = "Nit";
         }
         private void buscarEmp_Click(object sender, EventArgs e)
         {
             Validar();
-            BuscarEmpresa();
+            //BuscarEmpresa();
         }
 
         private void Validar()
@@ -63,25 +67,8 @@ namespace Tienda.Listas
             {
                 var buscar = empComBox.Text;
                 var id = this.bNomEmp.Text;
-                switch (buscar)
-                {
-                    case ("Nit"):
-                        buscar = "where Nit = " + id;
-                        ComboBoxEmp(buscar);
-                        break;
-                    case ("Nombre"):
-                        buscar = "where Nombre like '%" + id + "%'";
-                        ComboBoxEmp(buscar);
-                        break;
-                    case ("Productos"):
-                        buscar = "where Información like '%" + id + "%'";
-                        ComboBoxEmp(buscar);
-                        break;
-                    case ("Ciudad"):
-                        buscar = "where Ciudad like '%" + id + "%'";
-                        ComboBoxEmp(buscar);
-                        break;
-                }
+                ComboBoxEmp("@"+buscar, id);
+                
             }
             catch (Exception ex)
             {
@@ -89,13 +76,14 @@ namespace Tienda.Listas
             }
         }
 
-        private void ComboBoxEmp(string buscar)
+        private void ComboBoxEmp(string buscar, string id)
         {
             try
             {
-                string query = " select * from Lista_Emp " + buscar;
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerEmpresa", con);
+                cmd.Parameters.AddWithValue(buscar, id);
+                cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader reader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(reader);
@@ -118,9 +106,9 @@ namespace Tienda.Listas
         {
             try
             {
-                string query = "select top(20)* from Lista_Emp";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("ObtenerEmpresa", con);
+                cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dr);
@@ -149,13 +137,7 @@ namespace Tienda.Listas
                     e.Handled = true;
                 }
             }
-            else if (empComBox.Text.Equals("Nit"))
-            {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                {
-                    e.Handled = true;
-                }
-            }
+            
             if (e.KeyChar == Convert.ToChar(Keys.Enter))
             {
                 Validar();
@@ -173,8 +155,8 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
-                            string queryDelete = "delete from Company where Nit_Company = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Nit"].Value.ToString();
+                            string queryDelete = "delete from Empresa where Nit = '" + ID + "'";
                             con.Open();
                             SqlCommand cmd = new SqlCommand(queryDelete, con);
                             cmd.ExecuteNonQuery();
@@ -202,13 +184,14 @@ namespace Tienda.Listas
                     switch (password.DialogResult)
                     {
                         case DialogResult.OK:
-                            string Name_Company = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
-                            string Products = dataGridView1.CurrentRow.Cells["Información"].Value.ToString();
-                            string Direction = dataGridView1.CurrentRow.Cells["Dirección"].Value.ToString();
-                            string Phone = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
-                            string Correo = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
+                            string nombre = dataGridView1.CurrentRow.Cells["Nombre"].Value.ToString();
+                            string producto = dataGridView1.CurrentRow.Cells["Productos"].Value.ToString();
+                            string Direccion = dataGridView1.CurrentRow.Cells["Direccion"].Value.ToString();
+                            string telefono = dataGridView1.CurrentRow.Cells["Telefono"].Value.ToString();
                             string ciudad = dataGridView1.CurrentRow.Cells["Ciudad"].Value.ToString();
-                            string queryCiudad = "select Id_Municipality, Id_Department from Municipality where Municipality like '%" + ciudad + "%'";
+                            string Correo = dataGridView1.CurrentRow.Cells["Correo"].Value.ToString();
+
+                            string queryCiudad = "select id, Id_Departamento from Ciudad where Ciudad like '" + ciudad + "%'";
                             SqlDataAdapter adapter1 = new SqlDataAdapter(queryCiudad, con);
                             DataTable data2 = new DataTable();
                             adapter1.Fill(data2);
@@ -217,15 +200,22 @@ namespace Tienda.Listas
                                 MessageBox.Show("Ciudad no encontrada o necesita escribir el nombre completo", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 return;
                             }
-                            var Id_Municipaly = data2.Rows[0].ItemArray[0].ToString();
-                            var Id_Department = data2.Rows[0].ItemArray[1].ToString();
+                            var idCiudad = data2.Rows[0].ItemArray[0].ToString();
+                            var idDepartamento= data2.Rows[0].ItemArray[1].ToString();
                             //
-                            var ID = dataGridView1.Rows[e.RowIndex].Cells["NIT"].Value.ToString();
-                            string queryUpdate = "update Company set Name_Company = '" + Name_Company + "', Products='" + Products + "', Direction='" + Direction + "'" +
-                                ", Phone='" + Phone + "', Id_Municipaly=" + Id_Municipaly + ", Id_Department=" + Id_Department + "" +
-                                ", Mail = '"+Correo+"' where Nit_Company = " + ID;
+                            var ID = dataGridView1.Rows[e.RowIndex].Cells["Nit"].Value.ToString();
+                            
                             con.Open();
-                            SqlCommand cmd = new SqlCommand(queryUpdate, con);
+                            SqlCommand cmd = new SqlCommand("ActualizarEmpresa", con);
+                            cmd.Parameters.AddWithValue("@Nit", ID);
+                            cmd.Parameters.AddWithValue("@Nombre", nombre);
+                            cmd.Parameters.AddWithValue("@Producto", producto);
+                            cmd.Parameters.AddWithValue("@Telefono", telefono);
+                            cmd.Parameters.AddWithValue("@Direccion", Direccion);
+                            cmd.Parameters.AddWithValue("@Id_Departamento", idDepartamento);
+                            cmd.Parameters.AddWithValue("@Id_Ciudad", idCiudad);
+                            cmd.Parameters.AddWithValue("@Correo", Correo);
+                            cmd.CommandType = CommandType.StoredProcedure;
                             cmd.ExecuteNonQuery();
                             con.Close();
                             ListEmpresa();

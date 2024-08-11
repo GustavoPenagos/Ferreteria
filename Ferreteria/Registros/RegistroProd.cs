@@ -31,24 +31,24 @@ namespace Tienda.Registros
             try
             {
                 #region Nuevo
-                string id = this.idProd.Text;
-                string nombre = this.nomProd.Text;
-                double precio = Convert.ToDouble(this.precioProd.Text);
-                int idUnidad = Convert.ToInt32(this.unidProd.SelectedValue);
-                string marca = this.marcaProd.Text;
-                double utilidad = Convert.ToDouble(this.utilidad.Text);
-                double precioFinal = double.Parse(this.precioFinal.Text);
                 
                 //insert into DB
-                string query = "INSERT INTO Producto VALUES (" + id + ",'" + nombre + "'," + precio + "," + idUnidad + ", '" + marca + "','" + utilidad + "','" + precioFinal + "')";
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("InsertarProducto", con);
+                cmd.Parameters.AddWithValue("@Id", this.idProd.Text);
+                cmd.Parameters.AddWithValue("@Nombre", this.nomProd.Text);
+                cmd.Parameters.AddWithValue("@Precio", this.precioProd.Text);
+                cmd.Parameters.AddWithValue("@Id_Unidad", this.unidProd.SelectedValue);
+                cmd.Parameters.AddWithValue("@Marca", this.marcaProd.Text);
+                cmd.Parameters.AddWithValue("@Utilidad", this.utilidad.Text);
+                cmd.Parameters.AddWithValue("@Precio_Final", this.precioFinal.Text);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
 
                 //insert into bodega
                 var cantidad = this.txbCantidad.Text.Equals("") ? "0" : this.txbCantidad.Text;
-                string queryInsertCant = "INSERT INTO Bodega VALUES (" + id + ", '" + cantidad + "')";
+                string queryInsertCant = "INSERT INTO Bodega VALUES (" + this.idProd.Text + ", '" + cantidad + "')";
                 SqlCommand cmdInsert = new SqlCommand(queryInsertCant, con);
                 con.Open();
                 cmdInsert.ExecuteNonQuery();

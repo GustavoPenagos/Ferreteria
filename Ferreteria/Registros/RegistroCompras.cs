@@ -50,8 +50,6 @@ namespace Tienda.Registros
                 var nFactura = this.numFact.Text;
                 var valorFac = this.valorFact.Text;
                 var img = this.ImgFact.Image;
-                var date = this.dateFact.Value.ToString("d/MM/yyyy");
-                var dateLimi = this.dateLimite.Value.ToString("d/MM/yyyy");
                 var empresa = this.cBoxEmp.SelectedValue.ToString();
 
                 if (nFactura.Equals("") || valorFac.Equals("") || img == null)
@@ -59,39 +57,57 @@ namespace Tienda.Registros
                     MessageBox.Show("Llene todos los campos");
                     return;
                 }
-                //
-                string queryVal = "select [N° Factura] from Lista_Cartera";
-                con.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(queryVal, con);
-                DataTable data = new DataTable();
-                adapter.Fill(data);
-                for(int i = 0; i< data.Rows.Count; i++)
-                {
-                    var factura = data.Rows[i].ItemArray[0].ToString();
-                    if (nFactura.Equals(factura))
-                    {
-                        MessageBox.Show("Esta factura ("+nFactura+") ya existe", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                }
                 
-                con.Close();
-                //
-                byte[] bytes = (byte[])(new ImageConverter()).ConvertTo(img, typeof(byte[]));
-                var base64Img = System.Convert.ToBase64String(bytes).ToString();
-                string queryImgCompra = "INSERT INTO Cartera VALUES(4,'" + valorFac + "','" + date + "','" + nFactura + "', '" + dateLimi + "', '"+empresa+"')";
-                string queryInsertImg = "INSERT INTO FacturaCompras VALUES (" + nFactura + ",'" + base64Img + "', '"+empresa+"')";
                 con.Open();
-                SqlCommand cmdImgCompra = new SqlCommand(queryImgCompra, con);
-                cmdImgCompra.ExecuteNonQuery();
-                SqlCommand cmdInsertImg = new SqlCommand(queryInsertImg, con);
-                cmdInsertImg.ExecuteNonQuery();
+                SqlCommand cmd = new SqlCommand("ObtenerCartera", con);
+                cmd.Parameters.AddWithValue("@id_Cartera", 6);
+                cmd.Parameters.AddWithValue("@Factura", nFactura);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
                 con.Close();
-                string queryAbonoP = "INSERT INTO Abono VALUES (" + nFactura + ", '" + valorFac + "', '0', " + date + ",'" + valorFac + "')";
+
+                if (!dt.Rows[0].ItemArray[0].ToString().Equals("0")) 
+                { 
+                    MessageBox.Show("Esta factura ("+nFactura+") ya existe", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;    
+                }
+
                 con.Open();
-                SqlCommand cmdAP = new SqlCommand(queryAbonoP, con);
-                cmdAP.ExecuteNonQuery();
+                SqlCommand cmdC = new SqlCommand("InsertarCartera", con);
+                cmdC.Parameters.AddWithValue("@Id_Cartera", 6);
+                cmdC.Parameters.AddWithValue("@Valor_Cartera", valorFac);
+                cmdC.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
+                cmdC.Parameters.AddWithValue("@Factura", nFactura);
+                cmdC.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
+                cmdC.Parameters.AddWithValue("@Documento", empresa);
+                cmdC.CommandType = CommandType.StoredProcedure;
+                cmdC.ExecuteReader();
                 con.Close();
+
+                var base64Img = System.Convert.ToBase64String((byte[])(new ImageConverter()).ConvertTo(img, typeof(byte[]))).ToString();
+                con.Open();
+                SqlCommand cmdFC = new SqlCommand("InsertarFacrurasCompras", con);
+                cmdFC.Parameters.AddWithValue("@Id", nFactura);
+                cmdFC.Parameters.AddWithValue("@Factura", base64Img);
+                cmdFC.Parameters.AddWithValue("@Nit_Empresa", empresa);
+                cmdFC.CommandType = CommandType.StoredProcedure;
+                cmdFC.ExecuteReader();
+                con.Close();
+
+                con.Open();
+                SqlCommand cmdA = new SqlCommand("InsertarAbonos", con);
+                cmdA.Parameters.AddWithValue("@Id_Factura", nFactura);
+                cmdA.Parameters.AddWithValue("@Valor_Total", valorFac);
+                cmdA.Parameters.AddWithValue("@Abono", 0);
+                cmdA.Parameters.AddWithValue("@Fecha", DateTime.Now.ToShortDateString());
+                cmdA.Parameters.AddWithValue("@Valor_Actual", valorFac);
+                cmdA.CommandType = CommandType.StoredProcedure;
+                cmdA.ExecuteReader();
+                con.Close();
+
+                Clear();
             }
             catch (Exception ex)
             {
@@ -112,13 +128,13 @@ namespace Tienda.Registros
         {
             try
             {
-                string empresa = "select [Nit_Company], [Name_Company] from Company";
+                string empresa = "SELECT [Nit], [Nombre] FROM [Empresa]";
                 con.Open();
                 SqlDataAdapter adapterE = new SqlDataAdapter(empresa, con);
                 DataTable dataE = new DataTable();
                 adapterE.Fill(dataE);
-                this.cBoxEmp.DisplayMember = "Name_Company";
-                this.cBoxEmp.ValueMember = "Nit_Company";
+                this.cBoxEmp.DisplayMember = "Nombre";
+                this.cBoxEmp.ValueMember = "Nit";
                 this.cBoxEmp.DataSource = dataE;
                 con.Close();
             }
@@ -129,6 +145,11 @@ namespace Tienda.Registros
             }
         }
 
+        private void Clear()
+        {
+            this.numFact.Clear();
+            this.valorFact.Clear();
+        }
         
     }
 }

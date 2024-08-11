@@ -31,10 +31,23 @@ namespace Tienda.Registros
                 SqlCommand cmd = new SqlCommand("InsertarGastos", con);
                 cmd.Parameters.AddWithValue("@Dinero", this.dineroGasto.Text);
                 cmd.Parameters.AddWithValue("@Descripcion", this.descriGasto.Text);
-                cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                cmd.Parameters.AddWithValue("@Fecha", DateTime.Now.Date);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
                 con.Close();
+
+                con.Open();
+                SqlCommand cmdC = new SqlCommand("InsertarCartera", con);
+                cmdC.Parameters.AddWithValue("@Id_Cartera", 7);
+                cmdC.Parameters.AddWithValue("@Valor_Cartera", this.dineroGasto.Text);
+                cmdC.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.Date);
+                cmdC.Parameters.AddWithValue("@Factura", 0);
+                cmdC.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.Date);
+                cmdC.Parameters.AddWithValue("@Documento", 0);
+                cmdC.CommandType = CommandType.StoredProcedure;
+                cmdC.ExecuteReader();
+                con.Close();
+
                 Clear();
                 this.dineroGasto.Focus();
             }

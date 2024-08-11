@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Ferreteria.Forms
@@ -63,9 +64,6 @@ namespace Ferreteria.Forms
 
         public void IngresarDienro()
         {
-            string date = DateTime.Now.ToShortDateString();
-            string query = "";
-
             if(dinero.Text.Equals("") || dinero.Text.Length < 4)
             {
                 MessageBox.Show("Ingresar un valor valido");
@@ -73,16 +71,15 @@ namespace Ferreteria.Forms
             }
             else
             {
-                query = "INSERT INTO DineroBase VALUES('" + dinero.Text + "','" + date + "')";
                 con.Open();
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand("InsertarDineroBase", con);
+                cmd.Parameters.AddWithValue("@Dinero", dinero.Text);
+                cmd.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
                 con.Close();
                 DialogResult = DialogResult.Yes;
             }
-            
-            
-            
         }
     }
 }

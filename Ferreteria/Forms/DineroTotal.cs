@@ -20,7 +20,7 @@ namespace Ferreteria.Forms
         {
             try
             {
-                this.dinero.Text = dinero;
+                this.dinero.Text = Convert.ToDouble(dinero).ToString("C").Replace(",00", string.Empty);
             }
             catch(Exception ex) 
             {

@@ -58,11 +58,24 @@ namespace Ferreteria.Listas
         }
         private DataTable DataTable()
         {
-            string query1 = "SELECT top(30)*  FROM Lista_utilidad";
-            SqlDataAdapter adapter = new SqlDataAdapter(query1, con);
-            DataTable data = new DataTable();
-            adapter.Fill(data);
-            return data;
+
+            try
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("BalanceUtilidad", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dr);
+                con.Close();
+                return dt;
+
+            }catch(Exception ex)
+            {
+                con.Close();
+                MessageBox.Show("Error en en consulta");
+                return null;
+            }
         }
         private void buscar_Click(object sender, EventArgs e)
         {
@@ -77,59 +90,35 @@ namespace Ferreteria.Listas
                 }
                 else
                 {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("BalanceUtilidad", con);
                     switch (selectBusc)
                     {
                         case "ID":
-                            selectBusc = "ID";
-                            ListaBusqueda(selectBusc.ToString());
+                            cmd.Parameters.AddWithValue("@Id", this.producto.Text);
                             break;
                         case "Nombre":
-                            selectBusc = "Producto";
-                            ListaBusqueda(selectBusc.ToString());
+                            cmd.Parameters.AddWithValue("@Nombre", this.producto.Text);
                             break;
                         case "Marca":
-                            selectBusc = "Marca";
-                            ListaBusqueda(selectBusc.ToString());
+                            cmd.Parameters.AddWithValue("@Marca", this.producto.Text);
                             break;
-                        default: MessageBox.Show("No ha elegido un opcion valida"); break;
+                        default: 
+                            MessageBox.Show("No ha elegido un opcion valida"); 
+                            break;
                     }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    DataTable dt = new DataTable();
+                    dt.Load(dr);
+                    con.Close();
+                    dataGridView1.DataSource = dt;
                 }
             }
             catch (Exception ex)
             {
-
-            }
-        }
-
-        private void ListaBusqueda(string selectBusc)
-        {
-            try
-            {
-                string query = "";
-                switch (selectBusc)
-                {
-                    case "ID":
-                        query = "SELECT *  FROM Lista_utilidad where " + selectBusc + " = " + this.producto.Text;
-                        break;
-                    default:
-                        query = "SELECT *  FROM Lista_utilidad where " + selectBusc + " like '%" + this.producto.Text + "%'";
-                        break;
-                }
-                con.Open();
-                SqlDataAdapter dr = new SqlDataAdapter(query, con);
-                DataTable dt = new DataTable();
-                dr.Fill(dt);
-                dataGridView1.DataSource = dt;
-                if (dataGridView1.Rows.Count <= 0)
-                {
-                    MessageBox.Show("No existe un producto con este codigo de barras (" + this.producto.Text + ")");
-                }
                 con.Close();
-            }
-            catch (Exception ex)
-            {
-                con.Close();
-                MessageBox.Show(ex.Message, " ListaBusqueda");
+                MessageBox.Show("Error buscando " + this.selecBus.Text + "de producto", ex.Message);
             }
         }
     }

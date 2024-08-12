@@ -161,8 +161,8 @@ namespace Tienda.Listas
         {
             try
             {
-                var total = (double.Parse(this.tBCapital.Text) + double.Parse(this.tBVenta.Text)) - (double.Parse(this.tBGasto.Text) + double.Parse(this.tBAbono.Text));
-                this.tBTotal.Text = total.ToString();
+                var total = (double.Parse(this.tBCapital.Text, NumberStyles.Currency) + double.Parse(this.tBVenta.Text, NumberStyles.Currency)) - (double.Parse(this.tBGasto.Text, NumberStyles.Currency) + double.Parse(this.tBAbono.Text, NumberStyles.Currency));
+                this.tBTotal.Text = total.ToString("C").Replace(",00", string.Empty);
 
             }
             catch (Exception ex)
@@ -186,10 +186,10 @@ namespace Tienda.Listas
                 con.Close();
                 foreach(DataRow item in dt.Rows)
                 {
-                    sum += Convert.ToDouble(item[2].ToString()); 
+                    sum += double.Parse(item[1].ToString(), NumberStyles.Currency); 
                 }
 
-                this.tBCapital.Text = sum.ToString();
+                this.tBCapital.Text = sum.ToString("C").Replace(",00", string.Empty);
                 Ventas();
             }
             catch (Exception ex)
@@ -216,10 +216,10 @@ namespace Tienda.Listas
                     con.Close();
                     foreach(DataRow item in dt.Rows)
                     {
-                        sum += Convert.ToDouble(item[2].ToString());
+                        sum += double.Parse(item[1].ToString(), NumberStyles.Currency);
                     }
                 }
-                this.tBVenta.Text = sum.ToString();
+                this.tBVenta.Text = sum.ToString("C").Replace(",00", string.Empty);
 
                 Gasto();
 
@@ -247,9 +247,9 @@ namespace Tienda.Listas
 
                 foreach (DataRow item in dt.Rows)
                 {
-                    sum += Convert.ToDouble(item[2].ToString());
+                    sum += double.Parse(item[1].ToString(), NumberStyles.Currency);
                 }
-                this.tBGasto.Text = sum.ToString();
+                this.tBGasto.Text = sum.ToString("C").Replace(",00", string.Empty);
                 Facturas();
 
             }
@@ -276,10 +276,10 @@ namespace Tienda.Listas
 
                 foreach (DataRow item in dt.Rows)
                 {
-                    sum += Convert.ToDouble(item[2].ToString());
+                    sum += double.Parse(item[1].ToString(), NumberStyles.Currency);
                 }
 
-                this.tBTotalF.Text = sum.ToString();
+                this.tBTotalF.Text = sum.ToString("C").Replace(",00", string.Empty);
                 
                 Abono();
 
@@ -307,10 +307,10 @@ namespace Tienda.Listas
 
                 foreach (DataRow item in dt.Rows)
                 {
-                    sum += Convert.ToDouble(item[2].ToString());
+                    sum += double.Parse(item[1].ToString(), NumberStyles.Currency);
                 }
 
-                this.tBAbono.Text = sum.ToString();
+                this.tBAbono.Text = sum.ToString("C").Replace(",00", string.Empty);
                 con.Close();
                 Total();
             }
@@ -334,8 +334,8 @@ namespace Tienda.Listas
                 dt.Load(dr);
                 con.Close();
 
-                double dinero = dt.Rows.Count == 0 ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.dineroBase.Text = dinero.ToString();
+                double dinero = dt.Rows.Count == 0 ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[1].ToString());
+                this.dineroBase.Text = dinero.ToString("C").Replace(",00", string.Empty);
 
                 DineroVentas();
             }
@@ -370,7 +370,7 @@ namespace Tienda.Listas
                     }
                 }
 
-                this.ventasHoy.Text = sum.ToString();
+                this.ventasHoy.Text = sum.ToString("C").Replace(",00", string.Empty);
                 con.Close();
                 GastosHoy();
             }
@@ -397,11 +397,11 @@ namespace Tienda.Listas
                 {
                     if (item[3].ToString().Equals(DateTime.Now.Date.ToString()))
                     {
-                        sum += Convert.ToDouble(item[2].ToString());
+                        sum += Convert.ToDouble(item[1].ToString());
                     }
                 }
 
-                this.gastosHoy.Text = sum.ToString();
+                this.gastosHoy.Text = sum.ToString("C").Replace(",00", string.Empty);
                 con.Close();
                 AbonosHoy();
             }
@@ -432,15 +432,7 @@ namespace Tienda.Listas
                     }
                 }
 
-
-                //string date = DateTime.Now.ToShortDateString();
-                //string query = "select sum(CONVERT(decimal, Abono)) from Abono where Fecha like '" + date + "'";
-                //con.Open();
-                //SqlDataAdapter ad = new SqlDataAdapter(query, con);
-                //DataTable dt = new DataTable();
-                //ad.Fill(dt);
-                //var abono = dt.Rows[0].ItemArray[0].ToString().Equals("") ? double.Parse("0") : double.Parse(dt.Rows[0].ItemArray[0].ToString());
-                this.abonosHoy.Text = sum.ToString();
+                this.abonosHoy.Text = sum.ToString("C").Replace(",00", string.Empty);
                 con.Close();
                 TotalHoy();
             }
@@ -454,8 +446,8 @@ namespace Tienda.Listas
         {
             try
             {
-                double sumar = (double.Parse(this.dineroBase.Text) + double.Parse(this.ventasHoy.Text)) - (double.Parse(this.gastosHoy.Text) + double.Parse(this.abonosHoy.Text));
-                this.totalHoy.Text = sumar.ToString();
+                double sumar = (double.Parse(this.dineroBase.Text, NumberStyles.Currency) + double.Parse(this.ventasHoy.Text, NumberStyles.Currency)) - (double.Parse(this.gastosHoy.Text, NumberStyles.Currency) + double.Parse(this.abonosHoy.Text, NumberStyles.Currency));
+                this.totalHoy.Text = sumar.ToString("C").Replace(",00", string.Empty);
 
             }catch(Exception ex)
             {

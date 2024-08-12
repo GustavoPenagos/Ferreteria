@@ -8,7 +8,7 @@ namespace Ferreteria.Forms
         public MensageCambio(double pMessage)
         {
             InitializeComponent();
-            this.cambio.Text = pMessage.ToString();
+            this.cambio.Text = pMessage.ToString("C").Replace(",00",string.Empty);
         }
 
         private void MensageCambio_Load(object sender, EventArgs e)

@@ -22,6 +22,7 @@ using Aspose.Pdf.Operators;
 using Newtonsoft.Json;
 using System.Data;
 using Org.BouncyCastle.Crypto.Macs;
+using System.Data.SqlTypes;
 
 namespace Tienda.Registros
 {
@@ -35,7 +36,7 @@ namespace Tienda.Registros
         private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString);
 
         private void Compras_Load(object sender, EventArgs e)
-        {
+            {
             try
             {
                 Disable();
@@ -154,16 +155,6 @@ namespace Tienda.Registros
                 else
                 {
                     CantidadData(existe, cantidad, ID, result);
-
-                    //if (result >= 0)
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("El numero maximo de articulos en bodega es: " + existe + "", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    //    return;
-                    //}
                 }
             }
             catch (Exception ex)
@@ -323,7 +314,7 @@ namespace Tienda.Registros
                 double total = 0 ;
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    total += Convert.ToDouble(dt.Rows[i].ItemArray[5].ToString());
+                    total += double.Parse(dt.Rows[i].ItemArray[5].ToString(), NumberStyles.Currency);
                 }
                 if (dataGridView2 == null)
                 {
@@ -332,7 +323,7 @@ namespace Tienda.Registros
                 else
                 {
                     //var tv = (0.19 * st) + st;
-                    this.totalVenta.Text = total.ToString();
+                    this.totalVenta.Text = total.ToString("C").Replace(",00", string.Empty);
                 }
                 
             }
@@ -383,9 +374,9 @@ namespace Tienda.Registros
                     double totalVenta = 0;
                     for (int i = 0; i < dataGridView2.Rows.Count; i++)
                     {
-                        totalVenta += double.Parse(dataGridView2.Rows[i].Cells["Precio total"].Value.ToString());
+                        totalVenta += double.Parse(dataGridView2.Rows[i].Cells["Precio total"].Value.ToString(), NumberStyles.Currency);
                     }
-                    this.totalVenta.Text = totalVenta.ToString();
+                    this.totalVenta.Text = totalVenta.ToString("C").Replace(",00", string.Empty);
                 }
                 else
                 {
@@ -434,13 +425,12 @@ namespace Tienda.Registros
                 var precio = dt.Rows[0].ItemArray[5].ToString();
                 var unidades = dt.Rows[0].ItemArray[4].ToString();
                 var cantidad = Convert.ToDouble(this.canProd.Text);
-                //07-012-024
-                var precioTotal = cantidad * Convert.ToDouble(precio);
-                //
+                
+                var precioTotal = cantidad * double.Parse(precio, NumberStyles.Currency);
                 con.Close();
                 var value1 = this.ventaBut1.Checked; var value2 = this.ventaBut2.Checked;
                 var value3 = this.ventaBut3.Checked; var value4 = this.ventaBut4.Checked;
-                //
+                
                 string v = "";
                 switch (true)
                 {
@@ -478,7 +468,7 @@ namespace Tienda.Registros
                     SqlCommand cmdC = new SqlCommand("InsertarCompras", con);
                     cmdC.Parameters.AddWithValue("@Id", id_prod);
                     cmdC.Parameters.AddWithValue("@Nombre", nombre);
-                    cmdC.Parameters.AddWithValue("@Precio", precio);
+                    cmdC.Parameters.AddWithValue("@Precio", double.Parse(precio, NumberStyles.Currency));
                     cmdC.Parameters.AddWithValue("@Cantidad", cantidad);
                     cmdC.Parameters.AddWithValue("@Unidad_Producto", unidades);
                     cmdC.Parameters.AddWithValue("@Id_Venta", v);
@@ -679,7 +669,7 @@ namespace Tienda.Registros
                     con.Open();
                     SqlCommand cmdC = new SqlCommand("InsertarCartera", con);
                     cmdC.Parameters.AddWithValue("@Id_Cartera", 1);
-                    cmdC.Parameters.AddWithValue("@Valor_Cartera", this.totalVenta.Text);
+                    cmdC.Parameters.AddWithValue("@Valor_Cartera", double.Parse(this.totalVenta.Text, NumberStyles.Currency));
                     cmdC.Parameters.AddWithValue("@Fecha_Registro", DateTime.Now.ToShortDateString());
                     cmdC.Parameters.AddWithValue("@Factura", 0);
                     cmdC.Parameters.AddWithValue("@Fecha_Fin", DateTime.Now.ToShortDateString());
@@ -945,14 +935,14 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[2].Value.ToString();
-                            var precioT = double.Parse(r.Cells[3].Value.ToString());
-                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[6].Value.ToString());
+                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString(), NumberStyles.Currency);
+                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //--------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket1.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
                         }
-                        var totalComp = double.Parse(this.totalVenta.Text);
+                        var totalComp = double.Parse(this.totalVenta.Text, NumberStyles.Currency);
                         var ivaComp = Math.Ceiling((totalComp / 1.19) * 0.19);
                         con.Open();
                         SqlCommand cmdFact = new SqlCommand("InsertarCartera", con);
@@ -979,11 +969,11 @@ namespace Tienda.Registros
                         switch (true)
                         {
                             case true when efec:
-                                Ticket1.AgregaTotales("Efectivo Entregado:", double.Parse(cancela.ToString()));
-                                Ticket1.AgregaTotales("Efectivo Devuelto:", double.Parse(cambio.ToString()));
+                                Ticket1.AgregaTotales("Efectivo Entregado:", double.Parse(cancela.ToString(), NumberStyles.Currency));
+                                Ticket1.AgregaTotales("Efectivo Devuelto:", double.Parse(cambio.ToString(), NumberStyles.Currency));
                                 break;
                             case true when transf:
-                                Ticket1.AgregaTotales("Pago por transferencia:", double.Parse(this.cancelaCon.Text, NumberStyles.Currency));
+                                Ticket1.AgregaTotales("Pago por transferencia:", double.Parse(this.totalVenta.Text, NumberStyles.Currency));
                                 break;
                             default: break;
                         }
@@ -1006,7 +996,7 @@ namespace Tienda.Registros
                             tipoPago = "transferencia";
                         }
                         
-                        ExcelFactura(correo, nombre, direc, tel, ID, tipoPago, cancela.ToString(), cambio.ToString(), "Factura", 0);
+                        ExcelFactura(correo, nombre, direc, tel, ID, tipoPago, cancela.ToString(), cambio.ToString(), "Factura", 0, 2);
 
                     }
                     catch (Exception ex)
@@ -1079,7 +1069,7 @@ namespace Tienda.Registros
                         {
                             var articuloT = r.Cells[2].Value.ToString();
                             var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
-                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString(), NumberStyles.Currency);
                             var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
@@ -1130,7 +1120,7 @@ namespace Tienda.Registros
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket1.ImprimirTiket(impresora);
 
-                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 0);
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 0, 3);
                     }
                     catch (Exception ex)
                     {
@@ -1197,9 +1187,9 @@ namespace Tienda.Registros
                         foreach (DataGridViewRow r in dataGridView2.Rows)
                         {
                             var articuloT = r.Cells[2].Value.ToString();
-                            var precioT = double.Parse(r.Cells[3].Value.ToString());
-                            var cantidadT = double.Parse(r.Cells[5].Value.ToString());
-                            var totalT = double.Parse(r.Cells[6].Value.ToString());
+                            var precioT = double.Parse(r.Cells[3].Value.ToString(), NumberStyles.Currency);
+                            var cantidadT = double.Parse(r.Cells[5].Value.ToString(), NumberStyles.Currency);
+                            var totalT = double.Parse(r.Cells[6].Value.ToString(), NumberStyles.Currency);
 
                             //------------------------- PROD------PrECIO------CANT----TOTAL
                             Ticket3.AgregaArticulo(articuloT, precioT, cantidadT, totalT);
@@ -1245,7 +1235,7 @@ namespace Tienda.Registros
                         string impresora = ConfigurationManager.AppSettings["empresora"];
                         Ticket3.ImprimirTiket(impresora);
 
-                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 1);
+                        ExcelFactura("", "", "", "", "", "", cancela.ToString(), cambio.ToString(), "Factura_Remision", 1, 4);
                     }
                     catch (Exception ex)
                     {
@@ -1359,29 +1349,24 @@ namespace Tienda.Registros
             {
                 if (this.rBImprimir.Checked == true)
                 {
-                    this.rBNImprimir.Visible = true;
                     this.rBImprimir.Visible = false;
+                    this.rBNImprimir.Visible = true;
+                    this.rBFactNit.Visible = true;
+                    this.rBRemision.Visible = true;
                     this.sinDatos.Visible = true;
+
                 }
-                else if (this.rBImprimir.Checked == false)
-                {
-                    this.rBNImprimir.Visible = false;
-                    this.rBImprimir.Visible = true;
-                    this.sinDatos.Visible = false;
-                }
+
                 if (this.rBNImprimir.Checked == true)
                 {
+                    this.rBImprimir.Visible = true;
+                    this.rBNImprimir.Visible = false;
                     this.rBFactNit.Visible = false;
                     this.rBRemision.Visible = false;
                     this.sinDatos.Visible = false;
                 }
-                if (this.rBImprimir.Checked == true)
-                {
-                    this.rBFactNit.Visible = true;
-                    this.rBRemision.Visible = true;
-                    this.sinDatos.Visible = true;
-                }
 
+                
             }
             catch (Exception ex)
             {
@@ -1392,7 +1377,7 @@ namespace Tienda.Registros
         private void ventaBut1_CheckedChanged(object sender, EventArgs e)
         {
             ListaCompra();
-            rBImprimir.Checked = false;
+            rBNImprimir.Checked = true;
         }
 
         private void canProd_KeyPress(object sender, KeyPressEventArgs e)
@@ -1435,7 +1420,7 @@ namespace Tienda.Registros
         private void ventaBut2_CheckedChanged(object sender, EventArgs e)
         {
             ListaCompra();
-            rBImprimir.Checked = false;
+            rBNImprimir.Checked = true;
         }
 
         private void transferencia_CheckedChanged(object sender, EventArgs e)
@@ -1849,7 +1834,7 @@ namespace Tienda.Registros
             }
         }
 
-        public void ExcelFactura(string correo, string nombre, string direccion, string telefono, string ID, string tipoPago, string cancelaCon, string cambioDe, string ftra, int estado)
+        public void ExcelFactura(string correo, string nombre, string direccion, string telefono, string ID, string tipoPago, string cancelaCon, string cambioDe, string ftra, int estado, int TipoFactura)
         {
             try
             {
@@ -1883,7 +1868,7 @@ namespace Tienda.Registros
                 SqlDataAdapter adapter = new SqlDataAdapter(queryCont, con);
                 DataTable data = new DataTable();
                 adapter.Fill(data);
-                var nFac = Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
+                var nFac = data.Rows.Count == 0 ? 1 : Convert.ToInt64(data.Rows[0].ItemArray[0].ToString());
                 //var nFac = Fac + 1;
                 //
                 string dateda = DateTime.Now.ToString("dd/MMM/yyyy").Replace(".",string.Empty);
@@ -1975,7 +1960,7 @@ namespace Tienda.Registros
                 workbook.Close();
                 excel.Quit();
                 
-                ExportToPDFFactura(rutaDatos, rutaDatosPDF, correo, ftra, nombre);
+                ExportToPDFFactura(rutaDatos, rutaDatosPDF, correo, ftra, nombre, TipoFactura);
             }
             catch (Exception ex)
             {
@@ -2044,22 +2029,25 @@ namespace Tienda.Registros
             }
         }
 
-        public void ExportToPDFFactura(string rutaDatos, string rutaDatosPDF, string correo, string ftra, string nombre)
+        public void ExportToPDFFactura(string rutaDatos, string rutaDatosPDF, string correo, string ftra, string nombre, int TipoFactura)
         {
             try
             {
-                
+                Process[] killExcel = Process.GetProcessesByName("Excel");
+                for (int i = 0; i < killExcel.Length; i++)
+                {
+                    killExcel[i].Kill();
+                }
                 Excel.Application excel = new Excel.Application();
                 Excel.Workbook workbook = excel.Workbooks.Open(rutaDatos);
                 Excel.Worksheet worksheet = workbook.ActiveSheet;
                 worksheet.ExportAsFixedFormat(Excel.XlFixedFormatType.xlTypePDF, rutaDatosPDF);
                 workbook.Close();
                 excel.Quit();
-
-                Process[] processes = Process.GetProcessesByName("Excel");
-                for (int i = 0; i < processes.Length; i++)
+                killExcel = Process.GetProcessesByName("Excel");
+                for (int i = 0; i < killExcel.Length; i++)
                 {
-                    processes[i].Kill();
+                    killExcel [i].Kill();
                 }
 
                 Thread.Sleep(100);
@@ -2072,11 +2060,21 @@ namespace Tienda.Registros
                     reader.Close();
                     byte[] bytes = ms.ToArray();
                     var base64EncodedBytes = System.Convert.ToBase64String(bytes).ToString();
-                    string query = "INSERT INTO " + ftra + " VALUES('" + base64EncodedBytes + "')";
+
+                    //
                     con.Open();
-                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlCommand cmd = new SqlCommand("InsertrarFactura", con);
+                    cmd.Parameters.AddWithValue("@TipoFactura", TipoFactura);
+                    cmd.Parameters.AddWithValue("@Factura", base64EncodedBytes);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     con.Close();
+                    //
+                    //string query = "INSERT INTO " + ftra + " VALUES('" + base64EncodedBytes + "')";
+                    //con.Open();
+                    //SqlCommand cmd = new SqlCommand(query, con);
+                    //cmd.ExecuteNonQuery();
+                    //con.Close();
                 }
 
                 if (ftra.Equals("Factura"))
@@ -2105,6 +2103,7 @@ namespace Tienda.Registros
             }
             catch (Exception ex)
             {
+                con.Close();
                 MessageBox.Show(ex.Message, "ExportToPDF");
             }
         }

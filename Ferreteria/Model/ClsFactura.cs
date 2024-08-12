@@ -371,19 +371,19 @@ namespace DistribucionesArly_s
 
             public static bool SendStringToPrinter(string szPrinterName, string szString)
             {
-                if (szString.Length > 10)
-                {
-                    using (SqlConnection coon = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString))
-                    {
-                        coon.Open();
-                        SqlCommand cmd = new SqlCommand("InsertrarFactura", coon);
-                        byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(szString);
-                        cmd.Parameters.AddWithValue("@Factura", System.Convert.ToBase64String(plainTextBytes));
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.ExecuteNonQuery();
-                        coon.Close();
-                    }
-                }
+                //if (szString.Length > 10)
+                //{
+                //    using (SqlConnection coon = new SqlConnection(ConfigurationManager.ConnectionStrings["Conection"].ConnectionString))
+                //    {
+                //        coon.Open();
+                //        SqlCommand cmd = new SqlCommand("InsertrarFactura", coon);
+                //        byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(szString);
+                //        cmd.Parameters.AddWithValue("@Factura", System.Convert.ToBase64String(plainTextBytes));
+                //        cmd.CommandType = CommandType.StoredProcedure;
+                //        cmd.ExecuteNonQuery();
+                //        coon.Close();
+                //    }
+                //}
 
                 IntPtr pBytes;
                 Int32 dwCount;

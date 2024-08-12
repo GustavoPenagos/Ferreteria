@@ -104,7 +104,7 @@ namespace Ferreteria.Forms
                 {
                     long moneda = Convert.ToInt64(dinero.Text);
 
-                    dineroMoneda.Text = moneda.ToString();
+                    dineroMoneda.Text = moneda.ToString("C").Replace(",00", string.Empty);
                 }
 
             }

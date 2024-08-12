@@ -63,5 +63,15 @@ namespace Tienda.Forms
         {
             OpenFrom(new BalanceCompra());
         }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+            OpenFrom(new BalanceUtilidad());
+        }
+
+        private void pictureBox5_Click(object sender, EventArgs e)
+        {
+            OpenFrom(new BalanceCompra());
+        }
     }
 }

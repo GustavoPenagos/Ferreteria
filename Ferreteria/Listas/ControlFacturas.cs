@@ -33,61 +33,50 @@ namespace Tienda.Listas
         {
             try
             {
-               var seleccion = this.selecBus.Text;
-                var cBarras = Convert.ToInt64(this.buscaID.Text.Trim());
-                switch (seleccion)
+                con.Open();
+                webBrowser1.DocumentText = string.Empty;
+                SqlCommand cmd = new SqlCommand("ObtenerImgFactura", con);
+                switch (this.selecBus.Text)
                 {
                     case ("Factura de venta"):
-                        seleccion = "Factura";
-                        Mostrar(seleccion, cBarras);
+                        cmd.Parameters.AddWithValue("@Id_Factura", "Factura");
+                        cmd.Parameters.AddWithValue("@Factura", this.buscaID.Text.Trim());
                         break;
                     case ("Factura Remision"):
-                        seleccion = "FacturaRem";
-                        Mostrar(seleccion, cBarras);
+                        cmd.Parameters.AddWithValue("@Id_Factura", "FacturaRem");
+                        cmd.Parameters.AddWithValue("@Factura", this.buscaID.Text.Trim());
                         break;
                     case ("Cotizacion"):
-                        seleccion = "Cotizacion";
-                        Cotiza(seleccion, cBarras);
+
+                        cmd.Parameters.AddWithValue("@Id_Factura", "Cotizacion");
+                        cmd.Parameters.AddWithValue("@Factura", this.buscaID.Text.Trim());
                         break;
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Buscar");
-            }
-        }
-
-        private void Mostrar(string factura, long barras)
-        {
-            try
-            {
-                webBrowser1.DocumentText = string.Empty;
-                string queryBusca = "SELECT Factura FROM " + factura.ToString() + " WHERE Id_Factura = " + barras;
-                con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(queryBusca, con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
-                string codeB64 = dt.Rows[0].ItemArray[0].ToString();
+                dt.Load(dr);
                 con.Close();
+                string codeB64 = dt.Rows[0].ItemArray[1].ToString();
                 byte[] B64ToByte = Convert.FromBase64String(codeB64);
                 string rutaDatosPDF = ConfigurationManager.AppSettings["PathPDFFactura"];
                 Process[] processes = Process.GetProcessesByName("Acrobat");
-                for (int i = 0; i < processes.Length-1; i++)
+                for (int i = 0; i < processes.Length - 1; i++)
                 {
                     processes[i].Kill();
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 File.WriteAllBytes(rutaDatosPDF, B64ToByte);
 
-                
+
                 webBrowser1.Stop();
                 webBrowser1.Navigate(rutaDatosPDF);
-                
+
             }
             catch (Exception ex)
             {
                 con.Close();
-                MessageBox.Show(ex.Message, "Mostar");
+                MessageBox.Show(ex.Message, "Buscar");
             }
         }
 

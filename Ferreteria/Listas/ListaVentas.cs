@@ -18,9 +18,8 @@ namespace Tienda.Listas
 
         private void ListaVentas_Load(object sender, EventArgs e)
         {
-            TiposFactura();
             CostContol_Load();
-            Delete();
+            //Delete();
         }
 
         private void CostContol_Load()
@@ -45,8 +44,9 @@ namespace Tienda.Listas
                         var Cart = double.Parse(dt.Rows[i].ItemArray[2].ToString(), NumberStyles.Currency);
                         suma = suma + Cart;
                     }
-                    this.totalCartera.Text = suma.ToString();
+                    this.totalCartera.Text = suma.ToString("C").Replace(",00", string.Empty);
                 }
+                TiposFactura();
             }
             catch (Exception ex)
             {
@@ -59,98 +59,36 @@ namespace Tienda.Listas
         {
             try
             {
-                selectCartera_SelectedIndexChanged(sender, e);
-            }
-            catch (Exception ex)
-            { 
-                MessageBox.Show(ex.Message, "buttonBuscar_Click");
-            }
-        }
+                con.Open();
+                SqlCommand cmd = new SqlCommand("ObtenerFacturas", con);
 
-        private void selectCartera_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (selectCartera.Text.Equals("Fecha de venta") || selectCartera.Text.Equals("Venta sin factura"))
+                switch (selectCartera.Text)
                 {
-                    dateCartera.Visible = true;
-                    tBoxBusca.Visible = false;
-                    dateFin.Visible = true;
-                }
-                else
-                {
-                    dateCartera.Visible = false;
-                    tBoxBusca.Visible = true;
-                    dateFin.Visible = false;
-                }
-                string selecBox = selectCartera.Text;
-                var date = dateCartera.Value.ToString("d/MM/yyyy");
-                var dateF = dateFin.Value.ToString("d/MM/yyyy");
-                switch (selecBox)
-                {
-                    case ("Factura Nit"):
-                        selecBox = "[Tipo de venta] = 'Factura con Nit' and [Factura] = " + this.tBoxBusca.Text;
-                        BuscarCartera(selecBox);
-                        break;
-                    case ("Remision"):
-                        selecBox = "[Tipo de venta] = 'Remision' and [Factura] = " + this.tBoxBusca.Text;
-                        BuscarCartera(selecBox);
+                    case ("Compras NIT"):
+                        cmd.Parameters.AddWithValue("@TipoFactura", 2);
+                        cmd.Parameters.AddWithValue("@Id_Factura", tBoxBusca.Text.Trim());
                         break;
                     case ("Venta sin factura"):
-                        selecBox = "[Tipo de venta] = 'Venta sin factura' and [Fecha de venta] between '" + date + "' and '" + dateF + "'";
-                        BuscarCartera(selecBox);
+                        cmd.Parameters.AddWithValue("@TipoFactura", 3);
+                        cmd.Parameters.AddWithValue("@Id_Factura", tBoxBusca.Text.Trim());
                         break;
                     case ("Fecha de venta"):
-                        selecBox = "[Fecha de venta] between '" + date + "' and '" + dateF + "'";
-                        BuscarCartera(selecBox);
+                        cmd.Parameters.AddWithValue("@TipoFactura", 4);
+                        cmd.Parameters.AddWithValue("@Id_Factura", tBoxBusca.Text.Trim());
                         break;
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "selectCartera_SelectedIndexChanged");
-            }
-        }
-
-        private void BuscarCartera(string selecBox)
-        {
-            try
-            {
-                string querySWhere = "";
-                string fecha = dateCartera.Value.ToString("d/MM/yyyy");
-                if (this.tBoxBusca.Text.Equals("") && dateCartera.Visible == false)
-                {
-                    querySWhere = "select top(20)* from Lista_Ventas";
-                }
-                else
-                {
-                    querySWhere = "select * from Lista_Ventas WHERE " + selecBox;
-                }
-
-                con.Open();
-                SqlDataAdapter da = new SqlDataAdapter(querySWhere, con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dr = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
-                da.Fill(dt);
+                dt.Load(dr);
                 dataGridView1.DataSource = dt;
-
-                double suma = 0;
-                if (dataGridView1.Rows.Count != 0)
-                {
-                    for (int i = 0; i < dataGridView1.Rows.Count; i++)
-                    {
-                        var Cart = double.Parse(dt.Rows[i].ItemArray[2].ToString(), NumberStyles.Currency);
-                        var totalCart = Convert.ToDouble(Cart);
-                        suma = suma + totalCart;
-                    }
-                    this.totalCartera.Text = suma.ToString("C").Replace(",00", string.Empty);
-                }
-
                 con.Close();
+
             }
             catch (Exception ex)
             {
                 con.Close();
-                MessageBox.Show(ex.Message, "BuscarCartera");
+                MessageBox.Show(ex.Message, "buttonBuscar_Click");
             }
         }
 
@@ -187,19 +125,19 @@ namespace Tienda.Listas
             }
         }
 
-        private void Delete()
-        {
-            DataGridViewButtonColumn button = new DataGridViewButtonColumn();
-            button.HeaderText = "Eliminar";
-            button.Name = "Eliminar";
-            button.Text = "Eliminar";
-            button.UseColumnTextForButtonValue = true;
-            dataGridView1.Columns.Add(button);
-        }
+        //private void Delete()
+        //{
+        //    DataGridViewButtonColumn button = new DataGridViewButtonColumn();
+        //    button.HeaderText = "Eliminar";
+        //    button.Name = "Eliminar";
+        //    button.Text = "Eliminar";
+        //    button.UseColumnTextForButtonValue = true;
+        //    dataGridView1.Columns.Add(button);
+        //}
 
         private void TiposFactura()
         {
-            string departamento = "select * from Tipos_Cartera";
+            string departamento = "select * from Tipos_Cartera where Id_Cartera in (2,3,4)";
             con.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(departamento, con);
             DataTable data = new DataTable();
